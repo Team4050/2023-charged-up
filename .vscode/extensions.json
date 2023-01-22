@@ -1,6 +1,10 @@
 {
-    "recommendations": [
-        "richardwillis.vscode-spotless-gradle",
-        "mhutchie.git-graph"
-    ]
+  "recommendations": [
+    "richardwillis.vscode-spotless-gradle",
+    "mhutchie.git-graph",
+    "wpilibsuite.vscode-wpilib",
+    "redhat.java",
+    "vscjava.vscode-gradle",
+    "vscjava.vscode-java-pack"
+  ]
 }
