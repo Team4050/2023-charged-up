@@ -5,8 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -15,8 +17,27 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  /* Subsystems */
+  private DriveSubsystem drivetrain = new DriveSubsystem();
+
+  /* Commands */
+
+  /* Control Interface */
+  CommandXboxController primaryControl = new CommandXboxController(Constants.Operator.XboxPrimary);
+  CommandXboxController secondaryControl =
+      new CommandXboxController(Constants.Operator.XboxSecondary);
+
   public RobotContainer() {
     configureBindings();
+
+    /* Default Commands */
+    drivetrain.setDefaultCommand(
+        Commands.run(
+            () ->
+                drivetrain.drive(
+                    primaryControl.getLeftX(),
+                    primaryControl.getLeftY(),
+                    primaryControl.getRightX())));
   }
 
   /**
