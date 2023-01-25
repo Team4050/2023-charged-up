@@ -8,12 +8,13 @@ public final class Constants {
   public static final class Operator {
     public static final int XboxPrimary = 0;
     public static final int XboxSecondary = 1;
+    public static final float DeadzoneMin = 0.05f;
   }
 
   public static final class Drive {
-    public static final int FrontLeft = 0;
-    public static final int RearLeft = 1;
-    public static final int FrontRight = 2;
-    public static final int RearRight = 3;
+    public static final int FrontLeft = 3;
+    public static final int RearLeft = 2;
+    public static final int FrontRight = 4;
+    public static final int RearRight = 1;
   }
 }

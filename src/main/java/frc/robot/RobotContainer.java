@@ -5,9 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -27,17 +27,12 @@ public class RobotContainer {
   CommandXboxController secondaryControl =
       new CommandXboxController(Constants.Operator.XboxSecondary);
 
+  DriveCommand command = new DriveCommand(drivetrain, primaryControl);
+
   public RobotContainer() {
     configureBindings();
-
     /* Default Commands */
-    drivetrain.setDefaultCommand(
-        Commands.run(
-            () ->
-                drivetrain.drive(
-                    primaryControl.getLeftX(),
-                    primaryControl.getLeftY(),
-                    primaryControl.getRightX())));
+    drivetrain.setDefaultCommand(command);
   }
 
   /**
