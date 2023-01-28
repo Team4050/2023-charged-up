@@ -7,8 +7,8 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveCommand extends CommandBase {
 
-  static DriveSubsystem drivetrain;
-  static CommandXboxController joystick;
+  private static DriveSubsystem drivetrain;
+  private static CommandXboxController joystick;
 
   public DriveCommand(DriveSubsystem d, CommandXboxController j) {
     drivetrain = d;
@@ -18,13 +18,15 @@ public class DriveCommand extends CommandBase {
 
   @Override
   public void execute() {
-    double x = DeadzoneCheck(joystick.getLeftY());
-    double y = -DeadzoneCheck(joystick.getLeftX());
-    double r = -DeadzoneCheck(joystick.getRightX());
+    double x = deadzoneCheck(joystick.getLeftY());
+    double y = -deadzoneCheck(joystick.getLeftX());
+    double r = -deadzoneCheck(joystick.getRightX());
+
     drivetrain.drive(x, y, r);
+    drivetrain.go();
   }
 
-  double DeadzoneCheck(double d) {
+  private double deadzoneCheck(double d) {
     if (Math.abs(d) < Operator.DeadzoneMin) d = 0;
     return d;
   }

@@ -13,13 +13,35 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
+  private double xSpeed;
+  private double ySpeed;
+  private double rotation;
+
   public DriveSubsystem() {
     FR.setInverted(true);
     RR.setInverted(true);
   }
 
   public void drive(double xSpeed, double ySpeed, double rotation) {
-    drive.driveCartesian(xSpeed, ySpeed, rotation);
+    setXSpeed(xSpeed);
+    setYSpeed(ySpeed);
+    setRotation(rotation);
+  }
+
+  public void setXSpeed(double xSpeed) {
+    this.xSpeed = xSpeed;
+  }
+
+  public void setYSpeed(double ySpeed) {
+    this.ySpeed = ySpeed;
+  }
+
+  public void setRotation(double rotation) {
+    this.rotation = rotation;
+  }
+
+  public void go() {
+    this.drive.driveCartesian(this.xSpeed, this.ySpeed, this.rotation);
   }
 
   public void setMaxOutput(double maxOutput) {

@@ -7,8 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DriveCommand;
+import frc.robot.commands.*;
+import frc.robot.commands.VisionCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import org.photonvision.PhotonCamera;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,6 +22,9 @@ public class RobotContainer {
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem();
 
+  /* Camera */
+  private PhotonCamera camera = new PhotonCamera("photonvision");
+
   /* Commands */
 
   /* Control Interface */
@@ -27,12 +32,13 @@ public class RobotContainer {
   CommandXboxController secondaryControl =
       new CommandXboxController(Constants.Operator.XboxSecondary);
 
-  DriveCommand command = new DriveCommand(drivetrain, primaryControl);
+  DriveCommand driveCommand = new DriveCommand(drivetrain, primaryControl);
+  VisionCommand vCommand = new VisionCommand(camera, drivetrain, primaryControl);
 
   public RobotContainer() {
     configureBindings();
     /* Default Commands */
-    drivetrain.setDefaultCommand(command);
+    drivetrain.setDefaultCommand(driveCommand);
   }
 
   /**
@@ -44,7 +50,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    primaryControl.a().whileTrue(vCommand);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
