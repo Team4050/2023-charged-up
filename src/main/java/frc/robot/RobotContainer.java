@@ -5,9 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.HazardXbox;
 
@@ -29,12 +29,15 @@ public class RobotContainer {
   private DriveSubsystem drivetrain = new DriveSubsystem();
 
   /* Commands */
-  DriveCommand command = new DriveCommand(drivetrain, primaryControl);
 
   public RobotContainer() {
     configureBindings();
 
-    drivetrain.setDefaultCommand(command);
+    Commands.run(
+        () ->
+            drivetrain.drive(
+                primaryControl.getLeftX(), primaryControl.getLeftY(), primaryControl.getRightX()),
+        drivetrain);
   }
 
   /**
