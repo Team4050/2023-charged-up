@@ -25,10 +25,4 @@ public class DriveSubsystem extends SubsystemBase {
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput);
   }
-
-  @Override
-  public void periodic() {}
-
-  @Override
-  public void simulationPeriodic() {}
 }
