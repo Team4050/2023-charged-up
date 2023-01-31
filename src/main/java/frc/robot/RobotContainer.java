@@ -5,9 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DriveCommand;
+import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -17,22 +18,29 @@ import frc.robot.subsystems.DriveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  /* Control Interface */
+  CommandXboxController primaryControl =
+      new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
+  CommandXboxController secondaryControl =
+      new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
+
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem();
 
   /* Commands */
-
-  /* Control Interface */
-  CommandXboxController primaryControl = new CommandXboxController(Constants.Operator.XboxPrimary);
-  CommandXboxController secondaryControl =
-      new CommandXboxController(Constants.Operator.XboxSecondary);
-
-  DriveCommand command = new DriveCommand(drivetrain, primaryControl);
-
   public RobotContainer() {
     configureBindings();
-    /* Default Commands */
-    drivetrain.setDefaultCommand(command);
+
+    // Set the default drive command using input from the primary controller
+    drivetrain.setDefaultCommand(
+        Commands.run(
+            () ->
+                drivetrain.drive(
+                    primaryControl.getLeftX(),
+                    primaryControl.getLeftY(),
+                    primaryControl.getRightX()),
+            drivetrain));
   }
 
   /**
