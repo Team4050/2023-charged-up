@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.util.HazardXbox;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,15 +29,18 @@ public class RobotContainer {
   private DriveSubsystem drivetrain = new DriveSubsystem();
 
   /* Commands */
-
   public RobotContainer() {
     configureBindings();
 
-    Commands.run(
-        () ->
-            drivetrain.drive(
-                primaryControl.getLeftX(), primaryControl.getLeftY(), primaryControl.getRightX()),
-        drivetrain);
+    // Set the default drive command using input from the primary controller
+    drivetrain.setDefaultCommand(
+        Commands.run(
+            () ->
+                drivetrain.drive(
+                    primaryControl.getLeftX(),
+                    primaryControl.getLeftY(),
+                    primaryControl.getRightX()),
+            drivetrain));
   }
 
   /**
