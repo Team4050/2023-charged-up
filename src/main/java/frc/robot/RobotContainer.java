@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.util.HazardXbox;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -17,21 +18,22 @@ import frc.robot.subsystems.DriveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  /* Control Interface */
+  CommandXboxController primaryControl =
+      new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
+  CommandXboxController secondaryControl =
+      new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
+
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem();
 
   /* Commands */
-
-  /* Control Interface */
-  CommandXboxController primaryControl = new CommandXboxController(Constants.Operator.XboxPrimary);
-  CommandXboxController secondaryControl =
-      new CommandXboxController(Constants.Operator.XboxSecondary);
-
   DriveCommand command = new DriveCommand(drivetrain, primaryControl);
 
   public RobotContainer() {
     configureBindings();
-    /* Default Commands */
+
     drivetrain.setDefaultCommand(command);
   }
 
