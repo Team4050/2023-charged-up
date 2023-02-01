@@ -5,12 +5,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveCommand extends CommandBase {
+public class ManualDriveCommand extends CommandBase {
 
   private static DriveSubsystem drivetrain;
   private static CommandXboxController joystick;
 
-  public DriveCommand(DriveSubsystem d, CommandXboxController j) {
+  public ManualDriveCommand(DriveSubsystem d, CommandXboxController j) {
     drivetrain = d;
     joystick = j;
     addRequirements(d);
