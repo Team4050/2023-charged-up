@@ -9,7 +9,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.hazard.HazardXbox;
+import frc.robot.commands.*;
+import frc.robot.commands.VisionCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import org.photonvision.PhotonCamera;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -18,29 +21,28 @@ import frc.robot.subsystems.DriveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  /* Subsystems */
+  private DriveSubsystem drivetrain = new DriveSubsystem();
+
+  /* Camera */
+  private PhotonCamera camera = new PhotonCamera("photonvision");
+
+  /* Commands */
+  DriveCommand driveCommand = new DriveCommand(drivetrain, primaryControl);
+  VisionCommand vCommand = new VisionCommand(camera, drivetrain, primaryControl);
 
   /* Control Interface */
   CommandXboxController primaryControl =
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
   CommandXboxController secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
-
-  /* Subsystems */
-  private DriveSubsystem drivetrain = new DriveSubsystem();
-
-  /* Commands */
+  
   public RobotContainer() {
     configureBindings();
 
     // Set the default drive command using input from the primary controller
-    drivetrain.setDefaultCommand(
-        Commands.run(
-            () ->
-                drivetrain.drive(
-                    primaryControl.getLeftY(),
-                    primaryControl.getLeftX(),
-                    -primaryControl.getRightX()),
-            drivetrain));
+    /* Default Commands */
+    drivetrain.setDefaultCommand(driveCommand);
   }
 
   /**
@@ -52,7 +54,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    primaryControl.a().whileTrue(vCommand);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
