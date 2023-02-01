@@ -5,8 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.hazard.HazardXbox;
 import frc.robot.commands.*;
 import frc.robot.commands.VisionCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -26,17 +28,19 @@ public class RobotContainer {
   private PhotonCamera camera = new PhotonCamera("photonvision");
 
   /* Commands */
-
-  /* Control Interface */
-  CommandXboxController primaryControl = new CommandXboxController(Constants.Operator.XboxPrimary);
-  CommandXboxController secondaryControl =
-      new CommandXboxController(Constants.Operator.XboxSecondary);
-
   DriveCommand driveCommand = new DriveCommand(drivetrain, primaryControl);
   VisionCommand vCommand = new VisionCommand(camera, drivetrain, primaryControl);
 
+  /* Control Interface */
+  CommandXboxController primaryControl =
+      new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
+  CommandXboxController secondaryControl =
+      new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
+  
   public RobotContainer() {
     configureBindings();
+
+    // Set the default drive command using input from the primary controller
     /* Default Commands */
     drivetrain.setDefaultCommand(driveCommand);
   }
