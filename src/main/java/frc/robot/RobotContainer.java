@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -29,6 +30,8 @@ public class RobotContainer {
   private DriveSubsystem drivetrain = new DriveSubsystem();
 
   /* Commands */
+  private DanceCommand dance = new DanceCommand(drivetrain);
+
   public RobotContainer() {
     configureBindings();
 
@@ -52,7 +55,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    primaryControl.start().toggleOnTrue(dance);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
