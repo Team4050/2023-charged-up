@@ -38,7 +38,7 @@ public class RobotContainer {
             () ->
                 drivetrain.drive(
                     primaryControl.getLeftY(),
-                    primaryControl.getLeftX(),
+                    -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
             drivetrain));
   }
