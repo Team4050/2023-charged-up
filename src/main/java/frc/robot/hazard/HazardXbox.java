@@ -19,6 +19,7 @@ public class HazardXbox extends CommandXboxController {
     this(port);
 
     this.deadzone = deadzone;
+    this.hid = super.getHID();
   }
 
   /**
