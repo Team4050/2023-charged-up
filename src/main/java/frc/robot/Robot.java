@@ -19,11 +19,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
+    Logger.configureLoggingAndConfig(this, false);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Logger.updateEntries();
   }
 
   @Override
