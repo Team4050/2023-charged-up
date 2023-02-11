@@ -4,18 +4,23 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class DriveSubsystem extends SubsystemBase implements Loggable{
-  @log.MotorController(name = "FL")
+public class DriveSubsystem extends SubsystemBase implements Loggable {
+  @Log.MotorController(name = "FL")
   private final WPI_TalonSRX FL = new WPI_TalonSRX(Constants.Drive.FrontLeft);
-  @log.MotorController(name = "RL")
+
+  @Log.MotorController(name = "RL")
   private final WPI_TalonSRX RL = new WPI_TalonSRX(Constants.Drive.RearLeft);
-  @log.MotorController(name = "FR")
+
+  @Log.MotorController(name = "FR")
   private final WPI_TalonSRX FR = new WPI_TalonSRX(Constants.Drive.FrontRight);
-  @log.MotorController(namw = "RR")
+
+  @Log.MotorController(name = "RR")
   private final WPI_TalonSRX RR = new WPI_TalonSRX(Constants.Drive.RearRight);
 
-  @log.MecanumDrive(name = "Drive")
+  @Log.MecanumDrive(name = "Drive")
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
   private double xSpeed;
