@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Pneumatics;
 import frc.robot.commands.*;
 import frc.robot.commands.VisionCommand;
 import frc.robot.hazard.HazardXbox;
@@ -32,7 +33,12 @@ public class RobotContainer {
 
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem();
-  private ClawSubsystem claw = new ClawSubsystem(0, PneumaticsModuleType.CTREPCM, 1, 2);
+  private ClawSubsystem claw =
+      new ClawSubsystem(
+          Pneumatics.PCM,
+          PneumaticsModuleType.CTREPCM,
+          Pneumatics.ClawFwdChannel,
+          Pneumatics.ClawRevChannel);
 
   /* Camera */
   private PhotonCamera camera = new PhotonCamera("photonvision");
