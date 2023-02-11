@@ -23,24 +23,6 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void drive(double xSpeed, double ySpeed, double rotation) {
-    setXSpeed(xSpeed);
-    setYSpeed(ySpeed);
-    setRotation(rotation);
-  }
-
-  public void setXSpeed(double xSpeed) {
-    this.xSpeed = xSpeed;
-  }
-
-  public void setYSpeed(double ySpeed) {
-    this.ySpeed = ySpeed;
-  }
-
-  public void setRotation(double rotation) {
-    this.rotation = rotation;
-  }
-
-  public void go() {
     this.drive.driveCartesian(this.xSpeed, this.ySpeed, this.rotation);
   }
 

@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
-import frc.robot.commands.*;
-import frc.robot.commands.VisionCommand;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -45,8 +43,7 @@ public class RobotContainer {
   private PhotonCamera camera = new PhotonCamera("photonvision");
 
   /* Commands */
-  ManualDriveCommand driveCommand = new ManualDriveCommand(drivetrain, primaryControl);
-  VisionCommand visionCommand = new VisionCommand(camera, drivetrain, primaryControl);
+  // No commands yet
 
   public RobotContainer() {
     configureBindings();
@@ -72,7 +69,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    primaryControl.a().whileTrue(visionCommand);
     primaryControl
         .b()
         .onTrue(
