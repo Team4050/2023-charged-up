@@ -13,7 +13,7 @@ public class HazardXbox extends CommandXboxController {
    * Initializes a new Xbox controller with the specified port and deadzone
    *
    * @param port USB port of the controller
-   * @param deadzone Deadzone (0-1
+   * @param deadzone Deadzone (0 - 1)
    */
   public HazardXbox(int port, float deadzone) {
     this(port);

@@ -4,11 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Pneumatics;
 import frc.robot.hazard.HazardXbox;
+import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import org.photonvision.PhotonCamera;
 
@@ -19,20 +24,27 @@ import org.photonvision.PhotonCamera;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
   /* Control Interface */
-  CommandXboxController primaryControl =
+  HazardXbox primaryControl =
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
-  CommandXboxController secondaryControl =
+  HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem();
+  private ClawSubsystem claw =
+      new ClawSubsystem(
+          Pneumatics.PCM,
+          PneumaticsModuleType.CTREPCM,
+          Pneumatics.ClawFwdChannel,
+          Pneumatics.ClawRevChannel);
 
   /* Camera */
   private PhotonCamera camera = new PhotonCamera("photonvision");
 
   /* Commands */
+  // No commands yet
+
   public RobotContainer() {
     configureBindings();
 
@@ -41,9 +53,9 @@ public class RobotContainer {
         Commands.run(
             () ->
                 drivetrain.drive(
-                    primaryControl.getLeftX(),
                     primaryControl.getLeftY(),
-                    primaryControl.getRightX()),
+                    -primaryControl.getLeftX(),
+                    -primaryControl.getRightX()),
             drivetrain));
   }
 
@@ -57,7 +69,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    primaryControl.a().whileTrue(null);
+    primaryControl
+        .b()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  claw.SetTargetState(Value.kForward);
+                  claw.Activate();
+                }))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  claw.SetTargetState(Value.kReverse);
+                  claw.Activate();
+                }));
   }
 
   /**
