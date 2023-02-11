@@ -20,7 +20,7 @@ public final class Constants {
 
   public static final class Pneumatics {
     public static final int PCM = 5;
-    public static final int ClawFwdChannel = -1;
-    public static final int ClawRevChannel = -1;
+    public static final int ClawFwdChannel = 0;
+    public static final int ClawRevChannel = 1;
   }
 }

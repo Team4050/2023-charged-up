@@ -14,11 +14,11 @@ public class ClawSubsystem extends SubsystemBase {
     piston = new DoubleSolenoid(module, moduleType, fwdChannel, revChannel);
   }
 
-  public void SetTargetState(Value state) {
+  public void setTargetState(Value state) {
     target = state;
   }
 
-  public void Activate() {
+  public void activate() {
     piston.set(target);
   }
 }

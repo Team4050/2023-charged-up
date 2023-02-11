@@ -74,14 +74,14 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(
                 () -> {
-                  claw.SetTargetState(Value.kForward);
-                  claw.Activate();
+                  claw.setTargetState(Value.kForward);
+                  claw.activate();
                 }))
         .onFalse(
             new InstantCommand(
                 () -> {
-                  claw.SetTargetState(Value.kReverse);
-                  claw.Activate();
+                  claw.setTargetState(Value.kReverse);
+                  claw.activate();
                 }));
   }
 
