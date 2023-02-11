@@ -41,4 +41,10 @@ public class VisionCommand extends CommandBase {
       drivetrain.setRotation(-turnController.calculate(target.getYaw(), 0));
     }
   }
+
+  @Override
+  public void cancel() {
+    drivetrain.drive(0, 0, 0);
+    drivetrain.go();
+  }
 }
