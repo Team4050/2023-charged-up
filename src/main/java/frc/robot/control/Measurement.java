@@ -1,6 +1,6 @@
 package frc.robot.control;
 
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 public class Measurement {
   // FL, FR, RL, RR
@@ -12,5 +12,5 @@ public class Measurement {
 
   public double YawAccel;
 
-  public Measurement(int FLE, int FRE, int RLE, int RRE, ADIS16448_IMU IMU) {}
+  public Measurement(int FLE, int FRE, int RLE, int RRE, ADIS16470_IMU IMU) {}
 }

@@ -1,6 +1,9 @@
 package frc.robot.control;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.StateSpaceUtil;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N11;
 
 public class DrivetrainControl {
   private Measurement previousEstimate;
@@ -18,14 +21,19 @@ public class DrivetrainControl {
    *
    */
 
-  public float[] position;
-  public float[] velocity;
-  public float[] acceleration;
+  Matrix<N11, N1> previousFiltered;
+  Matrix<N11, N1> state;
 
-  public void update(Measurement newMeasurement) {
-    current = newMeasurement;
-    previousEstimate = estimate;
-    estimate = estimate(current, predict(), previousEstimate);
+  public void initialize() {
+    // 3d position + 3d velocity + 3d acceleration + 2d rotation
+    state = new Matrix<N11, N1>(N11.instance, N1.instance);
+    previousFiltered = null;
+  }
+
+  public void update(Matrix<N11, N1> newMeasurement, double delta) {
+    Matrix<N11, N1> predicted =
+        stateEvolution(previousFiltered, delta).plus(controlEvolution(previousFiltered));
+    Matrix<N11, N11> predictedCovariance = StateSpaceUtil.makeCovarianceMatrix(N11.instance, null);
   }
 
   Measurement predict() {
@@ -36,19 +44,23 @@ public class DrivetrainControl {
     return null;
   }
 
-  Matrix stateEvolution(Matrix state, float delta) {
+  Matrix<N11, N1> stateEvolution(Matrix<N11, N1> state, double delta) {
     // acceleration varies from powered movement, drag(?), and possible noise (hitting a wall)
 
     // velocity increases linearly from acceleration
     for (int i = 0; i < 3; i++) {
-      state.set(1, i, state.get(0, i) * (1 + delta));
+      state.set(3 + i, 0, state.get(i, 0) * (1 + delta));
     }
 
     // position increases linearly from velocity
     for (int i = 0; i < 3; i++) {
-      state.set(2, i, state.get(1, i) * (1 + delta));
+      state.set(6 + i, 0, state.get(3 + i, 0) * (1 + delta));
     }
 
     return state;
+  }
+
+  Matrix<N11, N1> controlEvolution(Matrix<N11, N1> control) {
+    return control;
   }
 }
