@@ -62,14 +62,6 @@ public class DrivetrainControl {
     state = predicted.plus(kalmanGain.times(state.minus(systemObservationMatrix.times(predicted))));
   }
 
-  Measurement predict() {
-    return null;
-  }
-
-  Measurement estimate(Measurement actual, Measurement predicted, Measurement previousEstimate) {
-    return null;
-  }
-
   Matrix<N11, N11> diagonal(Matrix<N11, N1> vector) {
     Matrix<N11, N11> r = new Matrix<N11, N11>(N11.instance, N11.instance);
     for (int i = 0; i < 11; i++) {

@@ -57,6 +57,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       imuRef.getAccelZ(),
       Math.cos(imuRef.getAngle()),
       Math.sin(imuRef.getAngle()),
+      imuRef.getRate(),
       0,
       0,
       0,
