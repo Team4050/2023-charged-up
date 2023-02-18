@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -30,17 +34,18 @@ public class RobotContainer {
   HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
+  /* Camera & Sensors */
+  private PhotonCamera camera = new PhotonCamera("photonvision");
+  private ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
+
   /* Subsystems */
-  private DriveSubsystem drivetrain = new DriveSubsystem();
+  private DriveSubsystem drivetrain = new DriveSubsystem(imu);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
           PneumaticsModuleType.CTREPCM,
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
-
-  /* Camera */
-  private PhotonCamera camera = new PhotonCamera("photonvision");
 
   /* Commands */
   // No commands yet
