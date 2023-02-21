@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +16,7 @@ import frc.robot.Constants.Pneumatics;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import io.github.oblarg.oblog.annotations.Log;
 import org.photonvision.PhotonCamera;
 
 /**
@@ -39,8 +41,11 @@ public class RobotContainer {
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
 
-  /* Camera */
+  /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
+
+  @Log.Accelerometer(name = "ADIS16470 IMU")
+  private ADIS16470_IMU imu = new ADIS16470_IMU();
 
   /* Commands */
   // No commands yet
