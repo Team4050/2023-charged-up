@@ -3,19 +3,20 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-package io.github.oblarg.oblog;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import io.github.oblarg.oblog.annotations.Log;
 import org.photonvision.PhotonCamera;
 
 /**
@@ -40,8 +41,11 @@ public class RobotContainer {
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
 
-  /* Camera */
+  /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
+
+  @Log.Accelerometer(name = "ADIS16470 IMU")
+  private ADIS16470_IMU imu = new ADIS16470_IMU();
 
   /* Commands */
   // No commands yet
@@ -51,7 +55,7 @@ PowerDistribution pdp = new PowerDistribution();
 
     // Set the default drive command using input from the primary controller
     drivetrain.setDefaultCommand(
-        Commands.run(
+        new RunCommand(
             () ->
                 drivetrain.drive(
                     primaryControl.getLeftY(),
