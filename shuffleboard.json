@@ -1,0 +1,126 @@
+{
+  "tabPane": [
+    {
+      "title": "SmartDashboard",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "SmartDashboard/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "5,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Mecanum Drivebase",
+              "_title": "Mecanum Drivebase",
+              "_glyph": 0,
+              "_showGlyph": false,
+              "Visuals/Show velocity vectors": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LiveWindow",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    },
+    {
+      "title": "Programing tab",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "5,1": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "PDP",
+              "_title": "PDP",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Visuals/Show voltage and current values": true
+            }
+          },
+          "1,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Mecanum Drivebase",
+              "_title": "Mecanum Drivebase",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Visuals/Show velocity vectors": true
+            }
+          },
+          "1,0": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_title": "Camera Stream",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "5,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "3-Axis Accelerometer",
+              "_title": "3-Axis Accelerometer",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Accelerometer/Range": "k16G",
+              "Visuals/Show value": true,
+              "Visuals/Precision": 2,
+              "Visuals/Show tick marks": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": 0.0,
+    "y": 0.0,
+    "width": 1536.0,
+    "height": 816.0
+  }
+}
