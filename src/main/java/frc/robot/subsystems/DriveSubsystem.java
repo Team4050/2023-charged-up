@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,9 +24,12 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   @Log.MecanumDrive(name = "Drive")
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
-  public DriveSubsystem() {
+  private ADIS16470_IMU imu;
+
+  public DriveSubsystem(ADIS16470_IMU imu) {
     FR.setInverted(true);
     RR.setInverted(true);
+    this.imu = imu;
   }
 
   public void drive(double xSpeed, double ySpeed, double rotation) {

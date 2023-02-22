@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -32,8 +33,14 @@ public class RobotContainer {
   HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
+  /* Camera & Sensors */
+  private PhotonCamera camera = new PhotonCamera("photonvision");
+
+  @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
+  private ADIS16470_IMU imu = new ADIS16470_IMU();
+
   /* Subsystems */
-  private DriveSubsystem drivetrain = new DriveSubsystem();
+  private DriveSubsystem drivetrain = new DriveSubsystem(imu);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -41,15 +48,10 @@ public class RobotContainer {
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
 
-  /* Camera & Sensors */
-  private PhotonCamera camera = new PhotonCamera("photonvision");
-
-  @Log.Accelerometer(name = "ADIS16470 IMU")
-  private ADIS16470_IMU imu = new ADIS16470_IMU();
-
   /* Commands */
   // No commands yet
-PowerDistribution pdp = new PowerDistribution();
+  PowerDistribution pdp = new PowerDistribution();
+
   public RobotContainer() {
     configureBindings();
 
@@ -97,5 +99,11 @@ PowerDistribution pdp = new PowerDistribution();
    */
   public Command getAutonomousCommand() {
     return null;
+  }
+
+  public void manualLogging() {
+    System.out.println(
+        String.format(
+            "AccelX: %f AccelY: %f AccelZ: %f", imu.getAccelX(), imu.getAccelY(), imu.getAccelZ()));
   }
 }
