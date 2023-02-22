@@ -45,7 +45,7 @@ public class RobotContainer {
 
   /* Commands */
   // No commands yet
-
+PowerDistribution pdp = new PowerDistribution();
   public RobotContainer() {
     configureBindings();
 
