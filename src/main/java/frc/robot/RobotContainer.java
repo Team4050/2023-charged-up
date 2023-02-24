@@ -37,6 +37,15 @@ public class RobotContainer {
   /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
   private ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
+  private double Xdev = 0;
+  private double Ydev = 0;
+  private double Zdev = 0;
+  private double[] stdDev = {0, 0, 0, 0, 0, 0};
+  private double Xmean = 0;
+  private double Ymean = 0;
+  private double Zmean = 0;
+  private double[] mean = {0, 0, 0, 0, 0, 0};
+  private int N;
 
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem(imu);
@@ -97,5 +106,39 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return null;
+  }
+
+  public void manualLogging() {
+    N++;
+    double[] imuData = getImuDataArray();
+    for (int i = 0; i < mean.length; i++) {
+      mean[i] = ((mean[i] * N) + imuData[i]) / N + 1;
+    }
+
+    for (int i = 0; i < stdDev.length; i++) {
+      stdDev[i] = ((stdDev[i] * N) + Math.pow((mean[i] - imuData[i]), 2)) / N + 1;
+    }
+
+    System.out.println(
+        String.format(
+            "IMU std devs; accel: %f, %f, %f gyro: %f, %f, %f",
+            Math.sqrt(stdDev[0]),
+            Math.sqrt(stdDev[1]),
+            Math.sqrt(stdDev[2]),
+            Math.sqrt(stdDev[3]),
+            Math.sqrt(stdDev[4]),
+            Math.sqrt(stdDev[5])));
+  }
+
+  private double[] getImuDataArray() {
+    double[] r = {
+      imu.getAccelX(),
+      imu.getAccelY(),
+      imu.getAccelZ(),
+      imu.getAngle(),
+      imu.getXComplementaryAngle(),
+      imu.getYComplementaryAngle()
+    };
+    return r;
   }
 }
