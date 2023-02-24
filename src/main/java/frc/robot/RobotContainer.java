@@ -41,6 +41,7 @@ public class RobotContainer {
   private double Ydev = 0;
   private double Zdev = 0;
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
+  private double[] stateDev = {0, 0, 0, 0, 0, 0};
   private double Xmean = 0;
   private double Ymean = 0;
   private double Zmean = 0;
@@ -137,8 +138,14 @@ public class RobotContainer {
       imu.getAccelZ(),
       imu.getAngle(),
       imu.getXComplementaryAngle(),
-      imu.getYComplementaryAngle()
+      imu.getYComplementaryAngle(),
+      imu.getRate()
     };
     return r;
+  }
+
+  private double[] predictState(double[] state, double t) {
+    state[3] += imu.getRate() * t;
+    return state;
   }
 }

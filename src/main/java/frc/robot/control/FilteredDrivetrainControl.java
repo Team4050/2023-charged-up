@@ -30,18 +30,19 @@ public class FilteredDrivetrainControl extends CommandBase {
 
   public void initialize() {
     double[][] stdDev = {{}, {}, {}};
-    Matrix<N3, N1> sensorDeviations = new Matrix<>(new SimpleMatrix(stdDev));
+    Matrix<N3, N1> sensorDeviations = new Matrix<N3, N1>(new SimpleMatrix(stdDev));
     Matrix<N3, N1> stateDeviations = null;
     Matrix<N3, N3> A = null;
     Matrix<N3, N3> B = null;
     Matrix<N3, N3> C = null;
     Matrix<N3, N3> D = null;
-    LinearSystem<N3, N3, N3> system = new LinearSystem(A, B, C, D);
-    filter = new KalmanFilter(state, input, system, stateDeviations, sensorDeviations, 0);
+    LinearSystem<N3, N3, N3> system = new LinearSystem<N3, N3, N3>(A, B, C, D);
+    filter =
+        new KalmanFilter<N3, N3, N3>(state, input, system, stateDeviations, sensorDeviations, 0);
 
-    xPID = new PIDController(0.5, 0.5, 1);
-    yPID = new PIDController(0.5, 0.5, 1);
-    zRotPID = new PIDController(0.5, 0.5, 1);
+    xPID = new PIDController(0.1, 0.1, 0.1);
+    yPID = new PIDController(0.1, 0.1, 0.1);
+    zRotPID = new PIDController(0.1, 0.1, 0.1);
 
     timer = new Timer();
     timer.start();
@@ -64,7 +65,7 @@ public class FilteredDrivetrainControl extends CommandBase {
 
     controlVector.set(0, 0, xPID.calculate(state.get(0, 0)));
     controlVector.set(1, 0, yPID.calculate(state.get(1, 0)));
-    // controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0)));
+    controlVector.set(2, 0, 0); // Unused until xy keeping is tested
 
     return controlVector;
   }
