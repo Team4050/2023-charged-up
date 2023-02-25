@@ -37,15 +37,10 @@ public class RobotContainer {
   /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
   private ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
-  private double Xdev = 0;
-  private double Ydev = 0;
-  private double Zdev = 0;
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
   private double[] stateDev = {0, 0, 0, 0, 0, 0};
-  private double Xmean = 0;
-  private double Ymean = 0;
-  private double Zmean = 0;
   private double[] mean = {0, 0, 0, 0, 0, 0};
+  private double[] previousState = {0, 0, 0, 0, 0, 0};
   private int N;
 
   /* Subsystems */
@@ -109,26 +104,36 @@ public class RobotContainer {
     return null;
   }
 
-  public void manualLogging() {
+  public void manualLogging(double dT) {
     N++;
     double[] imuData = getImuDataArray();
+    double[] predictedState = predictState(previousState, dT);
+
     for (int i = 0; i < mean.length; i++) {
       mean[i] = ((mean[i] * N) + imuData[i]) / N + 1;
     }
 
     for (int i = 0; i < stdDev.length; i++) {
       stdDev[i] = ((stdDev[i] * N) + Math.pow((mean[i] - imuData[i]), 2)) / N + 1;
+      stateDev[i] = ((stateDev[i] * N) + Math.pow((predictedState[i] - imuData[i]), 2)) / N + 1;
     }
 
     System.out.println(
         String.format(
-            "IMU std devs; accel: %f, %f, %f gyro: %f, %f, %f",
+            "IMU std devs; accel: %f, %f, %f gyro: %f, %f, %f prediction + measurement noise: %f, %f, %f, %f, %f, %f",
             Math.sqrt(stdDev[0]),
             Math.sqrt(stdDev[1]),
             Math.sqrt(stdDev[2]),
             Math.sqrt(stdDev[3]),
             Math.sqrt(stdDev[4]),
-            Math.sqrt(stdDev[5])));
+            Math.sqrt(stdDev[5]),
+            Math.sqrt(stateDev[0]),
+            Math.sqrt(stateDev[1]),
+            Math.sqrt(stateDev[2]),
+            Math.sqrt(stateDev[3]),
+            Math.sqrt(stateDev[4]),
+            Math.sqrt(stateDev[5])));
+    // cov(v + w) = (cov(v) + cov(w)) / 2?
   }
 
   private double[] getImuDataArray() {

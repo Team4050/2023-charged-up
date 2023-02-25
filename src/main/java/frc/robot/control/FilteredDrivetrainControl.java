@@ -29,13 +29,14 @@ public class FilteredDrivetrainControl extends CommandBase {
   private double storedTime;
 
   public void initialize() {
-    double[][] stdDev = {{}, {}, {}};
+    double[][] stdDev = {{0}, {0}, {0}};
+    double[][] stateDev = {{0}, {0}, {0}};
     Matrix<N3, N1> sensorDeviations = new Matrix<N3, N1>(new SimpleMatrix(stdDev));
-    Matrix<N3, N1> stateDeviations = null;
-    Matrix<N3, N3> A = null;
-    Matrix<N3, N3> B = null;
-    Matrix<N3, N3> C = null;
-    Matrix<N3, N3> D = null;
+    Matrix<N3, N1> stateDeviations = new Matrix<N3, N1>(new SimpleMatrix(stateDev));
+    Matrix<N3, N3> A = null; // corresponds to F (state-space transition model)
+    Matrix<N3, N3> B = null; // corresponds to B (input transition model)
+    Matrix<N3, N3> C = null; // corresponds to H (state observation model)
+    Matrix<N3, N3> D = null; // feedforward control matrix (zero matrix because of no feedforward?)
     LinearSystem<N3, N3, N3> system = new LinearSystem<N3, N3, N3>(A, B, C, D);
     filter =
         new KalmanFilter<N3, N3, N3>(state, input, system, stateDeviations, sensorDeviations, 0);
