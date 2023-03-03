@@ -40,8 +40,9 @@ public class RobotContainer {
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
   private double[] stateDev = {0, 0, 0, 0, 0, 0};
   private double[] mean = {0, 0, 0, 0, 0, 0};
+  private double[] fixedMean = {0, 0, 0, 0, 0, 0};
   private double[] previousState = {0, 0, 0, 0, 0, 0};
-  private int N;
+  private int N = 0;
 
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem(imu);
@@ -105,18 +106,25 @@ public class RobotContainer {
   }
 
   public void manualLogging(double dT) {
-    N++;
     double[] imuData = getImuDataArray();
+    System.out.println(
+        String.format("IMU raw data; %f, %f, %f", imuData[0], imuData[1], imuData[2]));
     double[] predictedState = predictState(previousState, dT);
 
     for (int i = 0; i < mean.length; i++) {
-      mean[i] = ((mean[i] * N) + imuData[i]) / N + 1;
+      mean[i] = ((mean[i] * N) + imuData[i]) / (double) (N + 1);
     }
 
     for (int i = 0; i < stdDev.length; i++) {
-      stdDev[i] = ((stdDev[i] * N) + Math.pow((mean[i] - imuData[i]), 2)) / N + 1;
-      stateDev[i] = ((stateDev[i] * N) + Math.pow((predictedState[i] - imuData[i]), 2)) / N + 1;
+      stdDev[i] = ((stdDev[i] * N) + Math.pow((fixedMean[i] - imuData[i]), 2)) / (double) (N + 1);
+      stateDev[i] =
+          ((stateDev[i] * N) + Math.pow((predictedState[i] - imuData[i]), 2)) / (double) (N + 1);
     }
+
+    System.out.println(
+        String.format(
+            "IMU avgs; %f, %f, %f, %f, %f, %f",
+            mean[0], mean[1], mean[2], mean[3], mean[4], mean[5]));
 
     System.out.println(
         String.format(
@@ -134,11 +142,13 @@ public class RobotContainer {
             Math.sqrt(stateDev[4]),
             Math.sqrt(stateDev[5])));
     // cov(v + w) = (cov(v) + cov(w)) / 2?
+    N++;
   }
 
   private double[] getImuDataArray() {
     double[] r = {
       imu.getAccelX(),
+      // java.util.random.RandomGenerator.getDefault().nextDouble(),
       imu.getAccelY(),
       imu.getAccelZ(),
       imu.getAngle(),

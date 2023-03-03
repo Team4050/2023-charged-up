@@ -51,18 +51,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   public double[] getIMUData() {
-    double[] r = {
-      imuRef.getAccelX(),
-      imuRef.getAccelY(),
-      imuRef.getAccelZ(),
-      Math.cos(imuRef.getAngle()),
-      Math.sin(imuRef.getAngle()),
-      imuRef.getRate(),
-      0,
-      0,
-      0,
-      0
-    };
+    double[] r = {imuRef.getAccelX(), imuRef.getRate(), imuRef.getAccelZ()};
     return r;
   }
 }

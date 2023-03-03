@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.control.FilteredDrivetrainControl;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -16,10 +17,13 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
+  private FilteredDrivetrainControl test;
 
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
+    test = new FilteredDrivetrainControl();
+    test.initialize();
     Logger.configureLoggingAndConfig(this, false);
   }
 
@@ -28,6 +32,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
     robotContainer.manualLogging(this.getPeriod());
+    test.execute();
   }
 
   @Override
