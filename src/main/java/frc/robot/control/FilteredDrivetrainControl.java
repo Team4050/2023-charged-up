@@ -21,6 +21,7 @@ public class FilteredDrivetrainControl extends CommandBase {
 
   private KalmanFilter<N3, N3, N3> filter;
   private Matrix<N3, N1> controlVector;
+  private double[] estimatedStates;
   private DriveSubsystem drivetrain;
   private PIDController xPID;
   private PIDController yPID;
@@ -30,7 +31,7 @@ public class FilteredDrivetrainControl extends CommandBase {
 
   public void initialize() {
     // accel x y z
-    double[][] stdDev = {{0.01}, {0.01}, {0.01}};
+    double[][] stdDev = {{1}, {1}, {1}};
     double[][] stateDev = {{0.001}, {0.001}, {0.001}};
     Matrix<N3, N1> sensorDeviations = new Matrix<N3, N1>(new SimpleMatrix(stdDev));
     Matrix<N3, N1> stateDeviations = new Matrix<N3, N1>(new SimpleMatrix(stateDev));
@@ -53,9 +54,9 @@ public class FilteredDrivetrainControl extends CommandBase {
     filter =
         new KalmanFilter<N3, N3, N3>(
             N3.instance, N3.instance, system, stateDeviations, sensorDeviations, 0.05);
-    xPID = new PIDController(0.1, 0.3, 0.5);
-    yPID = new PIDController(0.1, 0.3, 0.5);
-    zRotPID = new PIDController(0.1, 0.3, 0.5);
+    xPID = new PIDController(0.1, 0.3, 0.3);
+    yPID = new PIDController(0.1, 0.3, 0.3);
+    zRotPID = new PIDController(0.1, 0.3, 0.3);
     double[][] empty = new double[3][1];
     double[][] bruh = {{1}, {1}, {1}};
     controlVector = new Matrix<N3, N1>(new SimpleMatrix(empty));
@@ -84,9 +85,9 @@ public class FilteredDrivetrainControl extends CommandBase {
   private Matrix<N3, N1> getControlVector(Matrix<N3, N1> state) {
     Matrix<N3, N1> controlVector = new Matrix<N3, N1>(N3.instance, N1.instance);
 
-    controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 1));
+    controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 2));
     controlVector.set(1, 0, yPID.calculate(state.get(1, 0), 1));
-    controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 1));
+    controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 2));
 
     return controlVector;
   }
@@ -94,19 +95,13 @@ public class FilteredDrivetrainControl extends CommandBase {
   private Matrix<N3, N1> getMeasurements() {
     Matrix<N3, N1> measurementVector = new Matrix<N3, N1>(N3.instance, N1.instance);
     double[][] rawData = {
-      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 0.1)},
-      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 0.1)},
-      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 0.1)}
+      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 1)},
+      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 1)},
+      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 1)}
     }; // drivetrain.getIMUData();
-
     measurementVector = new Matrix<N3, N1>(new SimpleMatrix(rawData));
-
-    /*
-    measurementVector.set(3, 0, rawData[3]);
-    measurementVector.set(4, 0, rawData[4]);
-    measurementVector.set(5, 0, rawData[5]);
-    */
-
     return measurementVector;
   }
+
+  private void integratePosVel() {}
 }
