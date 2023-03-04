@@ -107,8 +107,8 @@ public class RobotContainer {
 
   public void manualLogging(double dT) {
     double[] imuData = getImuDataArray();
-    System.out.println(
-        String.format("IMU raw data; %f, %f, %f", imuData[0], imuData[1], imuData[2]));
+    // System.out.println(
+    //  String.format("IMU raw data; %f, %f, %f", imuData[0], imuData[1], imuData[2]));
     double[] predictedState = predictState(previousState, dT);
 
     for (int i = 0; i < mean.length; i++) {
@@ -121,7 +121,7 @@ public class RobotContainer {
           ((stateDev[i] * N) + Math.pow((predictedState[i] - imuData[i]), 2)) / (double) (N + 1);
     }
 
-    System.out.println(
+    /*System.out.println(
         String.format(
             "IMU avgs; %f, %f, %f, %f, %f, %f",
             mean[0], mean[1], mean[2], mean[3], mean[4], mean[5]));
@@ -141,6 +141,7 @@ public class RobotContainer {
             Math.sqrt(stateDev[3]),
             Math.sqrt(stateDev[4]),
             Math.sqrt(stateDev[5])));
+            */
     // cov(v + w) = (cov(v) + cov(w)) / 2?
     N++;
   }

@@ -30,8 +30,8 @@ public class FilteredDrivetrainControl extends CommandBase {
 
   public void initialize() {
     // accel x y z
-    double[][] stdDev = {{0.1}, {0.1}, {0.1}};
-    double[][] stateDev = {{0.1}, {0.1}, {0.1}};
+    double[][] stdDev = {{0.01}, {0.01}, {0.01}};
+    double[][] stateDev = {{0.001}, {0.001}, {0.001}};
     Matrix<N3, N1> sensorDeviations = new Matrix<N3, N1>(new SimpleMatrix(stdDev));
     Matrix<N3, N1> stateDeviations = new Matrix<N3, N1>(new SimpleMatrix(stateDev));
     // identity matrices because testing
@@ -40,7 +40,7 @@ public class FilteredDrivetrainControl extends CommandBase {
         new Matrix<N3, N3>(new SimpleMatrix(a)); // corresponds to F (state-space transition model)
     double[][] b = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     Matrix<N3, N3> B =
-        new Matrix<N3, N3>(new SimpleMatrix(b)); // corresponds to B (input transition model)
+        new Matrix<N3, N3>(new SimpleMatrix(b)); // corresponds to B (input transform model)
     double[][] c = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     Matrix<N3, N3> C =
         new Matrix<N3, N3>(new SimpleMatrix(c)); // corresponds to H (state observation model)
@@ -75,6 +75,7 @@ public class FilteredDrivetrainControl extends CommandBase {
     storedTime = timer.get();
     controlVector = getControlVector(filter.getXhat());
 
+    System.out.println("Filter data:");
     System.out.println(filter.getXhat());
     System.out.println(controlVector);
     // drivetrain.drive(controlVector.get(0, 0), controlVector.get(1, 0), controlVector.get(2, 0));
@@ -83,16 +84,20 @@ public class FilteredDrivetrainControl extends CommandBase {
   private Matrix<N3, N1> getControlVector(Matrix<N3, N1> state) {
     Matrix<N3, N1> controlVector = new Matrix<N3, N1>(N3.instance, N1.instance);
 
-    controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 0));
-    controlVector.set(1, 0, yPID.calculate(state.get(1, 0), 0));
-    controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 0));
+    controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 1));
+    controlVector.set(1, 0, yPID.calculate(state.get(1, 0), 1));
+    controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 1));
 
     return controlVector;
   }
 
   private Matrix<N3, N1> getMeasurements() {
     Matrix<N3, N1> measurementVector = new Matrix<N3, N1>(N3.instance, N1.instance);
-    double[][] rawData = {{1}, {1}, {1}}; // drivetrain.getIMUData();
+    double[][] rawData = {
+      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 0.1)},
+      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 0.1)},
+      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 0.1)}
+    }; // drivetrain.getIMUData();
 
     measurementVector = new Matrix<N3, N1>(new SimpleMatrix(rawData));
 
