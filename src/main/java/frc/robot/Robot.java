@@ -18,21 +18,29 @@ import io.github.oblarg.oblog.Logger;
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
   private FilteredDrivetrainControl test;
+  private int N;
 
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
-    test = new FilteredDrivetrainControl();
+    test = new FilteredDrivetrainControl(robotContainer.imu);
     test.initialize();
     Logger.configureLoggingAndConfig(this, false);
+    N = 0;
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
-    robotContainer.manualLogging(this.getPeriod());
-    test.execute();
+    robotContainer.updateAvg(this.getPeriod());
+    N++;
+    if (N > 99) {
+      test.execute(true);
+      N = 0;
+      return;
+    }
+    test.execute(false);
   }
 
   @Override

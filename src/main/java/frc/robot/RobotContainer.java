@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
@@ -36,11 +35,11 @@ public class RobotContainer {
 
   /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
-  private ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
+  public ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
   private double[] stateDev = {0, 0, 0, 0, 0, 0};
   private double[] mean = {0, 0, 0, 0, 0, 0};
-  private double[] fixedMean = {0, 0, 0, 0, 0, 0};
+  private double[] fixedMean = {-0.362191, -0.287574, 9.784017, -0.083874, -2.076228, -1.730506};
   private double[] previousState = {0, 0, 0, 0, 0, 0};
   private int N = 0;
 
@@ -60,14 +59,14 @@ public class RobotContainer {
     configureBindings();
 
     // Set the default drive command using input from the primary controller
-    drivetrain.setDefaultCommand(
-        new RunCommand(
-            () ->
-                drivetrain.drive(
-                    primaryControl.getLeftY(),
-                    -primaryControl.getLeftX(),
-                    -primaryControl.getRightX()),
-            drivetrain));
+    /*drivetrain.setDefaultCommand(
+    new RunCommand(
+        () ->
+            drivetrain.drive(
+                primaryControl.getLeftY(),
+                -primaryControl.getLeftX(),
+                -primaryControl.getRightX()),
+        drivetrain));*/
   }
 
   /**
@@ -105,23 +104,8 @@ public class RobotContainer {
     return null;
   }
 
-  public void manualLogging(double dT) {
-    double[] imuData = getImuDataArray();
-    // System.out.println(
-    //  String.format("IMU raw data; %f, %f, %f", imuData[0], imuData[1], imuData[2]));
-    double[] predictedState = predictState(previousState, dT);
-
-    for (int i = 0; i < mean.length; i++) {
-      mean[i] = ((mean[i] * N) + imuData[i]) / (double) (N + 1);
-    }
-
-    for (int i = 0; i < stdDev.length; i++) {
-      stdDev[i] = ((stdDev[i] * N) + Math.pow((fixedMean[i] - imuData[i]), 2)) / (double) (N + 1);
-      stateDev[i] =
-          ((stateDev[i] * N) + Math.pow((predictedState[i] - imuData[i]), 2)) / (double) (N + 1);
-    }
-
-    /*System.out.println(
+  public void manualLogging() {
+    System.out.println(
         String.format(
             "IMU avgs; %f, %f, %f, %f, %f, %f",
             mean[0], mean[1], mean[2], mean[3], mean[4], mean[5]));
@@ -141,8 +125,25 @@ public class RobotContainer {
             Math.sqrt(stateDev[3]),
             Math.sqrt(stateDev[4]),
             Math.sqrt(stateDev[5])));
-            */
     // cov(v + w) = (cov(v) + cov(w)) / 2?
+  }
+
+  public void updateAvg(double dT) {
+    double[] imuData = getImuDataArray();
+    // System.out.println(
+    //  String.format("IMU raw data; %f, %f, %f", imuData[0], imuData[1], imuData[2]));
+    double[] predictedState = predictState(previousState, dT);
+
+    for (int i = 0; i < mean.length; i++) {
+      mean[i] = ((mean[i] * N) + imuData[i]) / (double) (N + 1);
+    }
+
+    for (int i = 0; i < stdDev.length; i++) {
+      stdDev[i] = ((stdDev[i] * N) + Math.pow((fixedMean[i] - imuData[i]), 2)) / (double) (N + 1);
+      stateDev[i] =
+          ((stateDev[i] * N) + Math.pow((predictedState[i] - imuData[i]), 2)) / (double) (N + 1);
+    }
+
     N++;
   }
 

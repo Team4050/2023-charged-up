@@ -6,6 +6,7 @@ import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
@@ -29,9 +30,16 @@ public class FilteredDrivetrainControl extends CommandBase {
   private Timer timer;
   private double storedTime;
 
+  private ADIS16470_IMU imuRef;
+
+  public FilteredDrivetrainControl(ADIS16470_IMU imu) {
+    imuRef = imu;
+  }
+
   public void initialize() {
-    // accel x y z
-    double[][] stdDev = {{1}, {1}, {1}};
+    // accel x y z (z altitude)
+    // 0.012532, 0.014077, 0.025190
+    double[][] stdDev = {{0.012532}, {0.014077}, {0.025190}};
     double[][] stateDev = {{0.001}, {0.001}, {0.001}};
     Matrix<N3, N1> sensorDeviations = new Matrix<N3, N1>(new SimpleMatrix(stdDev));
     Matrix<N3, N1> stateDeviations = new Matrix<N3, N1>(new SimpleMatrix(stateDev));
@@ -58,7 +66,7 @@ public class FilteredDrivetrainControl extends CommandBase {
     yPID = new PIDController(0.1, 0.3, 0.3);
     zRotPID = new PIDController(0.1, 0.3, 0.3);
     double[][] empty = new double[3][1];
-    double[][] bruh = {{1}, {1}, {1}};
+    double[][] bruh = {{0}, {0}, {0}};
     controlVector = new Matrix<N3, N1>(new SimpleMatrix(empty));
 
     filter.setXhat(new Matrix<N3, N1>(new SimpleMatrix(bruh)));
@@ -67,8 +75,7 @@ public class FilteredDrivetrainControl extends CommandBase {
     timer.start();
   }
 
-  @Override
-  public void execute() {
+  public void execute(boolean log) {
     double dT = timer.get() - storedTime;
     filter.predict(controlVector, dT);
     filter.correct(controlVector, getMeasurements());
@@ -76,30 +83,31 @@ public class FilteredDrivetrainControl extends CommandBase {
     storedTime = timer.get();
     controlVector = getControlVector(filter.getXhat());
 
-    System.out.println("Filter data:");
-    System.out.println(filter.getXhat());
-    System.out.println(controlVector);
+    if (log) {
+      System.out.println("Filter data:");
+      System.out.println(filter.getXhat());
+      System.out.println(controlVector);
+    }
     // drivetrain.drive(controlVector.get(0, 0), controlVector.get(1, 0), controlVector.get(2, 0));
   }
 
   private Matrix<N3, N1> getControlVector(Matrix<N3, N1> state) {
     Matrix<N3, N1> controlVector = new Matrix<N3, N1>(N3.instance, N1.instance);
 
-    controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 2));
-    controlVector.set(1, 0, yPID.calculate(state.get(1, 0), 1));
-    controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 2));
+    // controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 0));
+    // controlVector.set(1, 0, yPID.calculate(state.get(1, 0), 0));
+    // controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 0));
 
     return controlVector;
   }
 
   private Matrix<N3, N1> getMeasurements() {
     Matrix<N3, N1> measurementVector = new Matrix<N3, N1>(N3.instance, N1.instance);
-    double[][] rawData = {
-      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 1)},
-      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 1)},
-      {1 + java.util.random.RandomGenerator.getDefault().nextDouble(0, 1)}
-    }; // drivetrain.getIMUData();
-    measurementVector = new Matrix<N3, N1>(new SimpleMatrix(rawData));
+    // double[] rawData = drivetrain.getIMUData();
+    double[][] columnVec = {
+      {imuRef.getAccelX() + 0.29}, {imuRef.getAccelY() + 0.29}, {imuRef.getAccelZ()}
+    };
+    measurementVector = new Matrix<N3, N1>(new SimpleMatrix(columnVec));
     return measurementVector;
   }
 
