@@ -5,11 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -49,7 +47,8 @@ public class RobotContainer {
           Pneumatics.ClawRevChannel);
 
   /* Commands */
-  // No commands yet
+  ClawToggleCmd clawCmd = new ClawToggleCmd(primaryControl, claw);
+
   PowerDistribution pdp = new PowerDistribution();
 
   public RobotContainer() {
@@ -64,6 +63,8 @@ public class RobotContainer {
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
             drivetrain));
+
+    claw.setDefaultCommand(clawCmd);
   }
 
   /**
@@ -76,20 +77,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    primaryControl
-        .b()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  claw.setTargetState(Value.kForward);
-                  claw.activate();
-                }))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  claw.setTargetState(Value.kReverse);
-                  claw.activate();
-                }));
+    /*primaryControl
+    .b()
+    .onTrue(
+        new InstantCommand(
+            () -> {
+              claw.setTargetState(Value.kForward);
+              claw.activate();
+            }))
+    .onFalse(
+        new InstantCommand(
+            () -> {
+              claw.setTargetState(Value.kReverse);
+              claw.activate();
+            }));*/
   }
 
   /**
