@@ -47,7 +47,7 @@ public class RobotContainer {
           Pneumatics.ClawRevChannel);
 
   /* Commands */
-  ClawToggleCmd clawCmd = new ClawToggleCmd(primaryControl, claw);
+  ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
 
   PowerDistribution pdp = new PowerDistribution();
 
@@ -76,22 +76,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
-    /*primaryControl
-    .b()
-    .onTrue(
-        new InstantCommand(
-            () -> {
-              claw.setTargetState(Value.kForward);
-              claw.activate();
-            }))
-    .onFalse(
-        new InstantCommand(
-            () -> {
-              claw.setTargetState(Value.kReverse);
-              claw.activate();
-            }));*/
-  }
+  private void configureBindings() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

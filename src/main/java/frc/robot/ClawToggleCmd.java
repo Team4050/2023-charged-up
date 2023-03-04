@@ -49,6 +49,7 @@ class ClawToggleCmd extends CommandBase {
     claw.activate();
   }
 
+  /** Toggles the claw state, link this to a trigger such as a controller button */
   public void toggle() {
     toggle = !toggle;
   }

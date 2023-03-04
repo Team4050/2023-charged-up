@@ -32,10 +32,18 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     this.imu = imu;
   }
 
+  /**
+   * Directly sets the drivetrain motor's speeds
+   *
+   * @param xSpeed The target speed in the horizontal direction
+   * @param ySpeed The target speed in the forward/backward direction
+   * @param rotation The target rotation velocity (positive is CW)
+   */
   public void drive(double xSpeed, double ySpeed, double rotation) {
     drive.driveCartesian(xSpeed, ySpeed, rotation);
   }
 
+  /** Use this method to limit the drivetrain's max speed in any direction */
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput);
   }

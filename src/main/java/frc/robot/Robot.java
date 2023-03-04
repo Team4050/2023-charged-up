@@ -16,10 +16,12 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
+  private int N;
 
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
+    N = 0;
     Logger.configureLoggingAndConfig(this, false);
   }
 
@@ -27,7 +29,12 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
-    robotContainer.manualLogging();
+    if (N > 99) {
+      robotContainer.manualLogging();
+      N = 0;
+      return;
+    }
+    N++;
   }
 
   @Override
