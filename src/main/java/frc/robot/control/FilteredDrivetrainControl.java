@@ -76,20 +76,16 @@ public class FilteredDrivetrainControl extends CommandBase {
     timer.start();
   }
 
-  public void execute(boolean log) {
-    double dT = timer.get() - storedTime;
+  public void execute(double dT) {
     filter.predict(controlVector, dT);
     filter.correct(controlVector, getMeasurements());
 
     storedTime = timer.get();
     controlVector = getControlVector(filter.getXhat());
+  }
 
-    if (log) {
-      System.out.println("Filter data:");
-      System.out.println(filter.getXhat());
-      System.out.println(controlVector);
-    }
-    // drivetrain.drive(controlVector.get(0, 0), controlVector.get(1, 0), controlVector.get(2, 0));
+  public Matrix<N3, N1> getStateEstimate() {
+    return filter.getXhat();
   }
 
   private Matrix<N3, N1> getControlVector(Matrix<N3, N1> state) {
@@ -111,6 +107,4 @@ public class FilteredDrivetrainControl extends CommandBase {
     measurementVector = new Matrix<N3, N1>(new SimpleMatrix(columnVec));
     return measurementVector;
   }
-
-  private void integratePosVel() {}
 }
