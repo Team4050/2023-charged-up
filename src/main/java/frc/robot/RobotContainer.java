@@ -27,9 +27,9 @@ import org.photonvision.PhotonCamera;
  */
 public class RobotContainer {
   /* Control Interface */
-  HazardXbox primaryControl =
+  private HazardXbox primaryControl =
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
-  HazardXbox secondaryControl =
+  private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
   /* Camera & Sensors */
@@ -49,7 +49,6 @@ public class RobotContainer {
 
   /* Commands */
   private ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
-
   private PowerDistribution pdp = new PowerDistribution();
   private DanceCommand dance = new DanceCommand(drivetrain);
 
