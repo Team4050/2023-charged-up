@@ -1,25 +1,20 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
-public class DriveSubsystem extends SubsystemBase implements Loggable {
-  @Log.MotorController(name = "FL")
-  private final WPI_TalonSRX FL = new WPI_TalonSRX(Constants.Drive.FrontLeft);
+public class DriveSubsystem extends SubsystemBase {
+  private final WPI_TalonFX FL = new WPI_TalonFX(Constants.Drive.FrontLeft);
+  private final WPI_TalonFX RL = new WPI_TalonFX(Constants.Drive.RearLeft);
+  private final WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
+  private final WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
 
-  @Log.MotorController(name = "RL")
-  private final WPI_TalonSRX RL = new WPI_TalonSRX(Constants.Drive.RearLeft);
-
-  @Log.MotorController(name = "FR")
-  private final WPI_TalonSRX FR = new WPI_TalonSRX(Constants.Drive.FrontRight);
-
-  @Log.MotorController(name = "RR")
-  private final WPI_TalonSRX RR = new WPI_TalonSRX(Constants.Drive.RearRight);
+  public final Orchestra orchestra = new Orchestra();
 
   @Log.MecanumDrive(name = "Drive")
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
@@ -30,6 +25,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     FR.setInverted(true);
     RR.setInverted(true);
     this.imu = imu;
+
+    orchestra.addInstrument(FL);
+    orchestra.addInstrument(RL);
+    orchestra.addInstrument(FR);
+    orchestra.addInstrument(RR);
   }
 
   /**

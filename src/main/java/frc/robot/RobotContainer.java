@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
+import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -47,9 +48,10 @@ public class RobotContainer {
           Pneumatics.ClawRevChannel);
 
   /* Commands */
-  ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
+  private ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
 
-  PowerDistribution pdp = new PowerDistribution();
+  private PowerDistribution pdp = new PowerDistribution();
+  private DanceCommand dance = new DanceCommand(drivetrain);
 
   public RobotContainer() {
     configureBindings();
@@ -76,7 +78,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    primaryControl.start().toggleOnTrue(dance);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
