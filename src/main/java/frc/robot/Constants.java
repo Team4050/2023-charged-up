@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 public final class Constants {
+
   public static final class Operator {
     public static final int XboxPrimary = 0;
     public static final int XboxSecondary = 1;

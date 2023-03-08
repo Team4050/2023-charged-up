@@ -16,6 +16,8 @@ public class DanceCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // TODO: Possible the use of drive.orchestra (as a class object) is anti-pattern
+    // May need to consider making an orchestra() method in the drive subsystem instead
     drive.orchestra.loadMusic(Filesystem.getDeployDirectory().getAbsolutePath() + "/rave.chrp");
   }
 
