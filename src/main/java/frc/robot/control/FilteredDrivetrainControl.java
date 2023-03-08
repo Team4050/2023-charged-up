@@ -24,6 +24,7 @@ public class FilteredDrivetrainControl extends CommandBase {
   private Matrix<N3, N1> controlVector;
   private double[] estimatedStates;
   private DriveSubsystem drivetrain;
+  // Test with ProfiledPIDController?
   private PIDController xPID;
   private PIDController yPID;
   private PIDController zRotPID;
