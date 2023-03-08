@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.FloatArrayLogEntry;
+import edu.wpi.first.util.datalog.IntegerArrayLogEntry;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,15 +16,19 @@ public class DriveSubsystem extends SubsystemBase {
   private final WPI_TalonFX RL = new WPI_TalonFX(Constants.Drive.RearLeft);
   private final WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
   private final WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
+  private final IntegerArrayLogEntry encoderLogger;
+  private final FloatArrayLogEntry imuLogger;
 
   public final Orchestra orchestra = new Orchestra();
 
   @Log.MecanumDrive(name = "Drive")
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
+  private final String name = "Drivetrain";
+
   private ADIS16470_IMU imu;
 
-  public DriveSubsystem(ADIS16470_IMU imu) {
+  public DriveSubsystem(ADIS16470_IMU imu, DataLog log) {
     FR.setInverted(true);
     RR.setInverted(true);
     this.imu = imu;
@@ -30,6 +37,9 @@ public class DriveSubsystem extends SubsystemBase {
     orchestra.addInstrument(RL);
     orchestra.addInstrument(FR);
     orchestra.addInstrument(RR);
+
+    encoderLogger = new IntegerArrayLogEntry(log, "/robot/" + name);
+    imuLogger = new FloatArrayLogEntry(log, "/robot/ADIS16470_IMU");
   }
 
   /**
@@ -46,5 +56,16 @@ public class DriveSubsystem extends SubsystemBase {
   /** Use this method to limit the drivetrain's max speed in any direction */
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput);
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public void logEntries() {
+    encoderLogger.append(new long[] {0, 0, 0, 0});
+    imuLogger.append(
+        new float[] {(float) imu.getAccelX(), (float) imu.getAccelY(), (float) imu.getAccelZ()});
   }
 }

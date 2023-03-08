@@ -29,12 +29,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
-    if (N > 99) {
-      robotContainer.manualLogging();
-      N = 0;
-      return;
-    }
-    N++;
+    robotContainer.periodic();
   }
 
   @Override

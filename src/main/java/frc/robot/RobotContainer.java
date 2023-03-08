@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -17,6 +18,7 @@ import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import io.github.oblarg.oblog.annotations.Log;
+import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
 
 /**
@@ -32,6 +34,9 @@ public class RobotContainer {
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
+  /* Logging */
+  private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
+
   /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
 
@@ -39,7 +44,7 @@ public class RobotContainer {
   private ADIS16470_IMU imu = new ADIS16470_IMU();
 
   /* Subsystems */
-  private DriveSubsystem drivetrain = new DriveSubsystem(imu);
+  private DriveSubsystem drivetrain = new DriveSubsystem(imu, logFile);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -90,9 +95,7 @@ public class RobotContainer {
     return null;
   }
 
-  public void manualLogging() {
-    System.out.println(
-        String.format(
-            "AccelX: %f AccelY: %f AccelZ: %f", imu.getAccelX(), imu.getAccelY(), imu.getAccelZ()));
+  public void periodic() {
+    drivetrain.logEntries();
   }
 }
