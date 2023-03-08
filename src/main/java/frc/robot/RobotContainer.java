@@ -7,17 +7,19 @@ package frc.robot;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
+import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import io.github.oblarg.oblog.annotations.Log;
 import org.photonvision.PhotonCamera;
 
 /**
@@ -28,14 +30,17 @@ import org.photonvision.PhotonCamera;
  */
 public class RobotContainer {
   /* Control Interface */
-  HazardXbox primaryControl =
+  private HazardXbox primaryControl =
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
-  HazardXbox secondaryControl =
+  private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
   /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
+
+  @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
   public ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
+
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
   private double[] stateDev = {0, 0, 0, 0, 0, 0};
   private double[] mean = {0, 0, 0, 0, 0, 0};
@@ -53,20 +58,24 @@ public class RobotContainer {
           Pneumatics.ClawRevChannel);
 
   /* Commands */
-  // No commands yet
+  private ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
+  private PowerDistribution pdp = new PowerDistribution();
+  private DanceCommand dance = new DanceCommand(drivetrain);
 
   public RobotContainer() {
     configureBindings();
 
     // Set the default drive command using input from the primary controller
-    /*drivetrain.setDefaultCommand(
-    new RunCommand(
-        () ->
-            drivetrain.drive(
-                primaryControl.getLeftY(),
-                -primaryControl.getLeftX(),
-                -primaryControl.getRightX()),
-        drivetrain));*/
+    drivetrain.setDefaultCommand(
+        new RunCommand(
+            () ->
+                drivetrain.drive(
+                    primaryControl.getLeftY(),
+                    -primaryControl.getLeftX(),
+                    -primaryControl.getRightX()),
+            drivetrain));
+
+    claw.setDefaultCommand(clawCmd);
   }
 
   /**
@@ -79,20 +88,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    primaryControl
-        .b()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  claw.setTargetState(Value.kForward);
-                  claw.activate();
-                }))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  claw.setTargetState(Value.kReverse);
-                  claw.activate();
-                }));
+    primaryControl.start().toggleOnTrue(dance);
   }
 
   /**

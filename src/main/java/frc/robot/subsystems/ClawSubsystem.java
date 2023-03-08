@@ -14,10 +14,16 @@ public class ClawSubsystem extends SubsystemBase {
     piston = new DoubleSolenoid(module, moduleType, fwdChannel, revChannel);
   }
 
+  /**
+   * Sets the target value for the double solenoid
+   *
+   * @param state The target value (Forward, Reverse, or Off)
+   */
   public void setTargetState(Value state) {
     target = state;
   }
 
+  /** Powers the piston, moving it to the target state */
   public void activate() {
     piston.set(target);
   }
