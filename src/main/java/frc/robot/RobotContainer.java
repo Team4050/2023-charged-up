@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -20,6 +21,7 @@ import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import io.github.oblarg.oblog.annotations.Log;
+import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
 
 /**
@@ -35,6 +37,9 @@ public class RobotContainer {
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
+  /* Logging */
+  private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
+
   /* Camera & Sensors */
   private PhotonCamera camera = new PhotonCamera("photonvision");
 
@@ -49,7 +54,7 @@ public class RobotContainer {
   private int N = 0;
 
   /* Subsystems */
-  private DriveSubsystem drivetrain = new DriveSubsystem(imu);
+  private DriveSubsystem drivetrain = new DriveSubsystem(imu, logFile);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -160,5 +165,9 @@ public class RobotContainer {
   private double[] predictState(double[] state, double t) {
     state[3] += imu.getRate() * t;
     return state;
+  }
+
+  public void periodic() {
+    drivetrain.logEntries();
   }
 }

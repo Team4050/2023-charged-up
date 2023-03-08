@@ -33,14 +33,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
-    robotContainer.updateAvg(this.getPeriod());
-    N++;
-    if (N > 99) {
-      test.execute(true);
-      N = 0;
-      return;
-    }
-    test.execute(false);
+    robotContainer.periodic();
   }
 
   @Override
