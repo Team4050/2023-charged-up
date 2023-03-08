@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.FloatArrayLogEntry;
 import edu.wpi.first.util.datalog.IntegerArrayLogEntry;
@@ -19,14 +20,13 @@ public class DriveSubsystem extends SubsystemBase {
   private final IntegerArrayLogEntry encoderLogger;
   private final FloatArrayLogEntry imuLogger;
 
-  public final Orchestra orchestra = new Orchestra();
-
   @Log.MecanumDrive(name = "Drive")
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
-  private final String name = "Drivetrain";
-
+  public final Orchestra orchestra = new Orchestra();
   private ADIS16470_IMU imu;
+
+  private final String name = "Drivetrain";
 
   public DriveSubsystem(ADIS16470_IMU imu, DataLog log) {
     FR.setInverted(true);
@@ -51,6 +51,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rotation) {
     drive.driveCartesian(xSpeed, ySpeed, rotation);
+  }
+
+  public void driveFieldRelative(double xSpeed, double ySpeed, double rotation) {
+    drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imu.getAngle()));
   }
 
   /** Use this method to limit the drivetrain's max speed in any direction */
