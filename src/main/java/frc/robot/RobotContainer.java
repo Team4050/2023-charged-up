@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
 import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
@@ -21,29 +19,41 @@ import io.github.oblarg.oblog.annotations.Log;
 import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
-  /* Control Interface */
+  /*
+   **************************************************************************************************
+   * Control Interface
+   **************************************************************************************************
+   */
   private HazardXbox primaryControl =
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
-  /* Logging */
+  /*
+   **************************************************************************************************
+   * Logging
+   **************************************************************************************************
+   */
   private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
 
-  /* Camera & Sensors */
-  private PhotonCamera camera = new PhotonCamera("photonvision");
+  /*
+   **************************************************************************************************
+   * Camera & Sensors
+   **************************************************************************************************
+   */
+  @Log.CameraStream() private PhotonCamera camera = new PhotonCamera("photonvision");
 
   @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
   private ADIS16470_IMU imu = new ADIS16470_IMU();
 
-  /* Subsystems */
+  @Log.PowerDistribution() private PowerDistribution pdp = new PowerDistribution();
+
+  /*
+   **************************************************************************************************
+   * Subsystems
+   **************************************************************************************************
+   */
   private DriveSubsystem drivetrain = new DriveSubsystem(imu, logFile);
   private ClawSubsystem claw =
       new ClawSubsystem(
@@ -52,11 +62,19 @@ public class RobotContainer {
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
 
-  /* Commands */
+  /*
+   **************************************************************************************************
+   * Commands
+   **************************************************************************************************
+   */
   private ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
-  private PowerDistribution pdp = new PowerDistribution();
   private DanceCommand dance = new DanceCommand(drivetrain);
 
+  /*
+   **************************************************************************************************
+   * Container Functions
+   **************************************************************************************************
+   */
   public RobotContainer() {
     configureBindings();
 
@@ -73,24 +91,10 @@ public class RobotContainer {
     claw.setDefaultCommand(clawCmd);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
     primaryControl.start().toggleOnTrue(dance);
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     return null;
   }
