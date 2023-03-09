@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
+import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
@@ -29,6 +31,9 @@ public class RobotContainer {
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
+
+  private Trigger clawTrigger = secondaryControl.b();
+  private Trigger danceTrigger = primaryControl.start();
 
   /*
    **************************************************************************************************
@@ -67,7 +72,7 @@ public class RobotContainer {
    * Commands
    **************************************************************************************************
    */
-  private ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
+  private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, claw);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
   /*
@@ -92,7 +97,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    primaryControl.start().toggleOnTrue(dance);
+    danceTrigger.toggleOnTrue(dance);
   }
 
   public Command getAutonomousCommand() {
