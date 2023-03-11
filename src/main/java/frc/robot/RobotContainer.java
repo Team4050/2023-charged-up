@@ -8,6 +8,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -87,10 +88,10 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new RunCommand(
             () ->
-                drivetrain.drive(
+                drivetrain.driveFieldRelativeSmart(
                     primaryControl.getLeftY(),
-                    -primaryControl.getLeftX(),
-                    -primaryControl.getRightX()),
+                    -primaryControl.getRightX(),
+                    -primaryControl.getLeftX()),
             drivetrain));
 
     claw.setDefaultCommand(clawCmd);
@@ -106,5 +107,6 @@ public class RobotContainer {
 
   public void periodic() {
     drivetrain.logEntries();
+    SmartDashboard.putData(pdp);
   }
 }

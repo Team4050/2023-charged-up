@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.FloatArrayLogEntry;
@@ -31,6 +32,8 @@ public class DriveSubsystem extends SubsystemBase {
   /* Misc */
   public final Orchestra orchestra = new Orchestra();
   private final ADIS16470_IMU imu;
+
+  private final PIDController spinController = new PIDController(0.125, 0.1, 0);
 
   public DriveSubsystem(ADIS16470_IMU imu, DataLog log) {
     // Set up imu
@@ -71,6 +74,14 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rotation The target rotation velocity (positive is CW)
    */
   public void driveFieldRelative(double xSpeed, double ySpeed, double rotation) {
+    drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imu.getAngle()));
+  }
+
+  public void driveFieldRelativeSmart(double xSpeed, double ySpeed, double rotation) {
+    double v = spinController.calculate(imu.getRate(), 0);
+    if (rotation == 0) {
+      rotation = v / 50;
+    }
     drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imu.getAngle()));
   }
 
