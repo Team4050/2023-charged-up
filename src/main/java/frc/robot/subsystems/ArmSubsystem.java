@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,7 +16,7 @@ public class ArmSubsystem extends SubsystemBase {
           Constants.Pneumatics.ArmRevChannel);
 
   // TODO: Motor variable name should be more descriptive when we know what it does
-  private final WPI_TalonSRX motor = new WPI_TalonSRX(Constants.Actuators.Arm);
+  private final VictorSP motor = new VictorSP(Constants.Actuators.Arm);
 
   private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
@@ -30,5 +30,9 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  public void test() {
+    motor.set(0.3);
   }
 }
