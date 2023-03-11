@@ -76,35 +76,22 @@ public class FilteredDrivetrainControl extends CommandBase {
     timer.start();
   }
 
-  public void execute(double dT) {
+  public void execute(double dT, double[][] accel) {
     filter.predict(controlVector, dT);
-    filter.correct(controlVector, getMeasurements());
+    filter.correct(controlVector, new Matrix<N3, N1>(new SimpleMatrix(accel)));
 
     storedTime = timer.get();
-    controlVector = getControlVector(filter.getXhat());
+
+    controlVector.set(0, 0, xPID.calculate(filter.getXhat().get(0, 0), 0));
+    controlVector.set(1, 0, yPID.calculate(filter.getXhat().get(1, 0), 0));
+    controlVector.set(2, 0, zRotPID.calculate(filter.getXhat().get(2, 0), 0));
   }
 
   public Matrix<N3, N1> getStateEstimate() {
     return filter.getXhat();
   }
 
-  private Matrix<N3, N1> getControlVector(Matrix<N3, N1> state) {
-    Matrix<N3, N1> controlVector = new Matrix<N3, N1>(N3.instance, N1.instance);
-
-    // controlVector.set(0, 0, xPID.calculate(state.get(0, 0), 0));
-    // controlVector.set(1, 0, yPID.calculate(state.get(1, 0), 0));
-    // controlVector.set(2, 0, zRotPID.calculate(state.get(2, 0), 0));
-
+  public Matrix<N3, N1> getControlVector() {
     return controlVector;
-  }
-
-  private Matrix<N3, N1> getMeasurements() {
-    Matrix<N3, N1> measurementVector = new Matrix<N3, N1>(N3.instance, N1.instance);
-    // double[] rawData = drivetrain.getIMUData();
-    double[][] columnVec = {
-      {imuRef.getAccelX() + 0.29}, {imuRef.getAccelY() + 0.29}, {imuRef.getAccelZ()}
-    };
-    measurementVector = new Matrix<N3, N1>(new SimpleMatrix(columnVec));
-    return measurementVector;
   }
 }

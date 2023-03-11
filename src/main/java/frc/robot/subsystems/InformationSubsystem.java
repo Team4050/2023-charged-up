@@ -22,6 +22,7 @@ public class InformationSubsystem extends SubsystemBase {
 
   private PhotonPoseEstimator poseEstimator;
   private Matrix<N3, N1> estimatedPose;
+  private Matrix<N3, N1> setpointControlVector;
 
   private FilteredDrivetrainControl filter;
 
@@ -49,6 +50,23 @@ public class InformationSubsystem extends SubsystemBase {
   }
 
   public void updatePoseEstimate(double dT) {
-    filter.execute(dT);
+    double[][] columnVec = {{imu.getAccelX() + 0.29}, {imu.getAccelY() + 0.29}, {imu.getAccelZ()}};
+    filter.execute(dT, columnVec);
+    setpointControlVector = filter.getControlVector();
+
+    estimatedPose.set(
+        0,
+        0,
+        estimatedPose.get(0, 0) + filter.getStateEstimate().get(0, 0) * (Math.pow(dT, 2) / 2));
+
+    estimatedPose.set(
+        0,
+        1,
+        estimatedPose.get(0, 1) + filter.getStateEstimate().get(0, 1) * (Math.pow(dT, 2) / 2));
+
+    estimatedPose.set(
+        0,
+        2,
+        estimatedPose.get(0, 2) + filter.getStateEstimate().get(0, 2) * (Math.pow(dT, 2) / 2));
   }
 }
