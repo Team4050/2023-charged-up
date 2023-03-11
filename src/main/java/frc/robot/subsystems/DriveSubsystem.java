@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Operator;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -71,7 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rotation The target rotation velocity (positive is CW)
    */
   public void drive(double xSpeed, double ySpeed, double rotation) {
-    drive.driveCartesian(xSpeed, ySpeed, rotation);
+    drive.driveCartesian(xSpeed, ySpeed, rotation * Operator.RotationDamping);
   }
 
   /**
@@ -82,7 +83,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rotation The target rotation velocity (positive is CW)
    */
   public void driveFieldRelative(double xSpeed, double ySpeed, double rotation) {
-    drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imu.getAngle()));
+    drive.driveCartesian(
+        xSpeed,
+        ySpeed,
+        rotation * Operator.RotationDamping,
+        Rotation2d.fromDegrees(imu.getAngle()));
   }
 
   public void driveSmart(double xSpeed, double ySpeed, double rotation) {
@@ -90,7 +95,7 @@ public class DriveSubsystem extends SubsystemBase {
     if (rotation == 0 && autoControlSwitch.getSelected() == on) {
       rotation = v / 50;
     }
-    drive.driveCartesian(xSpeed, ySpeed, rotation);
+    drive.driveCartesian(xSpeed, ySpeed, rotation * Operator.RotationDamping);
   }
 
   public void driveFieldRelativeSmart(double xSpeed, double ySpeed, double rotation) {
@@ -98,7 +103,11 @@ public class DriveSubsystem extends SubsystemBase {
     if (rotation == 0) {
       rotation = v / 50;
     }
-    drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imu.getAngle()));
+    drive.driveCartesian(
+        xSpeed,
+        ySpeed,
+        rotation * Operator.RotationDamping,
+        Rotation2d.fromDegrees(imu.getAngle()));
   }
 
   /**

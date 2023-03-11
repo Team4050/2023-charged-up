@@ -14,6 +14,7 @@ public final class Constants {
     public static final int XboxPrimary = 0;
     public static final int XboxSecondary = 1;
     public static final float DeadzoneMin = 0.05f;
+    public static final float RotationDamping = 0.5f;
   }
 
   public static final class Geometry {
