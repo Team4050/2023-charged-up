@@ -1,0 +1,32 @@
+{
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "4050"
+  },
+  "transitory": {
+    "FMSInfo": {
+      "open": true
+    },
+    "LiveWindow": {
+      "open": true
+    },
+    "Shuffleboard": {
+      ".metadata": {
+        "open": true
+      },
+      ".recording": {
+        "open": true
+      },
+      "Robot": {
+        "open": true
+      },
+      "open": true
+    },
+    "SmartDashboard": {
+      "PowerDistribution[0]": {
+        "open": true
+      },
+      "open": true
+    }
+  }
+}
