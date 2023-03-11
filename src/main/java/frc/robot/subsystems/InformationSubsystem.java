@@ -8,6 +8,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Geometry;
 import frc.robot.control.FilteredDrivetrainControl;
@@ -46,6 +47,7 @@ public class InformationSubsystem extends SubsystemBase {
     poseEstimator =
         new PhotonPoseEstimator(
             layout, PoseStrategy.LOWEST_AMBIGUITY, camera, Geometry.RobotToCamera);
+
     filter = new FilteredDrivetrainControl(imu);
   }
 
@@ -68,5 +70,9 @@ public class InformationSubsystem extends SubsystemBase {
         0,
         2,
         estimatedPose.get(0, 2) + filter.getStateEstimate().get(0, 2) * (Math.pow(dT, 2) / 2));
+
+    SmartDashboard.putNumberArray(
+        "Filtered position estimate",
+        new double[] {estimatedPose.get(0, 0), estimatedPose.get(1, 0), estimatedPose.get(2, 0)});
   }
 }

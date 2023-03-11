@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,6 +22,7 @@ import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.annotations.Log;
 import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
@@ -55,6 +58,8 @@ public class RobotContainer {
 
   /* Subsystems */
   private DriveSubsystem drivetrain = new DriveSubsystem(imu, logFile);
+  private InformationSubsystem info =
+      new InformationSubsystem(imu, null, null, null, null, camera, new Pose2d());
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -167,7 +172,9 @@ public class RobotContainer {
     return state;
   }
 
-  public void periodic() {
+  public void periodic(double dT) {
     drivetrain.logEntries();
+    info.updatePoseEstimate(dT);
+    SmartDashboard.putData(pdp);
   }
 }

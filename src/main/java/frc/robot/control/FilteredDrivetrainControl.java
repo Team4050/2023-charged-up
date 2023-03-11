@@ -9,7 +9,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
 import org.ejml.simple.SimpleMatrix;
 
 public class FilteredDrivetrainControl extends CommandBase {
@@ -23,7 +22,6 @@ public class FilteredDrivetrainControl extends CommandBase {
   private KalmanFilter<N3, N3, N3> filter;
   private Matrix<N3, N1> controlVector;
   private double[] estimatedStates;
-  private DriveSubsystem drivetrain;
   // Test with ProfiledPIDController?
   private PIDController xPID;
   private PIDController yPID;
