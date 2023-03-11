@@ -77,6 +77,14 @@ public class DriveSubsystem extends SubsystemBase {
     drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imu.getAngle()));
   }
 
+  public void driveSmart(double xSpeed, double ySpeed, double rotation) {
+    double v = spinController.calculate(imu.getRate(), 0);
+    if (rotation == 0) {
+      rotation = v / 50;
+    }
+    drive.driveCartesian(xSpeed, ySpeed, rotation);
+  }
+
   public void driveFieldRelativeSmart(double xSpeed, double ySpeed, double rotation) {
     double v = spinController.calculate(imu.getRate(), 0);
     if (rotation == 0) {
