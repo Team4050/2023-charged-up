@@ -9,6 +9,8 @@ import edu.wpi.first.util.datalog.FloatArrayLogEntry;
 import edu.wpi.first.util.datalog.IntegerArrayLogEntry;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import io.github.oblarg.oblog.annotations.Log;
@@ -34,6 +36,9 @@ public class DriveSubsystem extends SubsystemBase {
   private final ADIS16470_IMU imu;
 
   private final PIDController spinController = new PIDController(0.125, 0.1, 0);
+  private final SendableChooser<String> autoControlSwitch = new SendableChooser<>();
+  private final String off = "Autocorrection disabled";
+  private final String on = "Autocorrection enabled";
 
   public DriveSubsystem(ADIS16470_IMU imu, DataLog log) {
     // Set up imu
@@ -53,6 +58,9 @@ public class DriveSubsystem extends SubsystemBase {
     // Set up loggers
     encoderLogger = new IntegerArrayLogEntry(log, "/robot/" + name);
     imuLogger = new FloatArrayLogEntry(log, "/robot/ADIS16470_IMU");
+    autoControlSwitch.setDefaultOption("off", off);
+    autoControlSwitch.addOption("on", on);
+    SmartDashboard.putData("Autocorrection", autoControlSwitch);
   }
 
   /**
@@ -79,7 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void driveSmart(double xSpeed, double ySpeed, double rotation) {
     double v = spinController.calculate(imu.getRate(), 0);
-    if (rotation == 0) {
+    if (rotation == 0 && autoControlSwitch.getSelected() == on) {
       rotation = v / 50;
     }
     drive.driveCartesian(xSpeed, ySpeed, rotation);

@@ -88,10 +88,10 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new RunCommand(
             () ->
-                drivetrain.driveFieldRelativeSmart(
+                drivetrain.driveSmart(
                     primaryControl.getLeftY(),
-                    -primaryControl.getRightX(),
-                    -primaryControl.getLeftX()),
+                    -primaryControl.getLeftX(),
+                    -primaryControl.getRightX()),
             drivetrain));
 
     claw.setDefaultCommand(clawCmd);
@@ -108,5 +108,6 @@ public class RobotContainer {
   public void periodic() {
     drivetrain.logEntries();
     SmartDashboard.putData(pdp);
+    SmartDashboard.putData("ADIS IMU", imu);
   }
 }
