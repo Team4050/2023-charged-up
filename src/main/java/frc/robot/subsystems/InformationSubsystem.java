@@ -40,4 +40,30 @@ public class InformationSubsystem extends SubsystemBase {
         new PhotonPoseEstimator(
             layout, PoseStrategy.LOWEST_AMBIGUITY, camera, Geometry.RobotToCamera);
   }
+
+  public enum axis {
+    X,
+    Y,
+    Z,
+    ZRot
+  }
+
+  public double getAccel(axis a) {
+    switch (a) {
+      case X:
+        return imu.getAccelX();
+      case Y:
+        return imu.getAccelY();
+      case Z:
+        return imu.getAccelZ();
+      case ZRot:
+        return imu.getRate();
+      default:
+        return 0;
+    }
+  }
+
+  public int getReading(int motor) {
+    return encoders[motor].get();
+  }
 }
