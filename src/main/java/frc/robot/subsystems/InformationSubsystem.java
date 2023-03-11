@@ -73,14 +73,14 @@ public class InformationSubsystem extends SubsystemBase {
         estimatedPose.get(0, 0) + filter.getStateEstimate().get(0, 0) * (Math.pow(dT, 2) / 2));
 
     estimatedPose.set(
-        0,
         1,
-        estimatedPose.get(0, 1) + filter.getStateEstimate().get(0, 1) * (Math.pow(dT, 2) / 2));
+        0,
+        estimatedPose.get(1, 0) + filter.getStateEstimate().get(1, 0) * (Math.pow(dT, 2) / 2));
 
     estimatedPose.set(
-        0,
         2,
-        estimatedPose.get(0, 2) + filter.getStateEstimate().get(0, 2) * (Math.pow(dT, 2) / 2));
+        0,
+        estimatedPose.get(2, 0) + filter.getStateEstimate().get(2, 0) * (Math.pow(dT, 2) / 2));
 
     SmartDashboard.putNumberArray(
         "Filtered position estimate",
