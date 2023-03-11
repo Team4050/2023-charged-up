@@ -88,7 +88,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new RunCommand(
             () ->
-                drivetrain.driveSmart(
+                drivetrain.driveFieldRelativeSmart(
                     primaryControl.getLeftY(),
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
