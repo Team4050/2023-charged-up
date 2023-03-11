@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Geometry;
 import frc.robot.control.FilteredDrivetrainControl;
+import org.ejml.simple.SimpleMatrix;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -49,6 +50,16 @@ public class InformationSubsystem extends SubsystemBase {
             layout, PoseStrategy.LOWEST_AMBIGUITY, camera, Geometry.RobotToCamera);
 
     filter = new FilteredDrivetrainControl(imu);
+    filter.initialize();
+
+    estimatedPose =
+        new Matrix<N3, N1>(
+            new SimpleMatrix(
+                new double[][] {
+                  {startingPose.getX()},
+                  {startingPose.getY()},
+                  {startingPose.getRotation().getDegrees()}
+                }));
   }
 
   public void updatePoseEstimate(double dT) {
