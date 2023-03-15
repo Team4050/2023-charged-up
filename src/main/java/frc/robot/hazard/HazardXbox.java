@@ -69,7 +69,7 @@ public class HazardXbox extends CommandXboxController {
    * @param v The value of the axis
    * @return The value of the axis after accounting for deadzone
    */
-  private double deadzone(float deadzone, double v) {
+  public static double deadzone(float deadzone, double v) {
     return Math.abs(v) > deadzone ? v : 0;
   }
 

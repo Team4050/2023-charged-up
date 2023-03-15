@@ -44,10 +44,10 @@ public class RobotContainer {
   private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
 
   /* Camera & Sensors */
-  private PhotonCamera camera = new PhotonCamera("photonvision");
+  private PhotonCamera camera;
 
   @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
-  public ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._2s);
+  public ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._4s);
 
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
   private double[] stateDev = {0, 0, 0, 0, 0, 0};
@@ -136,8 +136,6 @@ public class RobotContainer {
 
   public void updateAvg(double dT) {
     double[] imuData = getImuDataArray();
-    // System.out.println(
-    //  String.format("IMU raw data; %f, %f, %f", imuData[0], imuData[1], imuData[2]));
     double[] predictedState = predictState(previousState, dT);
 
     for (int i = 0; i < mean.length; i++) {
@@ -176,5 +174,6 @@ public class RobotContainer {
     drivetrain.logEntries();
     info.updatePoseEstimate(dT);
     SmartDashboard.putData(pdp);
+    SmartDashboard.putData(imu);
   }
 }

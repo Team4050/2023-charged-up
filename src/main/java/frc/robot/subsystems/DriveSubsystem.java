@@ -23,11 +23,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Log.MecanumDrive(name = "Drive")
   public final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
-  @Log.Accelerometer(name = "ADIS16470 IMU")
-  @Log.Gyro(name = "ADIS16470 IMU")
-  public static ADIS16470_IMU imuRef;
-
-  private boolean useImu = true;
+  private boolean useImu = false;
   public final Orchestra orchestra = new Orchestra();
   private ADIS16470_IMU imu;
 
@@ -55,11 +51,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rotation The target rotation velocity (positive is CW)
    */
   public void drive(double xSpeed, double ySpeed, double rotation) {
-    if (useImu) {
-      System.out.println(imuRef.getAngle());
-      drive.driveCartesian(xSpeed, ySpeed, rotation, Rotation2d.fromDegrees(imuRef.getAngle()));
-      return;
-    }
     drive.driveCartesian(xSpeed, ySpeed, rotation);
   }
 

@@ -38,12 +38,12 @@ public class FilteredDrivetrainControl extends CommandBase {
   public void initialize() {
     // accel x y z (z altitude)
     // 0.012532, 0.014077, 0.025190
-    double[][] stdDev = {{0.012532}, {0.014077}, {0.025190}};
-    double[][] stateDev = {{0.001}, {0.001}, {0.001}};
+    double[][] stdDev = {{0.02}, {0.02}, {0.05}};
+    double[][] stateDev = {{0.01}, {0.01}, {0.001}};
     Matrix<N3, N1> sensorDeviations = new Matrix<N3, N1>(new SimpleMatrix(stdDev));
     Matrix<N3, N1> stateDeviations = new Matrix<N3, N1>(new SimpleMatrix(stateDev));
     // identity matrices because testing
-    double[][] a = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    double[][] a = {{1, 0, 0}, {0, 1, 0}, {1, 0, 0}};
     Matrix<N3, N3> A =
         new Matrix<N3, N3>(new SimpleMatrix(a)); // corresponds to F (state-space transition model)
     double[][] b = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
@@ -74,15 +74,15 @@ public class FilteredDrivetrainControl extends CommandBase {
     timer.start();
   }
 
-  public void execute(double dT, double[][] accel) {
+  public void execute(double dT, double[][] data) {
     filter.predict(controlVector, dT);
-    filter.correct(controlVector, new Matrix<N3, N1>(new SimpleMatrix(accel)));
+    filter.correct(controlVector, new Matrix<N3, N1>(new SimpleMatrix(data)));
 
     storedTime = timer.get();
 
-    controlVector.set(0, 0, xPID.calculate(filter.getXhat().get(0, 0), 0));
-    controlVector.set(1, 0, yPID.calculate(filter.getXhat().get(1, 0), 0));
-    controlVector.set(2, 0, zRotPID.calculate(filter.getXhat().get(2, 0), 0));
+    // controlVector.set(0, 0, xPID.calculate(filter.getXhat().get(0, 0), 0));
+    // controlVector.set(1, 0, yPID.calculate(filter.getXhat().get(1, 0), 0));
+    // controlVector.set(2, 0, zRotPID.calculate(filter.getXhat().get(2, 0), 0));
   }
 
   public Matrix<N3, N1> getStateEstimate() {
