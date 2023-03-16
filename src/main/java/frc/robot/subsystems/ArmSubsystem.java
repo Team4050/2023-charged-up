@@ -15,8 +15,7 @@ public class ArmSubsystem extends SubsystemBase {
           Constants.Pneumatics.ArmFwdChannel,
           Constants.Pneumatics.ArmRevChannel);
 
-  // TODO: Motor variable name should be more descriptive when we know what it does
-  private final VictorSP motor = new VictorSP(Constants.Actuators.Arm);
+  private final VictorSP pivotMotor = new VictorSP(Constants.Actuators.Arm);
 
   private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
@@ -32,7 +31,8 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
+  /** Test method, please ignore */
   public void test() {
-    motor.set(0.3);
+    pivotMotor.set(0.3);
   }
 }

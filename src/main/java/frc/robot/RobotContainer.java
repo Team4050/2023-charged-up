@@ -19,6 +19,7 @@ import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.annotations.Log;
 import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
@@ -61,7 +62,9 @@ public class RobotContainer {
    * Subsystems
    **************************************************************************************************
    */
-  private DriveSubsystem drivetrain = new DriveSubsystem(imu, logFile);
+  private InformationSubsystem info =
+      new InformationSubsystem(imu, null, null, null, null, null, camera, null);
+  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -96,21 +99,29 @@ public class RobotContainer {
                     -primaryControl.getRightX()),
             drivetrain));
 
+    // TODO: arm command
     arm.setDefaultCommand(new RunCommand(() -> arm.test(), arm));
 
     claw.setDefaultCommand(clawCmd);
   }
 
+  /** Maps commands to their respective triggers. */
   private void configureBindings() {
     danceTrigger.toggleOnTrue(dance);
   }
 
+  /**
+   * Gets the selected autonomous command
+   *
+   * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
+   */
   public Command getAutonomousCommand() {
     return null;
   }
 
+  /** Called every 20ms(?) */
   public void periodic() {
-    drivetrain.logEntries();
+    // TODO: Move drivetrain logging to informationSubsystem
     SmartDashboard.putData(pdp);
     SmartDashboard.putData("ADIS IMU", imu);
   }

@@ -7,13 +7,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.FloatArrayLogEntry;
 import edu.wpi.first.util.datalog.IntegerArrayLogEntry;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Operator;
+import frc.robot.subsystems.InformationSubsystem.axis;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -34,19 +34,20 @@ public class DriveSubsystem extends SubsystemBase {
 
   /* Misc */
   public final Orchestra orchestra = new Orchestra();
-  private final ADIS16470_IMU imu;
+  private final InformationSubsystem info;
 
   private final PIDController spinController = new PIDController(0.125, 0.1, 0);
   private final SendableChooser<String> autoControlSwitch = new SendableChooser<>();
   private final String off = "Autocorrection disabled";
   private final String on = "Autocorrection enabled";
 
-  public DriveSubsystem(ADIS16470_IMU imu, DataLog log) {
+  public DriveSubsystem(InformationSubsystem info, DataLog log) {
     // Set up imu
     // TODO: Should this be moved to the sensor subsys? Then we pass the subsystem in as a parameter
-    this.imu = imu;
+    this.info = info;
 
     // Set up drive motors
+    // This might be what is preventing the orchestra from playing
     FR.setInverted(true);
     RR.setInverted(true);
 
@@ -65,7 +66,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Directly sets the drivetrain motor's speeds
+   * Directly sets the drivetrain motor's speeds.
    *
    * @param xSpeed The target speed in the horizontal direction
    * @param ySpeed The target speed in the forward/backward direction
@@ -76,7 +77,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Directly sets the drivetrain motor's speeds relative to the field
+   * Directly sets the drivetrain motor's speeds relative to the field.
    *
    * @param xSpeed The target speed in the horizontal direction
    * @param ySpeed The target speed in the forward/backward direction
@@ -87,27 +88,43 @@ public class DriveSubsystem extends SubsystemBase {
         xSpeed,
         ySpeed,
         rotation * Operator.RotationDamping,
-        Rotation2d.fromDegrees(imu.getAngle()));
+        Rotation2d.fromDegrees(info.getData(axis.ZRate)));
   }
 
+  /**
+   * Drives in robot-relative coordinates with rotation damping (if damping is enabled on the
+   * dashboard.)
+   *
+   * @param xSpeed X velocity in field coordinates
+   * @param ySpeed Y velocity in field coordinates
+   * @param rotation Rotational velocity
+   */
   public void driveSmart(double xSpeed, double ySpeed, double rotation) {
-    double v = spinController.calculate(imu.getRate(), 0);
+    double v = spinController.calculate(info.getData(axis.ZRate), 0);
     if (rotation == 0 && autoControlSwitch.getSelected() == on) {
       rotation = v / 50;
     }
     drive.driveCartesian(xSpeed, ySpeed, rotation * Operator.RotationDamping);
   }
 
+  /**
+   * Drives in field-relative coordinates with rotation damping (if damping is enabled on the
+   * dashboard.)
+   *
+   * @param xSpeed X velocity in field coordinates
+   * @param ySpeed Y velocity in field coordinates
+   * @param rotation Rotational velocity
+   */
   public void driveFieldRelativeSmart(double xSpeed, double ySpeed, double rotation) {
-    double v = spinController.calculate(imu.getRate(), 0);
-    if (rotation == 0) {
+    double v = spinController.calculate(info.getData(axis.ZRate), 0);
+    if (rotation == 0 && autoControlSwitch.getSelected() == on) {
       rotation = v / 50;
     }
     drive.driveCartesian(
         xSpeed,
         ySpeed,
         rotation * Operator.RotationDamping,
-        Rotation2d.fromDegrees(imu.getAngle()));
+        Rotation2d.fromDegrees(info.getData(axis.ZRot)));
   }
 
   /**
@@ -122,11 +139,5 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public String getName() {
     return name;
-  }
-
-  public void logEntries() {
-    encoderLogger.append(new long[] {0, 0, 0, 0});
-    imuLogger.append(
-        new float[] {(float) imu.getAccelX(), (float) imu.getAccelY(), (float) imu.getAccelZ()});
   }
 }

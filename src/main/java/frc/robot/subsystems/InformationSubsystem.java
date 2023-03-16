@@ -25,45 +25,99 @@ public class InformationSubsystem extends SubsystemBase {
       Encoder FR,
       Encoder RL,
       Encoder RR,
+      Encoder Arm,
       PhotonCamera camera,
       Pose2d startingPose) {
     this.imu = imu;
-    encoders = new Encoder[] {FL, FR, RL, RR};
     this.camera = camera;
+    encoders = new Encoder[] {FL, FR, RL, RR, Arm};
     AprilTagFieldLayout layout = null;
+
+    // Setup field layout from resource file
     try {
       layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    /*
+     * Setup pose estimator to average from low ambiguity targets, aka measure from the targets that are the most descernable
+     *
+     * Tends to give semi-acurrate data but with very fast fluxuation.
+     * Control loops using this should rely more on their I component.
+     */
     poseEstimator =
         new PhotonPoseEstimator(
-            layout, PoseStrategy.LOWEST_AMBIGUITY, camera, Geometry.RobotToCamera);
+            layout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, Geometry.RobotToCamera);
   }
 
   public enum axis {
-    X,
-    Y,
-    Z,
-    ZRot
+    XAcc,
+    YAcc,
+    ZAcc,
+    ZRot,
+    ZRate
   }
 
-  public double getAccel(axis a) {
+  /**
+   * Pretty self-explainatory. Gets raw data from the IMU.
+   *
+   * @param a The type of data to return.
+   * @return The requested data.
+   */
+  public double getData(axis a) {
     switch (a) {
-      case X:
+      case XAcc:
         return imu.getAccelX();
-      case Y:
+      case YAcc:
         return imu.getAccelY();
-      case Z:
+      case ZAcc:
         return imu.getAccelZ();
-      case ZRot:
+      case ZRate:
         return imu.getRate();
+      case ZRot:
+        return imu.getAngle();
       default:
         return 0;
     }
   }
 
-  public int getReading(int motor) {
-    return encoders[motor].get();
+  /**
+   * Returns multiple forms of raw IMU data in one call.
+   *
+   * @param a An array containing axis. The returned array with have corresponding values.
+   * @return An array of IMU data. The type of data is requested through the a parameter.
+   */
+  public double[] getData(axis[] a) {
+    double[] r = new double[a.length];
+    for (int i = 0; i < a.length; i++) {
+      r[i] = getData(a[i]);
+    }
+    return r;
+  }
+
+  public enum motor {
+    FL(0),
+    FR(1),
+    RL(2),
+    RR(3),
+    ArmPivot(4);
+
+    private int value;
+
+    private motor(int v) {
+      this.value = v;
+    }
+  }
+
+  /**
+   * Gets readngs from the motor encoders. Since the encoders still aren't on the robot, their
+   * accuracy is unknown.
+   *
+   * @param motor
+   * @return
+   */
+  public int getReading(motor motor) {
+    return encoders[motor.value].get();
   }
 }
