@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -33,6 +34,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** Test method, please ignore */
   public void test() {
-    // pivotMotor.set(TalonSRXControlMode.Velocity, 0);
+    pivotMotor.set(TalonSRXControlMode.Velocity, 0);
   }
 }
