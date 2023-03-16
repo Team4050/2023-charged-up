@@ -124,5 +124,6 @@ public class RobotContainer {
     // TODO: Move drivetrain logging to informationSubsystem
     SmartDashboard.putData(pdp);
     SmartDashboard.putData("ADIS IMU", imu);
+    drivetrain.sendToDashboard();
   }
 }

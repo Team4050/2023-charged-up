@@ -140,4 +140,8 @@ public class DriveSubsystem extends SubsystemBase {
   public String getName() {
     return name;
   }
+
+  public void sendToDashboard() {
+    SmartDashboard.putData(drive);
+  }
 }
