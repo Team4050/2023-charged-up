@@ -31,7 +31,7 @@ public final class Constants {
   }
 
   public static final class Actuators {
-    public static final int Arm = 0;
+    public static final int Arm = 6;
   }
 
   public static final class Sensors {

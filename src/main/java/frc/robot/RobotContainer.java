@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
@@ -116,7 +117,7 @@ public class RobotContainer {
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
-    return null;
+    return new AutonomousCommand(drivetrain, arm, claw, info);
   }
 
   /** Called every 20ms(?) */

@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Geometry;
 import org.photonvision.PhotonCamera;
@@ -15,6 +16,7 @@ public class InformationSubsystem extends SubsystemBase {
   private ADIS16470_IMU imu;
   private Encoder[] encoders;
   private PhotonCamera camera;
+  private Timer timer;
 
   private PhotonPoseEstimator poseEstimator;
   private Pose2d estimatedPose;
@@ -49,6 +51,9 @@ public class InformationSubsystem extends SubsystemBase {
     poseEstimator =
         new PhotonPoseEstimator(
             layout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, Geometry.RobotToCamera);
+
+    timer = new Timer();
+    timer.start();
   }
 
   public enum axis {
@@ -119,5 +124,19 @@ public class InformationSubsystem extends SubsystemBase {
    */
   public int getReading(motor motor) {
     return encoders[motor.value].get();
+  }
+
+  /**
+   * For autonomous: drives in the supplied direction for the supplied amount of time
+   *
+   * @param drive The drivetrain subsystem to use.
+   * @param direction The direction to drive in.
+   * @param timeout If the command takes longer than the supplied value, the command stops.
+   */
+  public void driveUntil(DriveSubsystem drive, Pose2d direction, int timeout) {
+    double since = timer.get();
+    while (timer.get() < since + timeout) {
+      drive.driveSmart(direction.getX(), direction.getY(), 0);
+    }
   }
 }
