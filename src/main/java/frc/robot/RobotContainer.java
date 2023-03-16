@@ -16,6 +16,7 @@ import frc.robot.Constants.Pneumatics;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.hazard.HazardXbox;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import io.github.oblarg.oblog.annotations.Log;
@@ -67,6 +68,7 @@ public class RobotContainer {
           PneumaticsModuleType.CTREPCM,
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
+  private ArmSubsystem arm = new ArmSubsystem();
 
   /*
    **************************************************************************************************
@@ -93,6 +95,8 @@ public class RobotContainer {
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
             drivetrain));
+
+    arm.setDefaultCommand(new RunCommand(() -> arm.test(), arm));
 
     claw.setDefaultCommand(clawCmd);
   }

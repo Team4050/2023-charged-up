@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public final class Constants {
 
@@ -29,9 +30,22 @@ public final class Constants {
     public static final int RearRight = 5;
   }
 
+  public static final class Actuators {
+    public static final int Arm = 0;
+  }
+
+  public static final class Sensors {
+    public static final int ClawLimitL = 0;
+    public static final int CLawLimitR = 1;
+    public static final int ArmLimit = 2;
+  }
+
   public static final class Pneumatics {
     public static final int PCM = 1;
+    public static final PneumaticsModuleType Module = PneumaticsModuleType.CTREPCM;
     public static final int ClawFwdChannel = 0;
     public static final int ClawRevChannel = 1;
+    public static final int ArmFwdChannel = 2;
+    public static final int ArmRevChannel = 3;
   }
 }
