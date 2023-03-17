@@ -23,8 +23,9 @@ public class HoldPosition extends CommandBase {
   private PIDController Y;
   private PIDController Z;
 
-  public HoldPosition(DriveSubsystem drive, Matrix<N3, N1> target) {
+  public HoldPosition(DriveSubsystem drive, InformationSubsystem info, Matrix<N3, N1> target) {
     this.drive = drive;
+    this.info = info;
     targetPose = target;
 
     requirements = new HashSet<Subsystem>();
@@ -40,14 +41,16 @@ public class HoldPosition extends CommandBase {
     X.calculate(info.getPoseEstimate().get(0, 0), targetPose.get(0, 0)),
     Y.calculate(info.getPoseEstimate().get(1, 0), targetPose.get(1, 0)),
     Z.calculate(info.getPoseEstimate().get(2, 0), targetPose.get(2, 0)));*/
-
-    SmartDashboard.putNumberArray(
-        "Station keeping PID",
+    double[] array =
         new double[] {
           X.calculate(info.getPoseEstimate().get(0, 0), targetPose.get(0, 0)),
           Y.calculate(info.getPoseEstimate().get(1, 0), targetPose.get(1, 0)),
           Z.calculate(info.getPoseEstimate().get(2, 0), targetPose.get(2, 0))
-        });
+        };
+
+    SmartDashboard.putNumberArray("Station keeping PID", array);
+
+    System.out.println(String.format("%f, %f, %f", array[0], array[1], array[2]));
   }
 
   @Override

@@ -92,7 +92,9 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(
         new HoldPosition(
-            drivetrain, new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{13}, {10}, {0}}))));
+            drivetrain,
+            info,
+            new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{13}, {10}, {0}}))));
 
     claw.setDefaultCommand(clawCmd);
   }
