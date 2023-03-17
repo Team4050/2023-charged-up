@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,6 +33,10 @@ public class InformationSubsystem extends SubsystemBase {
 
   private FilteredDrivetrainControl filter;
   private Field2d dashboardField;
+
+  private PIDController X;
+  private PIDController Y;
+  private PIDController Z;
 
   public InformationSubsystem(
       ADIS16470_IMU imu,
@@ -92,5 +97,11 @@ public class InformationSubsystem extends SubsystemBase {
 
   public Matrix<N3, N1> getPoseEstimate() {
     return estimatedPose;
+  }
+
+  public void ResetPID() {
+    X.reset();
+    Y.reset();
+    Z.reset();
   }
 }

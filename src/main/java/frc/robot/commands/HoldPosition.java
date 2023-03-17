@@ -50,6 +50,9 @@ public class HoldPosition extends CommandBase {
 
     SmartDashboard.putNumberArray("Station keeping PID", array);
 
+    System.out.println(
+        String.format(
+            "%f, %f", info.getPoseEstimate().get(0, 0), info.getPoseEstimate().get(1, 0)));
     System.out.println(String.format("%f, %f, %f", array[0], array[1], array[2]));
   }
 
