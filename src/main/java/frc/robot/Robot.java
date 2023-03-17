@@ -16,6 +16,7 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
+
   private int N;
 
   @Override

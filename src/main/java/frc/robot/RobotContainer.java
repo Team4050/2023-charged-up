@@ -8,6 +8,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -38,6 +39,11 @@ public class RobotContainer {
 
   private Trigger clawTrigger = secondaryControl.b();
   private Trigger danceTrigger = primaryControl.start();
+
+  private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
+  private final String noCmd = "no";
+  private final String simpleCmd = "simple";
+  private final String danceCmd = "crab";
 
   /*
    **************************************************************************************************
@@ -88,6 +94,10 @@ public class RobotContainer {
    **************************************************************************************************
    */
   public RobotContainer() {
+    autonomousSwitch.setDefaultOption("No auto", noCmd);
+    autonomousSwitch.addOption("Exit community", simpleCmd);
+    autonomousSwitch.addOption("Dance", danceCmd);
+
     configureBindings();
 
     // Set the default drive command using input from the primary controller
@@ -117,7 +127,16 @@ public class RobotContainer {
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
-    return new AutonomousCommand(drivetrain, arm, claw, info);
+    switch (autonomousSwitch.getSelected()) {
+      case noCmd:
+        return null;
+      case simpleCmd:
+        return new AutonomousCommand(drivetrain, arm, claw, info);
+      case danceCmd:
+        return new DanceCommand(drivetrain);
+      default:
+        return null;
+    }
   }
 
   /** Called every 20ms(?) */
