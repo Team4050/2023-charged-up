@@ -1,22 +1,22 @@
-package frc.robot;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.hazard.HazardXbox;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ClawSubsystem;
 import java.util.HashSet;
 import java.util.Set;
 
-class ClawToggleCmd extends CommandBase {
-  private HazardXbox controller;
+public class ClawToggleCmd extends CommandBase {
+  private Trigger clawTrigger;
   public boolean toggle = false;
   private ClawSubsystem claw;
   private Set<Subsystem> requirements;
 
-  public ClawToggleCmd(HazardXbox controller, ClawSubsystem claw) {
-    this.controller = controller;
+  public ClawToggleCmd(Trigger clawTrigger, ClawSubsystem claw) {
+    this.clawTrigger = clawTrigger;
     this.claw = claw;
     requirements = new HashSet<Subsystem>();
     requirements.add(claw);
@@ -29,13 +29,11 @@ class ClawToggleCmd extends CommandBase {
 
   @Override
   public void initialize() {
-    controller
-        .b()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  toggle();
-                }));
+    clawTrigger.onTrue(
+        new InstantCommand(
+            () -> {
+              toggle();
+            }));
   }
 
   @Override

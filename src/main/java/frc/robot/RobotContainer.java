@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.datalog.DataLog;
@@ -18,12 +17,13 @@ import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
+import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.commands.HoldPosition;
 import frc.robot.hazard.HazardXbox;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
@@ -32,24 +32,33 @@ import java.time.LocalDateTime;
 import org.ejml.simple.SimpleMatrix;
 import org.photonvision.PhotonCamera;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
-  /* Control Interface */
+  /*
+   **************************************************************************************************
+   * Control Interface
+   **************************************************************************************************
+   */
   private HazardXbox primaryControl =
       new HazardXbox(Constants.Operator.XboxPrimary, Constants.Operator.DeadzoneMin);
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
-  /* Logging */
+  private Trigger clawTrigger = secondaryControl.b();
+  private Trigger danceTrigger = primaryControl.start();
+
+  /*
+   **************************************************************************************************
+   * Logging
+   **************************************************************************************************
+   */
   private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
 
-  /* Camera & Sensors */
-  private PhotonCamera camera;
+  /*
+   **************************************************************************************************
+   * Camera & Sensors
+   **************************************************************************************************
+   */
+  @Log.CameraStream() private PhotonCamera camera = new PhotonCamera("photonvision");
 
   @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
   public ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._4s);
@@ -61,22 +70,37 @@ public class RobotContainer {
   private double[] previousState = {0, 0, 0, 0, 0, 0};
   private int N = 0;
 
-  /* Subsystems */
-  private DriveSubsystem drivetrain = new DriveSubsystem(imu, logFile);
+  @Log.PowerDistribution() private PowerDistribution pdp = new PowerDistribution();
+
+  /*
+   **************************************************************************************************
+   * Subsystems
+   **************************************************************************************************
+   */
   private InformationSubsystem info =
-      new InformationSubsystem(imu, null, null, null, null, camera, new Pose2d());
+      new InformationSubsystem(imu, null, null, null, null, null, camera, null);
+  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
           PneumaticsModuleType.CTREPCM,
           Pneumatics.ClawFwdChannel,
           Pneumatics.ClawRevChannel);
+  private ArmSubsystem arm = new ArmSubsystem();
 
-  /* Commands */
-  private ClawToggleCmd clawCmd = new ClawToggleCmd(secondaryControl, claw);
-  private PowerDistribution pdp = new PowerDistribution();
+  /*
+   **************************************************************************************************
+   * Commands
+   **************************************************************************************************
+   */
+  private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, claw);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
+  /*
+   **************************************************************************************************
+   * Container Functions
+   **************************************************************************************************
+   */
   public RobotContainer() {
     configureBindings();
 
@@ -84,7 +108,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new RunCommand(
             () ->
-                drivetrain.drive(
+                drivetrain.driveFieldRelativeSmart(
                     primaryControl.getLeftY(),
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
@@ -96,26 +120,21 @@ public class RobotContainer {
             info,
             new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{13}, {10}, {0}}))));
 
+    // TODO: arm command
+    arm.setDefaultCommand(new RunCommand(() -> arm.test(), arm));
+
     claw.setDefaultCommand(clawCmd);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
+  /** Maps commands to their respective triggers. */
   private void configureBindings() {
-    primaryControl.start().toggleOnTrue(dance);
+    danceTrigger.toggleOnTrue(dance);
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Gets the selected autonomous command
    *
-   * @return the command to run in autonomous
+   * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
     return null;
@@ -181,10 +200,11 @@ public class RobotContainer {
     return state;
   }
 
+  /** Called every 20ms(?) */
   public void periodic(double dT) {
-    drivetrain.logEntries();
     info.updatePoseEstimate(dT);
     SmartDashboard.putData(pdp);
     SmartDashboard.putData(imu);
+    drivetrain.sendToDashboard();
   }
 }
