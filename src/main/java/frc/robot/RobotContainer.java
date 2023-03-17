@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
@@ -19,12 +22,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
 import frc.robot.commands.DanceCommand;
+import frc.robot.commands.HoldPosition;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.annotations.Log;
 import java.time.LocalDateTime;
+import org.ejml.simple.SimpleMatrix;
 import org.photonvision.PhotonCamera;
 
 /**
@@ -84,6 +89,10 @@ public class RobotContainer {
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
             drivetrain));
+
+    drivetrain.setDefaultCommand(
+        new HoldPosition(
+            drivetrain, new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{13}, {10}, {0}}))));
 
     claw.setDefaultCommand(clawCmd);
   }

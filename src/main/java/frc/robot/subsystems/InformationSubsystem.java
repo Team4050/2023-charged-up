@@ -27,6 +27,7 @@ public class InformationSubsystem extends SubsystemBase {
 
   private PhotonPoseEstimator poseEstimator;
   private Matrix<N3, N1> estimatedPose;
+  private Matrix<N3, N1> setpoint;
   private Matrix<N3, N1> setpointControlVector;
 
   private FilteredDrivetrainControl filter;
@@ -87,8 +88,9 @@ public class InformationSubsystem extends SubsystemBase {
       dashboardField.setRobotPose(newPose.getX(), newPose.getY(), new Rotation2d());
       SmartDashboard.putData("Field", dashboardField);
     }
+  }
 
-    // System.out.println(String.format("%f %f %f", newPose.getX(), newPose.getY(),
-    // newPose.getZ()));
+  public Matrix<N3, N1> getPoseEstimate() {
+    return estimatedPose;
   }
 }
