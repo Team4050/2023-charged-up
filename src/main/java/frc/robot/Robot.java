@@ -18,7 +18,6 @@ import io.github.oblarg.oblog.Logger;
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
   private FilteredDrivetrainControl test;
-  private int N;
 
   @Override
   public void robotInit() {
@@ -26,7 +25,6 @@ public class Robot extends TimedRobot {
     test = new FilteredDrivetrainControl(robotContainer.imu);
     test.initialize();
     Logger.configureLoggingAndConfig(this, false);
-    N = 0;
   }
 
   @Override

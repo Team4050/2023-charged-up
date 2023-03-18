@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.datalog.DataLog;
@@ -78,7 +80,8 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private InformationSubsystem info =
-      new InformationSubsystem(imu, null, null, null, null, null, camera, null);
+      new InformationSubsystem(
+          imu, null, null, null, null, null, camera, new Pose2d(0, 0, new Rotation2d()));
   private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile);
   private ClawSubsystem claw =
       new ClawSubsystem(
@@ -118,7 +121,8 @@ public class RobotContainer {
         new HoldPosition(
             drivetrain,
             info,
-            new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{13}, {10}, {0}}))));
+            new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{12}, {4}, {0}})),
+            primaryControl));
 
     // TODO: arm command
     arm.setDefaultCommand(new RunCommand(() -> arm.test(), arm));

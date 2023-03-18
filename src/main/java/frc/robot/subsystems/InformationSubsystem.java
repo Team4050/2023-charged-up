@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Geometry;
 import frc.robot.control.FilteredDrivetrainControl;
+import java.util.Optional;
 import org.ejml.simple.SimpleMatrix;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -73,9 +75,6 @@ public class InformationSubsystem extends SubsystemBase {
     filter = new FilteredDrivetrainControl(imu);
     filter.initialize();
 
-    dashboardField = new Field2d();
-    dashboardField.setRobotPose(startingPose);
-
     estimatedPose =
         new Matrix<N3, N1>(
             new SimpleMatrix(
@@ -84,6 +83,21 @@ public class InformationSubsystem extends SubsystemBase {
                   {startingPose.getY()},
                   {startingPose.getRotation().getDegrees()}
                 }));
+
+    Optional<EstimatedRobotPose> p = poseEstimator.update();
+    if (p.isPresent()) {
+      estimatedPose =
+          new Matrix<N3, N1>(
+              new SimpleMatrix(
+                  new double[][] {
+                    {p.get().estimatedPose.getX()},
+                    {p.get().estimatedPose.getY()},
+                    {p.get().estimatedPose.getRotation().getZ()}
+                  }));
+    }
+
+    dashboardField = new Field2d();
+    dashboardField.setRobotPose(startingPose);
   }
 
   public void updatePoseEstimate(double dT) {
@@ -98,9 +112,23 @@ public class InformationSubsystem extends SubsystemBase {
     estimatedPose.set(2, 0, estimatedPose.get(2, 0) + (filter.getStateEstimate().get(2, 0) * dT));
 
     Pose3d newPose = new Pose3d();
-    if (poseEstimator.update().isPresent()) {
-      newPose = poseEstimator.update().get().estimatedPose;
+    Optional<EstimatedRobotPose> p = poseEstimator.update();
+    /* TODO: pose estimator does not take imu angle into account.
+     * Possibly write custom estimator to take imu data?
+     * Removes ambiguity problem
+     */
+    if (p.isPresent()) {
+      try {
+        newPose = poseEstimator.update().get().estimatedPose;
+      } catch (Exception e) {
+        e.printStackTrace();
+        newPose = new Pose3d();
+      }
       dashboardField.setRobotPose(newPose.getX(), newPose.getY(), new Rotation2d());
+      estimatedPose =
+          new Matrix<N3, N1>(
+              new SimpleMatrix(
+                  new double[][] {{newPose.getX()}, {newPose.getY()}, {imu.getAngle()}}));
       SmartDashboard.putData("Field", dashboardField);
     }
   }
