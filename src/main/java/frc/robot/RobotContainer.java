@@ -144,8 +144,6 @@ public class RobotContainer {
 
   /** Called every 20ms(?) */
   public void periodic() {
-    // TODO: Move drivetrain logging to informationSubsystem
     SmartDashboard.putData(pdp);
-    SmartDashboard.putData("ADIS IMU", imu);
   }
 }
