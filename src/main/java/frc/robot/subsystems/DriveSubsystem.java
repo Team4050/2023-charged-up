@@ -142,6 +142,6 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void sendToDashboard() {
-    SmartDashboard.putData(drive);
+    SmartDashboard.putData("Mecanum", drive);
   }
 }
