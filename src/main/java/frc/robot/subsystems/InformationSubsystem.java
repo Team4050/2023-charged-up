@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Geometry;
 import org.photonvision.PhotonCamera;
@@ -20,6 +21,7 @@ public class InformationSubsystem extends SubsystemBase {
   private Pose2d estimatedPose;
 
   public InformationSubsystem(
+      ShuffleboardTab tab,
       ADIS16470_IMU imu,
       Encoder FL,
       Encoder FR,
@@ -29,7 +31,9 @@ public class InformationSubsystem extends SubsystemBase {
       PhotonCamera camera,
       Pose2d startingPose) {
     this.imu = imu;
+    tab.add("ADIS IMU", imu);
     this.camera = camera;
+    tab.add("Limelight", camera);
     encoders = new Encoder[] {FL, FR, RL, RR, Arm};
     AprilTagFieldLayout layout = null;
 

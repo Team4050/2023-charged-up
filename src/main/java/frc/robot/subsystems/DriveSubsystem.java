@@ -4,17 +4,20 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.FloatArrayLogEntry;
 import edu.wpi.first.util.datalog.IntegerArrayLogEntry;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.InformationSubsystem.axis;
 import io.github.oblarg.oblog.annotations.Log;
+import java.util.Map;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -40,11 +43,21 @@ public class DriveSubsystem extends SubsystemBase {
   private final SendableChooser<String> autoControlSwitch = new SendableChooser<>();
   private final String off = "Autocorrection disabled";
   private final String on = "Autocorrection enabled";
+  private ShuffleboardTab dTab;
+  private GenericEntry maxSpeed;
 
-  public DriveSubsystem(InformationSubsystem info, DataLog log) {
+  public DriveSubsystem(InformationSubsystem info, DataLog log, ShuffleboardTab tab) {
     // Set up imu
     // TODO: Should this be moved to the sensor subsys? Then we pass the subsystem in as a parameter
     this.info = info;
+
+    dTab = tab;
+
+    maxSpeed =
+        dTab.add("Max speed", 1)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 1))
+            .getEntry();
 
     // Set up drive motors
     // This might be what is preventing the orchestra from playing
@@ -62,7 +75,13 @@ public class DriveSubsystem extends SubsystemBase {
     imuLogger = new FloatArrayLogEntry(log, "/robot/ADIS16470_IMU");
     autoControlSwitch.setDefaultOption("off", off);
     autoControlSwitch.addOption("on", on);
-    SmartDashboard.putData("Autocorrection", autoControlSwitch);
+    dTab.add("Autocorrection", autoControlSwitch);
+    dTab.add("Mecanum", drive).withWidget(BuiltInWidgets.kMecanumDrive);
+  }
+
+  @Override
+  public void periodic() {
+    drive.setMaxOutput(maxSpeed.getDouble(1.0));
   }
 
   /**
@@ -139,9 +158,5 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public String getName() {
     return name;
-  }
-
-  public void sendToDashboard() {
-    SmartDashboard.putData("Mecanum", drive);
   }
 }

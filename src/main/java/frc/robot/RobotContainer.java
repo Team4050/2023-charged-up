@@ -8,6 +8,8 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -44,6 +46,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
+  private ShuffleboardTab dashboardTab = Shuffleboard.getTab("Custom");
 
   /*
    **************************************************************************************************
@@ -63,8 +66,8 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private InformationSubsystem info =
-      new InformationSubsystem(imu, null, null, null, null, null, camera, null);
-  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile);
+      new InformationSubsystem(dashboardTab, imu, null, null, null, null, null, camera, null);
+  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -124,6 +127,5 @@ public class RobotContainer {
     // TODO: Move drivetrain logging to informationSubsystem
     SmartDashboard.putData(pdp);
     SmartDashboard.putData("ADIS IMU", imu);
-    drivetrain.sendToDashboard();
   }
 }

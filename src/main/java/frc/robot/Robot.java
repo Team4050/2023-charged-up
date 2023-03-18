@@ -16,12 +16,10 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
-  private int N;
 
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
-    N = 0;
     Logger.configureLoggingAndConfig(this, false);
   }
 
