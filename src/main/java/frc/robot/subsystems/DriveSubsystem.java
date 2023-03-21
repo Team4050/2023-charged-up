@@ -47,8 +47,6 @@ public class DriveSubsystem extends SubsystemBase {
   private GenericEntry maxSpeed;
 
   public DriveSubsystem(InformationSubsystem info, DataLog log, ShuffleboardTab tab) {
-    // Set up imu
-    // TODO: Should this be moved to the sensor subsys? Then we pass the subsystem in as a parameter
     this.info = info;
 
     dTab = tab;
