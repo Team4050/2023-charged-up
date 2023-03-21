@@ -24,6 +24,6 @@ public class ArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    arm.set(controller.getRightX());
+    arm.setpoint(controller.getRightX());
   }
 }
