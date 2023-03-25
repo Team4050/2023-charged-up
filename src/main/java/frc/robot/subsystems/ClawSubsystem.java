@@ -1,17 +1,25 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Actuators;
+import frc.robot.Constants.Pneumatics;
 
 public class ClawSubsystem extends SubsystemBase {
   private DoubleSolenoid piston;
   private Value target;
+  private final TalonSRX wristMotor = new TalonSRX(Actuators.Wrist);
 
-  public ClawSubsystem(
-      int module, PneumaticsModuleType moduleType, int fwdChannel, int revChannel) {
-    piston = new DoubleSolenoid(module, moduleType, fwdChannel, revChannel);
+  public ClawSubsystem() {
+    piston =
+        new DoubleSolenoid(
+            Pneumatics.PCM,
+            PneumaticsModuleType.CTREPCM,
+            Pneumatics.ClawFwdChannel,
+            Pneumatics.ClawRevChannel);
   }
 
   /**

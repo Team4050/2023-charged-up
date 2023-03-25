@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,8 +22,8 @@ public class ArmSubsystem extends SubsystemBase {
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 
   /* Sensors */
-  private final Encoder pivotGearboxEncoder = new Encoder(0, 0);
-  private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
+  private final Encoder pivotGearboxEncoder = null; // = new Encoder(0, 0);
+  // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
   // Profiled PID controller. Uses a simple trapezoid contraint as per Dan's request.
@@ -37,7 +36,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingly
-    pivotGearboxEncoder.setDistancePerPulse(1.0);
+    // pivotGearboxEncoder.setDistancePerPulse(1.0);
   }
 
   @Override

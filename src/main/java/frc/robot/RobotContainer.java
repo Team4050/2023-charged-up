@@ -6,16 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Pneumatics;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
@@ -72,12 +69,7 @@ public class RobotContainer {
   private InformationSubsystem info =
       new InformationSubsystem(dashboardTab, imu, null, null, null, null, null, camera, null);
   private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
-  private ClawSubsystem claw =
-      new ClawSubsystem(
-          Pneumatics.PCM,
-          PneumaticsModuleType.CTREPCM,
-          Pneumatics.ClawFwdChannel,
-          Pneumatics.ClawRevChannel);
+  private ClawSubsystem claw = new ClawSubsystem();
   private ArmSubsystem arm = new ArmSubsystem();
 
   /*
@@ -140,6 +132,6 @@ public class RobotContainer {
 
   /** Called every 20ms(?) */
   public void periodic() {
-    SmartDashboard.putData(pdp);
+    // SmartDashboard.putData(pdp);
   }
 }

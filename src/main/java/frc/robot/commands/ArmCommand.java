@@ -25,6 +25,13 @@ public class ArmCommand extends CommandBase {
   @Override
   public void execute() {
     // arm.setpoint(controller.getRightX());
-    arm.set(controller.getRightX());
+    if (Math.abs(controller.getRightY()) > 0.1) {
+      arm.set(controller.getRightY());
+    }
+  }
+
+  @Override
+  public Set<Subsystem> getRequirements() {
+    return requirements;
   }
 }
