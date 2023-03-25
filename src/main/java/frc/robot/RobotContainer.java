@@ -25,7 +25,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
-import io.github.oblarg.oblog.annotations.Log;
 import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
 
@@ -61,12 +60,9 @@ public class RobotContainer {
    * Camera & Sensors
    **************************************************************************************************
    */
-  @Log.CameraStream() private PhotonCamera camera = new PhotonCamera("photonvision");
-
-  @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
+  private PhotonCamera camera = new PhotonCamera("photonvision");
   private ADIS16470_IMU imu = new ADIS16470_IMU();
-
-  @Log.PowerDistribution() private PowerDistribution pdp = new PowerDistribution();
+  private PowerDistribution pdp = new PowerDistribution();
 
   /*
    **************************************************************************************************

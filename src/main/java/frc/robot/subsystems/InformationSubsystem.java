@@ -36,8 +36,8 @@ public class InformationSubsystem extends SubsystemBase {
       Pose2d startingPose) {
     this.imu = imu;
     tab.add("ADIS IMU", imu);
-    this.camera = camera;
-    tab.add("Limelight", camera);
+    // this.camera = camera;
+    // tab.add("Limelight", camera);
     encoders = new Encoder[] {FL, FR, RL, RR, Arm};
     AprilTagFieldLayout layout = null;
 
