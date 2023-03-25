@@ -14,11 +14,13 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class InformationSubsystem extends SubsystemBase {
+  /* Sensors */
   private ADIS16470_IMU imu;
   private Encoder[] encoders;
   private PhotonCamera camera;
   private Timer timer;
 
+  /* Filters & Estinators */
   private PhotonPoseEstimator poseEstimator;
   private Pose2d estimatedPose;
 

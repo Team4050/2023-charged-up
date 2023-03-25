@@ -21,8 +21,6 @@ public final class Constants {
     public static final int ArmGrabPosition = 0;
     public static final int ArmLevelOnePosition = 0;
     public static final int ArmLevelTwoPosition = 0;
-    //
-
     public static final int ArmRestPosition = 0;
   }
 

@@ -35,16 +35,16 @@ public class DriveSubsystem extends SubsystemBase {
   private final FloatArrayLogEntry imuLogger;
   private final String name = "Drivetrain";
 
-  /* Misc */
-  public final Orchestra orchestra = new Orchestra();
-  private final InformationSubsystem info;
-
-  private final PIDController spinController = new PIDController(0.125, 0.1, 0);
   private final SendableChooser<String> autoControlSwitch = new SendableChooser<>();
   private final String off = "Autocorrection disabled";
   private final String on = "Autocorrection enabled";
   private ShuffleboardTab dTab;
   private GenericEntry maxSpeed;
+
+  /* Misc */
+  public final Orchestra orchestra = new Orchestra();
+  private final InformationSubsystem info;
+  private final PIDController spinController = new PIDController(0.125, 0.1, 0);
 
   public DriveSubsystem(InformationSubsystem info, DataLog log, ShuffleboardTab tab) {
     this.info = info;

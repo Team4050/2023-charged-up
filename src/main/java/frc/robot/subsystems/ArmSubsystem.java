@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
+  /* Pistons & Motors */
   private final DoubleSolenoid clawAlignmentPiston =
       new DoubleSolenoid(
           Constants.Pneumatics.PCM,
@@ -20,14 +21,19 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final TalonSRX pivotMotor = new TalonSRX(Constants.Actuators.Arm);
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
-  private final Encoder pivotGearboxEncoder = new Encoder(0, 0);
 
+  /* Sensors */
+  private final Encoder pivotGearboxEncoder = new Encoder(0, 0);
   private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
+  /* Control */
   // Profiled PID controller. Uses a simple trapezoid contraint as per Dan's request.
   private Constraints constraints = new Constraints(0, 0);
   private ProfiledPIDController PID = new ProfiledPIDController(0.1, 0, 0, constraints);
   private double setpoint = 0;
+
+  /* Misc */
+  private final String name = "Arm";
 
   public ArmSubsystem() {
     // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingly
@@ -40,9 +46,9 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {}
 
-  /** Test method, please ignore */
-  public void test() {
-    pivotMotor.set(TalonSRXControlMode.MotionMagic, 0);
+  @Override
+  public String getName() {
+    return name;
   }
 
   /**
