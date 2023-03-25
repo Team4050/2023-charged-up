@@ -38,6 +38,8 @@ public final class Constants {
 
   public static final class Actuators {
     public static final int Arm = 6;
+    public static final int ArmLimitA = 0;
+    public static final int ArmLimitB = 0;
     public static final int Wrist = 7;
   }
 

@@ -4,7 +4,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,7 +15,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class InformationSubsystem extends SubsystemBase {
   /* Sensors */
   private ADIS16470_IMU imu;
-  private Encoder[] encoders;
   private PhotonCamera camera;
   private Timer timer;
 
@@ -25,19 +23,11 @@ public class InformationSubsystem extends SubsystemBase {
   private Pose2d estimatedPose;
 
   public InformationSubsystem(
-      ShuffleboardTab tab,
-      ADIS16470_IMU imu,
-      Encoder FL,
-      Encoder FR,
-      Encoder RL,
-      Encoder RR,
-      PhotonCamera camera,
-      Pose2d startingPose) {
+      ShuffleboardTab tab, ADIS16470_IMU imu, PhotonCamera camera, Pose2d startingPose) {
     this.imu = imu;
     tab.add("ADIS IMU", imu);
     // this.camera = camera;
     // tab.add("Limelight", camera);
-    encoders = new Encoder[] {FL, FR, RL, RR};
     AprilTagFieldLayout layout = null;
 
     // Setup field layout from resource file
@@ -117,17 +107,6 @@ public class InformationSubsystem extends SubsystemBase {
     private motor(int v) {
       this.value = v;
     }
-  }
-
-  /**
-   * Gets readngs from the motor encoders. Since the encoders still aren't on the robot, their
-   * accuracy is unknown.
-   *
-   * @param motor
-   * @return
-   */
-  public int getReading(motor motor) {
-    return encoders[motor.value].get();
   }
 
   /**

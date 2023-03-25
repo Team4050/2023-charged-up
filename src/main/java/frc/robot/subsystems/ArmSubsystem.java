@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,14 +22,14 @@ public class ArmSubsystem extends SubsystemBase {
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 
   /* Sensors */
-  private final Encoder pivotGearboxEncoder = null; // = new Encoder(0, 0);
   // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
   // Profiled PID controller. Uses a simple trapezoid contraint as per Dan's request.
-  private Constraints constraints = new Constraints(0, 0);
-  private ProfiledPIDController PID = new ProfiledPIDController(0.1, 0, 0, constraints);
-  private double setpoint = 0;
+  private Constraints constraints = new Constraints(0.2, 0.5);
+  // TODO: transition to using built-in PID loop? 1ms resolution, better control.
+  private ProfiledPIDController PID = new ProfiledPIDController(0.2, 0.1, 0.1, constraints);
+  private double setpoint = pivotMotor.getSelectedSensorPosition();
 
   /* Misc */
   private final String name = "Arm";
@@ -48,7 +47,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    System.out.println(String.format("%f", pivotMotor.getSelectedSensorPosition()));
+  }
 
   @Override
   public void simulationPeriodic() {}
@@ -80,11 +81,21 @@ public class ArmSubsystem extends SubsystemBase {
    * @param encodedSetpoint The setpoint which the PID loop will try and reach. As of yet there are
    *     no safety limits!
    */
+  // TODO: Add setpoint safety limits to this method using ArmLimit A & B in Constants
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
   }
 
-  public double supplyDouble() {
-    return pivotMotor.getSelectedSensorPosition();
+  /*
+   *
+   */
+  public void configurePID() {
+    pivotMotor.configFactoryDefault();
+    pivotMotor.configClosedloopRamp(0.1);
+    pivotMotor.config_kP(0, 0.2);
+    pivotMotor.config_kI(0, 0.1);
+    pivotMotor.config_kD(0, 0.1);
+    // configure feedforward each time a new setpoint is called for
+    pivotMotor.configAllowableClosedloopError(0, 64);
   }
 }

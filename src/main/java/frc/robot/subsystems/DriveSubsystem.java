@@ -6,8 +6,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.FloatArrayLogEntry;
-import edu.wpi.first.util.datalog.IntegerArrayLogEntry;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -16,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.InformationSubsystem.axis;
-import io.github.oblarg.oblog.annotations.Log;
 import java.util.Map;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -27,12 +24,9 @@ public class DriveSubsystem extends SubsystemBase {
   private final WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
   private final WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
 
-  @Log.MecanumDrive(name = "Drive")
   private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
   /* Loggers */
-  private final IntegerArrayLogEntry encoderLogger;
-  private final FloatArrayLogEntry imuLogger;
   private final String name = "Drivetrain";
 
   private final SendableChooser<String> autoControlSwitch = new SendableChooser<>();
@@ -69,8 +63,6 @@ public class DriveSubsystem extends SubsystemBase {
     orchestra.addInstrument(RR);
 
     // Set up loggers
-    encoderLogger = new IntegerArrayLogEntry(log, "/robot/" + name);
-    imuLogger = new FloatArrayLogEntry(log, "/robot/ADIS16470_IMU");
     autoControlSwitch.setDefaultOption("off", off);
     autoControlSwitch.addOption("on", on);
     dTab.add("Autocorrection", autoControlSwitch);
@@ -151,6 +143,27 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput);
+  }
+
+  /**
+   * Gets a specified integrated motor encoder value
+   *
+   * @param motor The motor number (0-4 for drivetrain)
+   * @return
+   */
+  public double getSensorValue(int motor) {
+    switch (motor) {
+      case 0:
+        return FL.getSelectedSensorPosition();
+      case 1:
+        return FR.getSelectedSensorPosition();
+      case 2:
+        return RL.getSelectedSensorPosition();
+      case 3:
+        return RR.getSelectedSensorPosition();
+      default:
+        return 0;
+    }
   }
 
   @Override
