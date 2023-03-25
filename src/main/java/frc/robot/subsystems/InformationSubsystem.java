@@ -134,6 +134,12 @@ public class InformationSubsystem extends SubsystemBase {
                   new double[][] {{newPose.getX()}, {newPose.getY()}, {imu.getAngle()}}));
       SmartDashboard.putData("Field", dashboardField);
     }
+    /*
+     * Way to compare photonvision poses with imu data?
+     * difference between photonvision positions measured and compared with integrated accel (velocity) data,
+     * Kalman filter with vision & accelerometer?
+     * xyz pos, xyz vel, avg distance to tags
+     */
   }
 
   public Matrix<N3, N1> getPoseEstimate() {

@@ -45,10 +45,6 @@ public class HoldPosition extends CommandBase {
   }
 
   public void execute() {
-    /*drive.drive(
-    X.calculate(info.getPoseEstimate().get(0, 0), targetPose.get(0, 0)),
-    Y.calculate(info.getPoseEstimate().get(1, 0), targetPose.get(1, 0)),
-    Z.calculate(info.getPoseEstimate().get(2, 0), targetPose.get(2, 0)));*/
     double[] array =
         new double[] {
           X.calculate(info.getPoseEstimate().get(0, 0), targetPose.get(0, 0)),
@@ -62,11 +58,6 @@ public class HoldPosition extends CommandBase {
 
     drive.driveSmart(
         primaryControl.getLeftY(), -primaryControl.getLeftX(), -primaryControl.getRightX());
-
-    /*System.out.println(
-        String.format(
-            "%f, %f", info.getPoseEstimate().get(0, 0), info.getPoseEstimate().get(1, 0)));
-    System.out.println(String.format("%f, %f, %f", array[0], array[1], array[2]));*/
   }
 
   @Override
