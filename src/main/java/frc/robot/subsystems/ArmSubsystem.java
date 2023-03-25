@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -34,9 +35,16 @@ public class ArmSubsystem extends SubsystemBase {
   /* Misc */
   private final String name = "Arm";
 
-  public ArmSubsystem() {
+  public ArmSubsystem(ShuffleboardTab tab) {
     // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingly
     // pivotGearboxEncoder.setDistancePerPulse(1.0);
+
+    // tab.add(pivotGearboxEncoder);
+    tab.addDouble(
+        "Arm Encoder",
+        () -> {
+          return pivotMotor.getSelectedSensorPosition();
+        });
   }
 
   @Override
@@ -62,7 +70,8 @@ public class ArmSubsystem extends SubsystemBase {
   /** Calculates pid output based on the gearbox encoder. */
   public void calculatePID() {
     pivotMotor.set(
-        TalonSRXControlMode.Velocity, PID.calculate(pivotGearboxEncoder.get(), setpoint));
+        TalonSRXControlMode.Velocity,
+        PID.calculate(pivotMotor.getSelectedSensorPosition(), setpoint));
   }
 
   /**
@@ -73,5 +82,9 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
+  }
+
+  public double supplyDouble() {
+    return pivotMotor.getSelectedSensorPosition();
   }
 }

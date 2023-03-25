@@ -31,14 +31,13 @@ public class InformationSubsystem extends SubsystemBase {
       Encoder FR,
       Encoder RL,
       Encoder RR,
-      Encoder Arm,
       PhotonCamera camera,
       Pose2d startingPose) {
     this.imu = imu;
     tab.add("ADIS IMU", imu);
     // this.camera = camera;
     // tab.add("Limelight", camera);
-    encoders = new Encoder[] {FL, FR, RL, RR, Arm};
+    encoders = new Encoder[] {FL, FR, RL, RR};
     AprilTagFieldLayout layout = null;
 
     // Setup field layout from resource file
@@ -111,8 +110,7 @@ public class InformationSubsystem extends SubsystemBase {
     FL(0),
     FR(1),
     RL(2),
-    RR(3),
-    ArmPivot(4);
+    RR(3);
 
     private int value;
 

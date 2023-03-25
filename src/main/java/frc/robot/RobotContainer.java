@@ -67,10 +67,10 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private InformationSubsystem info =
-      new InformationSubsystem(dashboardTab, imu, null, null, null, null, null, camera, null);
+      new InformationSubsystem(dashboardTab, imu, null, null, null, null, camera, null);
   private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
-  private ClawSubsystem claw = new ClawSubsystem();
-  private ArmSubsystem arm = new ArmSubsystem();
+  private ClawSubsystem claw = new ClawSubsystem(dashboardTab);
+  private ArmSubsystem arm = new ArmSubsystem(dashboardTab);
 
   /*
    **************************************************************************************************
