@@ -16,6 +16,12 @@ public final class Constants {
     public static final int XboxSecondary = 1;
     public static final float DeadzoneMin = 0.05f;
     public static final float RotationDamping = 0.5f;
+
+    // TODO: Values to be determined
+    public static final int ArmGrabPosition = 0;
+    public static final int ArmLevelOnePosition = 0;
+    public static final int ArmLevelTwoPosition = 0;
+    public static final int ArmRestPosition = 0;
   }
 
   public static final class Geometry {
@@ -31,7 +37,7 @@ public final class Constants {
   }
 
   public static final class Actuators {
-    public static final int Arm = 0;
+    public static final int Arm = 6;
   }
 
   public static final class Sensors {

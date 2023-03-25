@@ -11,6 +11,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,10 +26,13 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class InformationSubsystem extends SubsystemBase {
+  /* Sensors */
   private ADIS16470_IMU imu;
   private Encoder[] encoders;
   private PhotonCamera camera;
+  private Timer timer;
 
+  /* Filters & Estinators */
   private PhotonPoseEstimator poseEstimator;
   private Matrix<N3, N1> estimatedPose;
   private Matrix<N3, N1> setpoint;
@@ -41,6 +46,7 @@ public class InformationSubsystem extends SubsystemBase {
   private PIDController Z;
 
   public InformationSubsystem(
+      ShuffleboardTab tab,
       ADIS16470_IMU imu,
       Encoder FL,
       Encoder FR,
@@ -50,6 +56,9 @@ public class InformationSubsystem extends SubsystemBase {
       PhotonCamera camera,
       Pose2d startingPose) {
     this.imu = imu;
+    tab.add("ADIS IMU", imu);
+    this.camera = camera;
+    tab.add("Limelight", camera);
     encoders = new Encoder[] {FL, FR, RL, RR, Arm};
     this.camera = new PhotonCamera("photonvision");
     camera = this.camera;
@@ -95,6 +104,9 @@ public class InformationSubsystem extends SubsystemBase {
                     {p.get().estimatedPose.getRotation().getZ()}
                   }));
     }
+
+    timer.reset();
+    timer.start();
 
     dashboardField = new Field2d();
     dashboardField.setRobotPose(startingPose);
@@ -211,5 +223,19 @@ public class InformationSubsystem extends SubsystemBase {
    */
   public int getReading(motor motor) {
     return encoders[motor.value].get();
+  }
+
+  /**
+   * For autonomous: drives in the supplied direction for the supplied amount of time
+   *
+   * @param drive The drivetrain subsystem to use.
+   * @param direction The direction to drive in.
+   * @param timeout If the command takes longer than the supplied value, the command stops.
+   */
+  public void driveUntil(DriveSubsystem drive, Pose2d direction, int timeout) {
+    double since = timer.get();
+    while (timer.get() < since + timeout) {
+      drive.driveSmart(direction.getX(), direction.getY(), 0);
+    }
   }
 }

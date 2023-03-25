@@ -16,11 +16,16 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Pneumatics;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.commands.HoldPosition;
@@ -48,12 +53,18 @@ public class RobotContainer {
   private Trigger clawTrigger = secondaryControl.b();
   private Trigger danceTrigger = primaryControl.start();
 
+  private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
+  private final String noCmd = "no";
+  private final String simpleCmd = "simple";
+  private final String danceCmd = "crab";
+
   /*
    **************************************************************************************************
    * Logging
    **************************************************************************************************
    */
   private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
+  private ShuffleboardTab dashboardTab = Shuffleboard.getTab("Custom");
 
   /*
    **************************************************************************************************
@@ -81,8 +92,16 @@ public class RobotContainer {
    */
   private InformationSubsystem info =
       new InformationSubsystem(
-          imu, null, null, null, null, null, camera, new Pose2d(0, 0, new Rotation2d()));
-  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile);
+          dashboardTab,
+          imu,
+          null,
+          null,
+          null,
+          null,
+          null,
+          camera,
+          new Pose2d(0, 0, new Rotation2d()));
+  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
   private ClawSubsystem claw =
       new ClawSubsystem(
           Pneumatics.PCM,
@@ -97,6 +116,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, claw);
+  private ArmCommand armCmd = new ArmCommand(arm, secondaryControl);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
   /*
@@ -105,13 +125,17 @@ public class RobotContainer {
    **************************************************************************************************
    */
   public RobotContainer() {
+    autonomousSwitch.setDefaultOption("No auto", noCmd);
+    autonomousSwitch.addOption("Exit community", simpleCmd);
+    autonomousSwitch.addOption("Dance", danceCmd);
+
     configureBindings();
 
     // Set the default drive command using input from the primary controller
     drivetrain.setDefaultCommand(
         new RunCommand(
             () ->
-                drivetrain.driveFieldRelativeSmart(
+                drivetrain.driveSmart(
                     primaryControl.getLeftY(),
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
@@ -124,9 +148,7 @@ public class RobotContainer {
             new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{12}, {4}, {0}})),
             primaryControl));
 
-    // TODO: arm command
-    arm.setDefaultCommand(new RunCommand(() -> arm.test(), arm));
-
+    arm.setDefaultCommand(armCmd);
     claw.setDefaultCommand(clawCmd);
   }
 
@@ -141,7 +163,16 @@ public class RobotContainer {
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
-    return null;
+    switch (autonomousSwitch.getSelected()) {
+      case noCmd:
+        return null;
+      case simpleCmd:
+        return new AutonomousCommand(drivetrain, arm, claw, info);
+      case danceCmd:
+        return new DanceCommand(drivetrain);
+      default:
+        return null;
+    }
   }
 
   public void manualLogging() {
@@ -209,6 +240,5 @@ public class RobotContainer {
     info.updatePoseEstimate(dT);
     SmartDashboard.putData(pdp);
     SmartDashboard.putData(imu);
-    drivetrain.sendToDashboard();
   }
 }
