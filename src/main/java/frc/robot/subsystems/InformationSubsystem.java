@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,18 +31,11 @@ public class InformationSubsystem extends SubsystemBase {
   private PhotonCamera camera;
   private Timer timer;
 
-  /* Filters & Estinators */
+  /* Filters & Estimators */
   private PhotonPoseEstimator poseEstimator;
   private Matrix<N3, N1> estimatedPose;
-  private Matrix<N3, N1> setpoint;
-  private Matrix<N3, N1> setpointControlVector;
-
   private FilteredDrivetrainControl filter;
   private Field2d dashboardField;
-
-  private PIDController X;
-  private PIDController Y;
-  private PIDController Z;
 
   public InformationSubsystem(
       ShuffleboardTab tab,
@@ -81,7 +73,7 @@ public class InformationSubsystem extends SubsystemBase {
         new PhotonPoseEstimator(
             layout, PoseStrategy.LOWEST_AMBIGUITY, this.camera, Geometry.RobotToCamera);
 
-    filter = new FilteredDrivetrainControl(imu);
+    filter = new FilteredDrivetrainControl();
     filter.initialize();
 
     estimatedPose =
@@ -115,7 +107,6 @@ public class InformationSubsystem extends SubsystemBase {
   public void updatePoseEstimate(double dT) {
     double[][] columnVec = {{imu.getAccelX() + 0.4}, {imu.getAccelY() + 0.49}, {imu.getRate()}};
     filter.execute(dT, columnVec);
-    setpointControlVector = filter.getControlVector();
 
     estimatedPose.set(0, 0, estimatedPose.get(0, 0) + (filter.getStateEstimate().get(0, 0) * dT));
 
@@ -147,12 +138,6 @@ public class InformationSubsystem extends SubsystemBase {
 
   public Matrix<N3, N1> getPoseEstimate() {
     return estimatedPose;
-  }
-
-  public void ResetPID() {
-    X.reset();
-    Y.reset();
-    Z.reset();
   }
 
   public enum axis {
