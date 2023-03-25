@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.datalog.DataLog;
@@ -16,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.InformationSubsystem.axis;
-import io.github.oblarg.oblog.annotations.Log;
 import java.util.Map;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -27,7 +27,6 @@ public class DriveSubsystem extends SubsystemBase {
   private final WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
   private final WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
 
-  @Log.MecanumDrive(name = "Drive")
   public final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
   /* Loggers */
@@ -43,6 +42,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   /* Misc */
   public final Orchestra orchestra = new Orchestra();
+  private final MecanumDrivePoseEstimator poseEstimator =
+      new MecanumDrivePoseEstimator(null, null, null, null);
   private final InformationSubsystem info;
   private final PIDController spinController = new PIDController(0.125, 0.1, 0);
 
