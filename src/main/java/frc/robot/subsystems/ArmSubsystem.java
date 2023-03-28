@@ -35,10 +35,9 @@ public class ArmSubsystem extends SubsystemBase {
   private final String name = "Arm";
 
   public ArmSubsystem(ShuffleboardTab tab) {
-    // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingly
-    // pivotGearboxEncoder.setDistancePerPulse(1.0);
+    // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingl
+    configurePID();
 
-    // tab.add(pivotGearboxEncoder);
     tab.addDouble(
         "Arm Encoder",
         () -> {
@@ -48,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(String.format("%f", pivotMotor.getSelectedSensorPosition()));
+    // System.out.println(String.format("%f", pivotMotor.getSelectedSensorPosition(0)));
   }
 
   @Override
@@ -65,6 +64,7 @@ public class ArmSubsystem extends SubsystemBase {
    * @param speed The motor speed.
    */
   public void set(double speed) {
+    // TODO: fix the encoder situation and put this on Position control!
     pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
@@ -97,5 +97,7 @@ public class ArmSubsystem extends SubsystemBase {
     pivotMotor.config_kD(0, 0.1);
     // configure feedforward each time a new setpoint is called for
     pivotMotor.configAllowableClosedloopError(0, 64);
+    pivotMotor.configClosedLoopPeriod(0, 1);
+    pivotMotor.configClosedLoopPeakOutput(0, 0.4);
   }
 }

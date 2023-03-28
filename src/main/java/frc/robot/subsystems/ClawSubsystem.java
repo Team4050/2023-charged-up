@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -13,6 +14,7 @@ public class ClawSubsystem extends SubsystemBase {
   private DoubleSolenoid piston;
   private Value target;
   private final TalonSRX wristMotor = new TalonSRX(Actuators.Wrist);
+  private static final double wristLimit = 0.75;
 
   public ClawSubsystem(ShuffleboardTab tab) {
     piston =
@@ -37,5 +39,9 @@ public class ClawSubsystem extends SubsystemBase {
   /** Powers the piston, moving it to the target state */
   public void activate() {
     piston.set(target);
+  }
+
+  public void setWrist(int speed) {
+    wristMotor.set(ControlMode.PercentOutput, speed * wristLimit);
   }
 }

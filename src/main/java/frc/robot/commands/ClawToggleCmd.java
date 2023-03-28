@@ -5,18 +5,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ClawSubsystem;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ClawToggleCmd extends CommandBase {
+  private HazardXbox controller;
   private Trigger clawTrigger;
   public boolean toggle = false;
   private ClawSubsystem claw;
   private Set<Subsystem> requirements;
+  private int estimatedBias = 0;
 
-  public ClawToggleCmd(Trigger clawTrigger, ClawSubsystem claw) {
+  public ClawToggleCmd(Trigger clawTrigger, HazardXbox controller, ClawSubsystem claw) {
     this.clawTrigger = clawTrigger;
+    this.controller = controller;
     this.claw = claw;
     requirements = new HashSet<Subsystem>();
     requirements.add(claw);
@@ -45,6 +49,12 @@ public class ClawToggleCmd extends CommandBase {
     }
     claw.setTargetState(Value.kReverse);
     claw.activate();
+
+    int wristSpeed = (int) controller.getLeftX();
+    estimatedBias += wristSpeed;
+    System.out.println(estimatedBias);
+    // if (Math.abs(estimatedBias) > 30) System.out.println("AAAAAAAAAAAAAAA");
+    claw.setWrist(wristSpeed);
   }
 
   /** Toggles the claw state, link this to a trigger such as a controller button */

@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -76,7 +78,7 @@ public class RobotContainer {
    * Commands
    **************************************************************************************************
    */
-  private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, claw);
+  private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, secondaryControl, claw);
   private ArmCommand armCmd = new ArmCommand(arm, secondaryControl);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
@@ -86,6 +88,11 @@ public class RobotContainer {
    **************************************************************************************************
    */
   public RobotContainer() {
+    Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+    compressor.disable();
+    System.out.println(compressor.getPressureSwitchValue());
+    compressor.close();
+
     autonomousSwitch.setDefaultOption("No auto", noCmd);
     autonomousSwitch.addOption("Exit community", simpleCmd);
     autonomousSwitch.addOption("Dance", danceCmd);
