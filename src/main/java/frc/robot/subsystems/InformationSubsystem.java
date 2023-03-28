@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
@@ -33,6 +35,7 @@ public class InformationSubsystem extends SubsystemBase {
 
   /* Filters & Estimators */
   private PhotonPoseEstimator poseEstimator;
+  private MecanumDrivePoseEstimator drivetrainPoseEstimator;
   private Matrix<N3, N1> estimatedPose;
   private FilteredDrivetrainControl filter;
   private Field2d dashboardField;
@@ -104,7 +107,7 @@ public class InformationSubsystem extends SubsystemBase {
     dashboardField.setRobotPose(startingPose);
   }
 
-  public void updatePoseEstimate(double dT) {
+  public void updatePoseEstimate(double dT, double[] wheelPositions) {
     double[][] columnVec = {{imu.getAccelX() + 0.4}, {imu.getAccelY() + 0.49}, {imu.getRate()}};
     filter.execute(dT, columnVec);
 
@@ -133,7 +136,15 @@ public class InformationSubsystem extends SubsystemBase {
               new SimpleMatrix(
                   new double[][] {{newPose.getX()}, {newPose.getY()}, {imu.getAngle()}}));
       SmartDashboard.putData("Field", dashboardField);
+
+      drivetrainPoseEstimator.addVisionMeasurement(newPose.toPose2d(), dT);
     }
+
+    drivetrainPoseEstimator.update(
+        new Rotation2d(imu.getAngle()),
+        new MecanumDriveWheelPositions(
+            wheelPositions[0], wheelPositions[1], wheelPositions[2], wheelPositions[3]));
+
     /*
      * Way to compare photonvision poses with imu data?
      * difference between photonvision positions measured and compared with integrated accel (velocity) data,

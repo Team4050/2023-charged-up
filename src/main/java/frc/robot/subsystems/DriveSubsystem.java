@@ -3,12 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
-import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.FloatArrayLogEntry;
@@ -46,7 +41,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   /* Misc */
   public final Orchestra orchestra = new Orchestra();
-  private final MecanumDrivePoseEstimator poseEstimator;
   private final InformationSubsystem info;
   private final PIDController spinController = new PIDController(0.125, 0.1, 0);
 
@@ -79,14 +73,6 @@ public class DriveSubsystem extends SubsystemBase {
     autoControlSwitch.addOption("on", on);
     dTab.add("Autocorrection", autoControlSwitch);
     dTab.add("Mecanum", drive).withWidget(BuiltInWidgets.kMecanumDrive);
-
-    poseEstimator =
-        new MecanumDrivePoseEstimator(
-            new MecanumDriveKinematics(
-                new Translation2d(), new Translation2d(), new Translation2d(), new Translation2d()),
-            Rotation2d.fromDegrees(info.getData(axis.ZRot)),
-            new MecanumDriveWheelPositions(0, 0, 0, 0),
-            new Pose2d(new Translation2d(), new Rotation2d()));
   }
 
   @Override
@@ -163,6 +149,15 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput);
+  }
+
+  public double[] getWheelPositions() {
+    return new double[] {
+      FL.getSelectedSensorPosition(),
+      FR.getSelectedSensorPosition(),
+      RL.getSelectedSensorPosition(),
+      RR.getSelectedSensorPosition()
+    };
   }
 
   @Override

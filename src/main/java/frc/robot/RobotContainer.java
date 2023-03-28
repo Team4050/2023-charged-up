@@ -237,7 +237,7 @@ public class RobotContainer {
 
   /** Called every 20ms(?) */
   public void periodic(double dT) {
-    info.updatePoseEstimate(dT);
+    info.updatePoseEstimate(dT, drivetrain.getWheelPositions());
     SmartDashboard.putData(pdp);
     SmartDashboard.putData(imu);
   }
