@@ -47,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // System.out.println(String.format("%f", pivotMotor.getSelectedSensorPosition(0)));
+    System.out.println(String.format("%f", pivotMotor.getSelectedSensorPosition(0)));
   }
 
   @Override
