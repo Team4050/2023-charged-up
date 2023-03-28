@@ -24,7 +24,7 @@ public class ArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    arm.setpoint(controller.getRightY() * 50);
+    arm.set(controller.getRightY());
 
     /*if (Math.abs(controller.getRightY()) > 0.1) {
       arm.set(controller.getRightY());

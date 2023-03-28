@@ -15,6 +15,7 @@ public class ClawSubsystem extends SubsystemBase {
   private Value target;
   private final TalonSRX wristMotor = new TalonSRX(Actuators.Wrist);
   private static final double wristLimit = 0.75;
+  private int estimatedBias = 0;
 
   public ClawSubsystem(ShuffleboardTab tab) {
     piston =
@@ -43,5 +44,6 @@ public class ClawSubsystem extends SubsystemBase {
 
   public void setWrist(int speed) {
     wristMotor.set(ControlMode.PercentOutput, speed * wristLimit);
+    estimatedBias += speed;
   }
 }

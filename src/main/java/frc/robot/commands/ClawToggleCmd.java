@@ -69,11 +69,7 @@ public class ClawToggleCmd extends CommandBase {
     claw.setTargetState(Value.kReverse);
     claw.activate();
 
-    int wristSpeed = (int) controller.getLeftX();
-    estimatedBias += wristSpeed;
-    System.out.println(estimatedBias);
-    // if (Math.abs(estimatedBias) > 30) System.out.println("AAAAAAAAAAAAAAA");
-    claw.setWrist(wristSpeed);
+    claw.setWrist((int) controller.getLeftX());
   }
 
   /** Toggles the claw state, link this to a trigger such as a controller button */
