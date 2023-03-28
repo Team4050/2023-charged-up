@@ -39,6 +39,8 @@ public class RobotContainer {
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
   private Trigger clawTrigger = secondaryControl.b();
+  private Trigger clawHoldTrigger = secondaryControl.leftTrigger();
+  private Trigger clawFLipTrigger = secondaryControl.a();
   private Trigger danceTrigger = primaryControl.start();
 
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
@@ -78,7 +80,8 @@ public class RobotContainer {
    * Commands
    **************************************************************************************************
    */
-  private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, secondaryControl, claw);
+  private ClawToggleCmd clawCmd =
+      new ClawToggleCmd(clawTrigger, clawHoldTrigger, clawFLipTrigger, secondaryControl, claw);
   private ArmCommand armCmd = new ArmCommand(arm, secondaryControl);
   private DanceCommand dance = new DanceCommand(drivetrain);
 

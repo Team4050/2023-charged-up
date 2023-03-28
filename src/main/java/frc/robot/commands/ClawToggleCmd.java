@@ -13,13 +13,20 @@ import java.util.Set;
 public class ClawToggleCmd extends CommandBase {
   private HazardXbox controller;
   private Trigger clawTrigger;
+  private Trigger clawHoldTrigger;
   public boolean toggle = false;
   private ClawSubsystem claw;
   private Set<Subsystem> requirements;
   private int estimatedBias = 0;
 
-  public ClawToggleCmd(Trigger clawTrigger, HazardXbox controller, ClawSubsystem claw) {
+  public ClawToggleCmd(
+      Trigger clawTrigger,
+      Trigger clawHoldTrigger,
+      Trigger clawFlipTrigger,
+      HazardXbox controller,
+      ClawSubsystem claw) {
     this.clawTrigger = clawTrigger;
+    this.clawHoldTrigger = clawHoldTrigger;
     this.controller = controller;
     this.claw = claw;
     requirements = new HashSet<Subsystem>();
@@ -37,6 +44,18 @@ public class ClawToggleCmd extends CommandBase {
         new InstantCommand(
             () -> {
               toggle();
+            }));
+
+    clawHoldTrigger.whileTrue(
+        new InstantCommand(
+            () -> {
+              toggle = true;
+            }));
+
+    clawHoldTrigger.onFalse(
+        new InstantCommand(
+            () -> {
+              toggle = false;
             }));
   }
 
