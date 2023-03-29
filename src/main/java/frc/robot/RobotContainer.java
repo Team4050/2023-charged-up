@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -25,7 +24,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
-import java.time.LocalDateTime;
 import org.photonvision.PhotonCamera;
 
 public class RobotContainer {
@@ -67,7 +65,8 @@ public class RobotContainer {
    * Logging
    **************************************************************************************************
    */
-  private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
+  // TODO: completely remove log file?
+  // private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
   private ShuffleboardTab dashboardTab = Shuffleboard.getTab("Custom");
 
   /*
@@ -85,7 +84,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private InformationSubsystem info = new InformationSubsystem(dashboardTab, imu, camera, null);
-  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
+  private DriveSubsystem drivetrain = new DriveSubsystem(info, dashboardTab);
   private ClawSubsystem claw = new ClawSubsystem(dashboardTab);
   private ArmSubsystem arm = new ArmSubsystem(dashboardTab);
 

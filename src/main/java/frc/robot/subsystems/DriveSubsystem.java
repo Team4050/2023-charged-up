@@ -5,7 +5,6 @@ import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -40,7 +39,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final InformationSubsystem info;
   private final PIDController spinController = new PIDController(0.125, 0.1, 0);
 
-  public DriveSubsystem(InformationSubsystem info, DataLog log, ShuffleboardTab tab) {
+  public DriveSubsystem(InformationSubsystem info, ShuffleboardTab tab) {
     this.info = info;
 
     dTab = tab;

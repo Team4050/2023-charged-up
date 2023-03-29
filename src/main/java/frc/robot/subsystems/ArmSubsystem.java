@@ -52,6 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // pivotMotor.set(TalonSRXControlMode.Position, setpoint + 100);
+    // TODO: remove logging when arm encoder is fixed
     if (++loop > 10) {
       loop = 0;
       System.out.println(
