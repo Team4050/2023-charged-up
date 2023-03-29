@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -13,7 +13,7 @@ import frc.robot.Constants.Pneumatics;
 public class ClawSubsystem extends SubsystemBase {
   private DoubleSolenoid piston;
   private Value target;
-  private final TalonSRX wristMotor = new TalonSRX(Actuators.Wrist);
+  private final WPI_TalonSRX wristMotor = new WPI_TalonSRX(Actuators.Wrist);
   private static final double wristLimit = 0.75;
   private int estimatedBias = 0;
 

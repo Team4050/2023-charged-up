@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -21,7 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
           Constants.Pneumatics.ArmFwdChannel,
           Constants.Pneumatics.ArmRevChannel);
 
-  private final TalonSRX pivotMotor = new TalonSRX(Constants.Actuators.Arm);
+  private final WPI_TalonSRX pivotMotor = new WPI_TalonSRX(Constants.Actuators.Arm);
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 
   /* Sensors */
