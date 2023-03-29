@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -36,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem(ShuffleboardTab tab) {
     // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingl
-    configurePID();
+    // configurePID();
 
     tab.addDouble(
         "Arm Encoder",
@@ -45,9 +46,18 @@ public class ArmSubsystem extends SubsystemBase {
         });
   }
 
+  private int loop = 0;
+
   @Override
   public void periodic() {
-    System.out.println(String.format("%f", pivotMotor.getSelectedSensorPosition(0)));
+    // pivotMotor.set(TalonSRXControlMode.Position, setpoint + 100);
+    if (++loop > 10) {
+      loop = 0;
+      System.out.println(
+          String.format(
+              "setpoint: %f, current point: %f",
+              setpoint, pivotMotor.getSelectedSensorPosition(0)));
+    }
   }
 
   @Override
@@ -64,15 +74,7 @@ public class ArmSubsystem extends SubsystemBase {
    * @param speed The motor speed.
    */
   public void set(double speed) {
-    // TODO: fix the encoder situation and put this on Position control!
-    pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
-  }
-
-  /** Calculates pid output based on the gearbox encoder. */
-  public void calculatePID() {
-    pivotMotor.set(
-        TalonSRXControlMode.Velocity,
-        PID.calculate(pivotMotor.getSelectedSensorPosition(), setpoint));
+    pivotMotor.set(TalonSRXControlMode.Position, setpoint + (speed * 200));
   }
 
   /**
@@ -91,10 +93,20 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void configurePID() {
     pivotMotor.configFactoryDefault();
-    pivotMotor.configClosedloopRamp(0.1);
+
+    // Sensor must be PulseWidthEncodedPosition
+    pivotMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, 10);
+    pivotMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 1, 10);
+
+    pivotMotor.setSensorPhase(true); //
+
+    pivotMotor.setSelectedSensorPosition(0, 0, 10);
+    pivotMotor.setSelectedSensorPosition(0, 1, 10);
+
+    pivotMotor.configClosedloopRamp(0.5);
     pivotMotor.config_kP(0, 0.2);
-    pivotMotor.config_kI(0, 0.1);
-    pivotMotor.config_kD(0, 0.1);
+    pivotMotor.config_kI(0, 0);
+    pivotMotor.config_kD(0, 0);
     // configure feedforward each time a new setpoint is called for
     pivotMotor.configAllowableClosedloopError(0, 64);
     pivotMotor.configClosedLoopPeriod(0, 1);

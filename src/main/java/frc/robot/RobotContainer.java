@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Compressor;
@@ -38,9 +39,22 @@ public class RobotContainer {
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
-  private Trigger clawTrigger = secondaryControl.b();
+  /*
+   * Discuss controls with drive team
+   *
+   *
+   *
+   */
+  private Trigger clawOpenTrigger = secondaryControl.leftTrigger();
+  private Trigger clawClosedTrigger = secondaryControl.rightTrigger();
   private Trigger clawHoldTrigger = secondaryControl.leftTrigger();
-  private Trigger clawFLipTrigger = secondaryControl.a();
+  private Trigger clawFLipTrigger = null;
+  private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
+  private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
+  private Trigger armPosGrabTrigger = secondaryControl.a();
+  private Trigger armPosScore1Trigger = secondaryControl.x();
+  private Trigger armPosScore2Trigger = secondaryControl.y();
+  private Trigger armPosRestTrigger = secondaryControl.b();
   private Trigger danceTrigger = primaryControl.start();
 
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
@@ -81,7 +95,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private ClawToggleCmd clawCmd =
-      new ClawToggleCmd(clawTrigger, clawHoldTrigger, clawFLipTrigger, secondaryControl, claw);
+      new ClawToggleCmd(clawOpenTrigger, clawHoldTrigger, clawFLipTrigger, secondaryControl, claw);
   private ArmCommand armCmd = new ArmCommand(arm, secondaryControl);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
@@ -114,6 +128,9 @@ public class RobotContainer {
 
     arm.setDefaultCommand(armCmd);
     claw.setDefaultCommand(clawCmd);
+
+    CameraServer.startAutomaticCapture();
+    // CameraServer.getInstance().startAutomaticCapture();
   }
 
   /** Maps commands to their respective triggers. */
