@@ -12,21 +12,23 @@ import java.util.Set;
 
 public class ClawToggleCmd extends CommandBase {
   private HazardXbox controller;
-  private Trigger clawTrigger;
-  private Trigger clawHoldTrigger;
+  private Trigger clawOnTrigger;
+  private Trigger clawOffTrigger;
   public boolean toggle = false;
   private ClawSubsystem claw;
   private Set<Subsystem> requirements;
   private int estimatedBias = 0;
 
+  /**
+   * @param clawOnTrigger The controller button to close the claw.
+   * @param clawOffTrigger The controller button to open the claw.
+   * @param controller The controller that belongs to the secondary driver.
+   * @param claw The claw subsystem to use.
+   */
   public ClawToggleCmd(
-      Trigger clawTrigger,
-      Trigger clawHoldTrigger,
-      Trigger clawFlipTrigger,
-      HazardXbox controller,
-      ClawSubsystem claw) {
-    this.clawTrigger = clawTrigger;
-    this.clawHoldTrigger = clawHoldTrigger;
+      Trigger clawOnTrigger, Trigger clawOffTrigger, HazardXbox controller, ClawSubsystem claw) {
+    this.clawOnTrigger = clawOnTrigger;
+    this.clawOffTrigger = clawOffTrigger;
     this.controller = controller;
     this.claw = claw;
     requirements = new HashSet<Subsystem>();
@@ -40,19 +42,13 @@ public class ClawToggleCmd extends CommandBase {
 
   @Override
   public void initialize() {
-    clawTrigger.onTrue(
-        new InstantCommand(
-            () -> {
-              toggle();
-            }));
-
-    clawHoldTrigger.whileTrue(
+    clawOnTrigger.onTrue(
         new InstantCommand(
             () -> {
               toggle = true;
             }));
 
-    clawHoldTrigger.onFalse(
+    clawOffTrigger.onTrue(
         new InstantCommand(
             () -> {
               toggle = false;
@@ -61,6 +57,8 @@ public class ClawToggleCmd extends CommandBase {
 
   @Override
   public void execute() {
+    claw.setWrist(Math.round((float) controller.getLeftX()));
+
     if (toggle) {
       claw.setTargetState(Value.kForward);
       claw.activate();
@@ -68,12 +66,5 @@ public class ClawToggleCmd extends CommandBase {
     }
     claw.setTargetState(Value.kReverse);
     claw.activate();
-
-    claw.setWrist((int) controller.getLeftX());
-  }
-
-  /** Toggles the claw state, link this to a trigger such as a controller button */
-  public void toggle() {
-    toggle = !toggle;
   }
 }

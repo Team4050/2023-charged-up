@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
   /* Control */
   // Profiled PID controller. Uses a simple trapezoid contraint as per Dan's request.
   private Constraints constraints = new Constraints(0.2, 0.5);
-  // TODO: transition to using built-in PID loop? 1ms resolution, better control.
+  // TODO: transition to this from using built-in PID loop?
   private ProfiledPIDController PID = new ProfiledPIDController(0.2, 0.1, 0.1, constraints);
   private double setpoint = pivotMotor.getSelectedSensorPosition();
 
@@ -36,8 +38,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final String name = "Arm";
 
   public ArmSubsystem(ShuffleboardTab tab) {
-    // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingl
-    // configurePID();
+    configurePID();
 
     tab.addDouble(
         "Arm Encoder",
@@ -88,6 +89,14 @@ public class ArmSubsystem extends SubsystemBase {
     setpoint = encodedSetpoint;
   }
 
+  public void setClawAlignment(boolean up) {
+    if (up) {
+      clawAlignmentPiston.set(Value.kForward);
+      return;
+    }
+    clawAlignmentPiston.set(Value.kReverse);
+  }
+
   /*
    *
    */
@@ -98,7 +107,9 @@ public class ArmSubsystem extends SubsystemBase {
     pivotMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, 10);
     pivotMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 1, 10);
 
-    pivotMotor.setSensorPhase(true); //
+    pivotMotor.setInverted(
+        InvertType.None); // TODO: decide if inverting the arm control makes more sense
+    pivotMotor.setSensorPhase(true); // TODO: see if this fixes the reversing issue
 
     pivotMotor.setSelectedSensorPosition(0, 0, 10);
     pivotMotor.setSelectedSensorPosition(0, 1, 10);

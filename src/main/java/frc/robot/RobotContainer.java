@@ -47,8 +47,8 @@ public class RobotContainer {
    */
   private Trigger clawOpenTrigger = secondaryControl.leftTrigger();
   private Trigger clawClosedTrigger = secondaryControl.rightTrigger();
-  private Trigger clawHoldTrigger = secondaryControl.leftTrigger();
-  private Trigger clawFLipTrigger = null;
+  private Trigger clawUpTrigger = null;
+  private Trigger clawDownTrigger = null;
   private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
   private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
   private Trigger armPosGrabTrigger = secondaryControl.a();
@@ -95,8 +95,8 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private ClawToggleCmd clawCmd =
-      new ClawToggleCmd(clawOpenTrigger, clawHoldTrigger, clawFLipTrigger, secondaryControl, claw);
-  private ArmCommand armCmd = new ArmCommand(arm, secondaryControl);
+      new ClawToggleCmd(clawOpenTrigger, clawClosedTrigger, secondaryControl, claw);
+  private ArmCommand armCmd = new ArmCommand(arm, secondaryControl, clawUpTrigger, clawDownTrigger);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
   /*
