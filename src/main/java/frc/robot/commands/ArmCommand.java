@@ -18,6 +18,7 @@ public class ArmCommand extends CommandBase {
   private Trigger score1;
   private Trigger score2;
   private Trigger pickup;
+  private Trigger armResetEncoder;
   private ArmSubsystem arm;
   private Set<Subsystem> requirements;
 
@@ -29,7 +30,8 @@ public class ArmCommand extends CommandBase {
       Trigger armRest,
       Trigger armScore1,
       Trigger armScore2,
-      Trigger armGrab) {
+      Trigger armGrab,
+      Trigger armResetEncoder) {
     this.controller = controller;
     this.arm = arm;
     this.clawUpTrigger = clawUpTrigger;
@@ -38,6 +40,7 @@ public class ArmCommand extends CommandBase {
     score1 = armScore1;
     score2 = armScore2;
     pickup = armGrab;
+    this.armResetEncoder = armResetEncoder;
     requirements = new HashSet<>();
     requirements.add(arm);
   }
@@ -73,6 +76,11 @@ public class ArmCommand extends CommandBase {
         new InstantCommand(
             () -> {
               arm.setpoint(Constants.Operator.ArmGrabPosition);
+            }));
+    armResetEncoder.onTrue(
+        new InstantCommand(
+            () -> {
+              arm.resetEncoder();
             }));
   }
 

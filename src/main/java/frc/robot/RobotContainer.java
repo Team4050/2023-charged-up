@@ -48,6 +48,8 @@ public class RobotContainer {
   private Trigger armPosScore1Trigger = secondaryControl.x();
   private Trigger armPosScore2Trigger = secondaryControl.y();
   private Trigger armPosRestTrigger = secondaryControl.b();
+  // Resets the arm encoder
+  private Trigger armResetTrigger = secondaryControl.back();
   // :(
   private Trigger danceTrigger = primaryControl.start();
 
@@ -100,7 +102,8 @@ public class RobotContainer {
           armPosRestTrigger,
           armPosScore1Trigger,
           armPosScore2Trigger,
-          armPosGrabTrigger);
+          armPosGrabTrigger,
+          armResetTrigger);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
   /*

@@ -93,6 +93,12 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
     pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
   }
 
+  /** Resets the arm encoder. Currently disabled. */
+  public void resetEncoder() {
+    // pivotMotor.setSelectedSensorPosition(0);
+    // home = pivotMotor.getSelectedSensorPosition();
+  }
+
   /**
    * Sets the PID loop setpoint to the current position of the arm. No guarantee it'll stop
    * immediately though.
