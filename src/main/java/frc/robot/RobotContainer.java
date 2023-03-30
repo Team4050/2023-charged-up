@@ -37,9 +37,9 @@ public class RobotContainer {
   private Trigger clawOpenTrigger = secondaryControl.leftTrigger();
   private Trigger clawClosedTrigger = secondaryControl.rightTrigger();
   // Claw alingment piston
-  // TODO: change
-  private Trigger clawUpTrigger = secondaryControl.start();
-  private Trigger clawDownTrigger = secondaryControl.start();
+  // TODO: currently set to the controller dpad, discuss with drive team
+  private Trigger clawUpTrigger = secondaryControl.povUp();
+  private Trigger clawDownTrigger = secondaryControl.povDown();
   // Claw rotation motor
   private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
   private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
@@ -50,6 +50,8 @@ public class RobotContainer {
   private Trigger armPosRestTrigger = secondaryControl.b();
   // :(
   private Trigger danceTrigger = primaryControl.start();
+
+  // TODO: figure out controller rumble?
 
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
   private final String noCmd = "no";

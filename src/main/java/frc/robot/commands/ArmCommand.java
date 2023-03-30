@@ -57,28 +57,29 @@ public class ArmCommand extends CommandBase {
     rest.onTrue(
         new InstantCommand(
             () -> {
-              arm.set(Constants.Operator.ArmRestPosition);
+              arm.setpoint(Constants.Operator.ArmRestPosition);
             }));
     score1.onTrue(
         new InstantCommand(
             () -> {
-              arm.set(Constants.Operator.ArmLevelOnePosition);
+              arm.setpoint(Constants.Operator.ArmLevelOnePosition);
             }));
     score2.onTrue(
         new InstantCommand(
             () -> {
-              arm.set(Constants.Operator.ArmLevelTwoPosition);
+              arm.setpoint(Constants.Operator.ArmLevelTwoPosition);
             }));
     pickup.onTrue(
         new InstantCommand(
             () -> {
-              arm.set(Constants.Operator.ArmGrabPosition);
+              arm.setpoint(Constants.Operator.ArmGrabPosition);
             }));
   }
 
   @Override
   public void execute() {
-    // arm.set(controller.getRightY());
+    // TODO: test
+    arm.setpointAdditive(controller.getRightY() * Constants.Operator.ArmJoystickCoefficient);
   }
 
   @Override

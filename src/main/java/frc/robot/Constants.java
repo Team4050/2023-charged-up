@@ -28,6 +28,10 @@ public final class Constants {
     // Arm soft limits. 0 is at rest, so we don't want to go further back.
     public static final int ArmEncoderLimitLow = -10;
     public static final int ArmEncoderLimitHigh = 5379;
+
+    // Controls the speed at which the manual position control changes
+    // TODO: tune
+    public static final float ArmJoystickCoefficient = 1;
   }
 
   public static class Drive {

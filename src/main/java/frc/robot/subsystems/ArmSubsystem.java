@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,10 +30,6 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
-  // Profiled PID controller. Uses a simple trapezoid contraint as per Dan's request.
-  private Constraints constraints = new Constraints(0.2, 0.5);
-  // TODO: transition to this from using built-in PID loop?
-  private ProfiledPIDController PID = new ProfiledPIDController(0.2, 0.1, 0.1, constraints);
   private double home = pivotMotor.getSelectedSensorPosition();
   private double setpoint = 0;
 
@@ -49,7 +43,9 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   @Override
   public void periodic() {
     // pivotMotor.set(TalonSRXControlMode.Position, setpoint + 100);
-    // TODO: remove logging when arm encoder is fixed
+    softLimit(pivotMotor.getSelectedSensorPosition(0));
+
+    // TODO: become confident enough to remove logging
     loop++;
     if (loop > 10) {
       loop = 0;
@@ -65,15 +61,10 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
    *
    * @param speed The motor speed.
    */
+  @Deprecated
   public void set(double speed) {
     setpoint = speed;
-    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
-
-    if (pivotMotor.getSelectedSensorPosition() < Constants.Operator.ArmEncoderLimitLow
-        || pivotMotor.getSelectedSensorPosition() > Constants.Operator.ArmEncoderLimitHigh) {
-      pivotMotor.set(TalonSRXControlMode.PercentOutput, 0);
-      pivotMotor.disable();
-    }
+    pivotMotor.set(TalonSRXControlMode.PercentOutput, home + setpoint);
     // pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
 
     // System.out.println(pivotMotor.getSelectedSensorPosition());
@@ -85,9 +76,29 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
    * @param encodedSetpoint The setpoint which the PID loop will try and reach. As of yet there are
    *     no safety limits!
    */
-  // TODO: Add setpoint safety limits to this method using ArmLimit A & B in Constants
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
+    softLimit(setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+  }
+
+  /**
+   * Sets the PID loop setpoint
+   *
+   * @param add The amount to add to the current setpoint
+   */
+  public void setpointAdditive(double add) {
+    setpoint += add;
+    softLimit(setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+  }
+
+  /**
+   * Sets the PID loop setpoint to the current position of the arm. No guarantee it'll stop
+   * immediately though.
+   */
+  public void PIDhaltArm() {
+    pivotMotor.set(TalonSRXControlMode.Position, pivotMotor.getSelectedSensorPosition());
   }
 
   public void setClawAlignment(boolean up) {
@@ -98,9 +109,14 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
     clawAlignmentPiston.set(Value.kReverse);
   }
 
-  /*
-   *
-   */
+  public void softLimit(double v) {
+    if (v < Constants.Operator.ArmEncoderLimitLow || v > Constants.Operator.ArmEncoderLimitHigh) {
+      pivotMotor.set(TalonSRXControlMode.PercentOutput, 0);
+      pivotMotor.setNeutralMode(NeutralMode.Brake);
+      pivotMotor.disable();
+    }
+  }
+
   public void configurePID() {
     pivotMotor.configFactoryDefault();
 
