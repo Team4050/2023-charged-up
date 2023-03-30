@@ -18,12 +18,16 @@ public final class Constants {
     public static final float RotationDamping = 0.5f;
 
     // TODO: Values to be determined
-    // TODO: arm encoder resolution is 4096 per full rotation. Calculate and test values for button
-    // setpoints.
-    public static final int ArmGrabPosition = 0;
-    public static final int ArmLevelOnePosition = 0;
-    public static final int ArmLevelTwoPosition = 0;
+    // TODO: arm encoder resolution is 4096 per quarter rotation. Calculate and test values for
+    // button setpoints.
+    public static final int ArmGrabPosition = 5000;
+    public static final int ArmLevelOnePosition = 3250;
+    public static final int ArmLevelTwoPosition = 2000;
     public static final int ArmRestPosition = 0;
+
+    // Arm soft limits. 0 is at rest, so we don't want to go further back.
+    public static final int ArmEncoderLimitLow = -10;
+    public static final int ArmEncoderLimitHigh = 5379;
   }
 
   public static final class Geometry {

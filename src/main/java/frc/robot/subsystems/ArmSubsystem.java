@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -32,13 +33,15 @@ public class ArmSubsystem extends SubsystemBase {
   private Constraints constraints = new Constraints(0.2, 0.5);
   // TODO: transition to this from using built-in PID loop?
   private ProfiledPIDController PID = new ProfiledPIDController(0.2, 0.1, 0.1, constraints);
-  private double setpoint = pivotMotor.getSelectedSensorPosition();
+  private double home = pivotMotor.getSelectedSensorPosition();
+  private double setpoint = 0;
 
   /* Misc */
   private final String name = "Arm";
 
   public ArmSubsystem(ShuffleboardTab tab) {
     configurePID();
+    home = pivotMotor.getSelectedSensorPosition();
 
     tab.addDouble(
         "Arm Encoder",
@@ -53,12 +56,13 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     // pivotMotor.set(TalonSRXControlMode.Position, setpoint + 100);
     // TODO: remove logging when arm encoder is fixed
-    if (++loop > 10) {
+    loop++;
+    if (loop > 10) {
       loop = 0;
       System.out.println(
           String.format(
               "setpoint: %f, current point: %f",
-              setpoint, pivotMotor.getSelectedSensorPosition(0)));
+              home + setpoint, pivotMotor.getSelectedSensorPosition(0)));
     }
   }
 
@@ -76,7 +80,17 @@ public class ArmSubsystem extends SubsystemBase {
    * @param speed The motor speed.
    */
   public void set(double speed) {
-    pivotMotor.set(TalonSRXControlMode.Position, setpoint + (speed * 200));
+    setpoint = speed;
+    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+
+    if (pivotMotor.getSelectedSensorPosition() < Constants.Operator.ArmEncoderLimitLow
+        || pivotMotor.getSelectedSensorPosition() > Constants.Operator.ArmEncoderLimitHigh) {
+      pivotMotor.set(TalonSRXControlMode.PercentOutput, 0);
+      pivotMotor.disable();
+    }
+    // pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
+
+    // System.out.println(pivotMotor.getSelectedSensorPosition());
   }
 
   /**
@@ -113,15 +127,18 @@ public class ArmSubsystem extends SubsystemBase {
     pivotMotor.setSensorPhase(true); // TODO: see if this fixes the reversing issue
 
     pivotMotor.setSelectedSensorPosition(0, 0, 10);
-    pivotMotor.setSelectedSensorPosition(0, 1, 10);
+    // pivotMotor.setSelectedSensorPosition(0, 1, 10);
 
     pivotMotor.configClosedloopRamp(0.5);
-    pivotMotor.config_kP(0, 0.2);
-    pivotMotor.config_kI(0, 0);
-    pivotMotor.config_kD(0, 0);
+    pivotMotor.config_kP(0, 0.8);
+    pivotMotor.config_kI(0, 0.1);
+    pivotMotor.configMaxIntegralAccumulator(0, 1);
+    pivotMotor.config_kD(0, 0.1);
     // configure feedforward each time a new setpoint is called for
-    pivotMotor.configAllowableClosedloopError(0, 64);
-    pivotMotor.configClosedLoopPeriod(0, 1);
-    pivotMotor.configClosedLoopPeakOutput(0, 0.4);
+    pivotMotor.configAllowableClosedloopError(0, 24);
+    pivotMotor.configClosedLoopPeriod(0, 4);
+    pivotMotor.configClosedLoopPeakOutput(0, 1);
+
+    pivotMotor.setNeutralMode(NeutralMode.Coast);
   }
 }

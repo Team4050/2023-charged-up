@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ArmSubsystem;
 import java.util.HashSet;
@@ -13,15 +14,30 @@ public class ArmCommand extends CommandBase {
   private HazardXbox controller;
   private Trigger clawUpTrigger;
   private Trigger clawDownTrigger;
+  private Trigger rest;
+  private Trigger score1;
+  private Trigger score2;
+  private Trigger pickup;
   private ArmSubsystem arm;
   private Set<Subsystem> requirements;
 
   public ArmCommand(
-      ArmSubsystem arm, HazardXbox controller, Trigger clawUpTrigger, Trigger clawDownTrigger) {
+      ArmSubsystem arm,
+      HazardXbox controller,
+      Trigger clawUpTrigger,
+      Trigger clawDownTrigger,
+      Trigger armRest,
+      Trigger armScore1,
+      Trigger armScore2,
+      Trigger armGrab) {
     this.controller = controller;
     this.arm = arm;
     this.clawUpTrigger = clawUpTrigger;
     this.clawDownTrigger = clawDownTrigger;
+    rest = armRest;
+    score1 = armScore1;
+    score2 = armScore2;
+    pickup = armGrab;
     requirements = new HashSet<>();
     requirements.add(arm);
   }
@@ -38,11 +54,31 @@ public class ArmCommand extends CommandBase {
             () -> {
               arm.setClawAlignment(false);
             }));
+    rest.onTrue(
+        new InstantCommand(
+            () -> {
+              arm.set(Constants.Operator.ArmRestPosition);
+            }));
+    score1.onTrue(
+        new InstantCommand(
+            () -> {
+              arm.set(Constants.Operator.ArmLevelOnePosition);
+            }));
+    score2.onTrue(
+        new InstantCommand(
+            () -> {
+              arm.set(Constants.Operator.ArmLevelTwoPosition);
+            }));
+    pickup.onTrue(
+        new InstantCommand(
+            () -> {
+              arm.set(Constants.Operator.ArmGrabPosition);
+            }));
   }
 
   @Override
   public void execute() {
-    arm.set(controller.getRightY());
+    // arm.set(controller.getRightY());
   }
 
   @Override

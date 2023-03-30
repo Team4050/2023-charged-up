@@ -4,10 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -24,6 +21,8 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Log;
 import org.photonvision.PhotonCamera;
 
 public class RobotContainer {
@@ -37,22 +36,22 @@ public class RobotContainer {
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
-  /*
-   * Discuss controls with drive team
-   *
-   *
-   *
-   */
+  // Claw grabbing control
   private Trigger clawOpenTrigger = secondaryControl.leftTrigger();
   private Trigger clawClosedTrigger = secondaryControl.rightTrigger();
-  private Trigger clawUpTrigger = null;
-  private Trigger clawDownTrigger = null;
+  // Claw alingment piston
+  // TODO: change
+  private Trigger clawUpTrigger = secondaryControl.start();
+  private Trigger clawDownTrigger = secondaryControl.start();
+  // Claw rotation motor
   private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
   private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
+  // Arm setpoint buttons
   private Trigger armPosGrabTrigger = secondaryControl.a();
   private Trigger armPosScore1Trigger = secondaryControl.x();
   private Trigger armPosScore2Trigger = secondaryControl.y();
   private Trigger armPosRestTrigger = secondaryControl.b();
+  // :(
   private Trigger danceTrigger = primaryControl.start();
 
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
@@ -76,6 +75,8 @@ public class RobotContainer {
    */
   private PhotonCamera camera = new PhotonCamera("photonvision");
   private ADIS16470_IMU imu = new ADIS16470_IMU();
+
+  @Log(name = "PowerDistribution")
   private PowerDistribution pdp = new PowerDistribution();
 
   /*
@@ -84,7 +85,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private InformationSubsystem info = new InformationSubsystem(dashboardTab, imu, camera, null);
-  private DriveSubsystem drivetrain = new DriveSubsystem(info, dashboardTab);
+  private DriveSubsystem drivetrain = new DriveSubsystem(info);
   private ClawSubsystem claw = new ClawSubsystem(dashboardTab);
   private ArmSubsystem arm = new ArmSubsystem(dashboardTab);
 
@@ -94,8 +95,23 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private ClawToggleCmd clawCmd =
-      new ClawToggleCmd(clawOpenTrigger, clawClosedTrigger, secondaryControl, claw);
-  private ArmCommand armCmd = new ArmCommand(arm, secondaryControl, clawUpTrigger, clawDownTrigger);
+      new ClawToggleCmd(
+          clawOpenTrigger,
+          clawClosedTrigger,
+          clawWristLeftTrigger,
+          clawWristRightTrigger,
+          secondaryControl,
+          claw);
+  private ArmCommand armCmd =
+      new ArmCommand(
+          arm,
+          secondaryControl,
+          clawUpTrigger,
+          clawDownTrigger,
+          armPosRestTrigger,
+          armPosScore1Trigger,
+          armPosScore2Trigger,
+          armPosGrabTrigger);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
   /*
@@ -104,10 +120,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   public RobotContainer() {
-    Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
-    compressor.disable();
-    System.out.println(compressor.getPressureSwitchValue());
-    compressor.close();
+    Logger.configureLoggingAndConfig(this, false);
 
     autonomousSwitch.setDefaultOption("No auto", noCmd);
     autonomousSwitch.addOption("Exit community", simpleCmd);
@@ -127,9 +140,6 @@ public class RobotContainer {
 
     arm.setDefaultCommand(armCmd);
     claw.setDefaultCommand(clawCmd);
-
-    CameraServer.startAutomaticCapture();
-    // CameraServer.getInstance().startAutomaticCapture();
   }
 
   /** Maps commands to their respective triggers. */
@@ -155,8 +165,7 @@ public class RobotContainer {
     }
   }
 
-  /** Called every 20ms(?) */
   public void periodic() {
-    // SmartDashboard.putData(pdp);
+    Logger.updateEntries();
   }
 }
