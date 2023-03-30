@@ -6,8 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -23,7 +21,6 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
-import org.photonvision.PhotonCamera;
 
 public class RobotContainer {
   /*
@@ -61,19 +58,9 @@ public class RobotContainer {
 
   /*
    **************************************************************************************************
-   * Logging
-   **************************************************************************************************
-   */
-  // TODO: completely remove log file?
-  // private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
-  private ShuffleboardTab dashboardTab = Shuffleboard.getTab("Custom");
-
-  /*
-   **************************************************************************************************
    * Camera & Sensors
    **************************************************************************************************
    */
-  private PhotonCamera camera = new PhotonCamera("photonvision");
   private ADIS16470_IMU imu = new ADIS16470_IMU();
 
   @Log(name = "PowerDistribution")
@@ -84,10 +71,10 @@ public class RobotContainer {
    * Subsystems
    **************************************************************************************************
    */
-  private InformationSubsystem info = new InformationSubsystem(dashboardTab, imu, camera, null);
+  private InformationSubsystem info = new InformationSubsystem(imu);
   private DriveSubsystem drivetrain = new DriveSubsystem(info);
-  private ClawSubsystem claw = new ClawSubsystem(dashboardTab);
-  private ArmSubsystem arm = new ArmSubsystem(dashboardTab);
+  private ClawSubsystem claw = new ClawSubsystem();
+  private ArmSubsystem arm = new ArmSubsystem();
 
   /*
    **************************************************************************************************

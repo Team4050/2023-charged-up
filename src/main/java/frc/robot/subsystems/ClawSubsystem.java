@@ -4,27 +4,29 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Actuators;
-import frc.robot.Constants.Pneumatics;
+import frc.robot.Constants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class ClawSubsystem extends SubsystemBase {
+public class ClawSubsystem extends SubsystemBase implements Loggable {
+  @Log(name = "Claw Piston")
   private DoubleSolenoid piston;
-  private Value target;
-  private final WPI_TalonSRX wristMotor = new WPI_TalonSRX(Actuators.Wrist);
-  private static final double wristLimit = 0.75;
-  private int estimatedBias = 0;
 
-  public ClawSubsystem(ShuffleboardTab tab) {
+  @Log(name = "Wrist Motor")
+  private WPI_TalonSRX wristMotor = new WPI_TalonSRX(Constants.Actuators.Wrist);
+
+  private Value target;
+  private double wristLimit = 0.75;
+
+  public ClawSubsystem() {
     piston =
         new DoubleSolenoid(
-            Pneumatics.PCM,
-            Pneumatics.Module,
-            Pneumatics.ClawFwdChannel,
-            Pneumatics.ClawRevChannel);
-
-    tab.add("Claw grab (Currently wrist control)", piston);
+            Constants.Pneumatics.PCM,
+            Constants.Pneumatics.Module,
+            Constants.Pneumatics.ClawFwdChannel,
+            Constants.Pneumatics.ClawRevChannel);
   }
 
   /**
@@ -43,6 +45,10 @@ public class ClawSubsystem extends SubsystemBase {
 
   public void setWrist(int speed) {
     wristMotor.set(ControlMode.PercentOutput, speed * wristLimit);
-    estimatedBias += speed;
+  }
+
+  @Config(name = "Wrist Max Output", defaultValueNumeric = 75)
+  public void setWristLimit(int limit) {
+    wristLimit = limit / 100;
   }
 }

@@ -9,20 +9,23 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class ArmSubsystem extends SubsystemBase {
+public class ArmSubsystem extends SubsystemBase implements Loggable {
   /* Pistons & Motors */
-  private final DoubleSolenoid clawAlignmentPiston =
+  @Log(name = "Wrist Piston")
+  private DoubleSolenoid clawAlignmentPiston =
       new DoubleSolenoid(
           Constants.Pneumatics.PCM,
           Constants.Pneumatics.Module,
           Constants.Pneumatics.ArmFwdChannel,
           Constants.Pneumatics.ArmRevChannel);
 
-  private final WPI_TalonSRX pivotMotor = new WPI_TalonSRX(Constants.Actuators.Arm);
+  @Log(name = "Arm Position")
+  private WPI_TalonSRX pivotMotor = new WPI_TalonSRX(Constants.Actuators.Arm);
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 
   /* Sensors */
@@ -36,18 +39,9 @@ public class ArmSubsystem extends SubsystemBase {
   private double home = pivotMotor.getSelectedSensorPosition();
   private double setpoint = 0;
 
-  /* Misc */
-  private final String name = "Arm";
-
-  public ArmSubsystem(ShuffleboardTab tab) {
+  public ArmSubsystem() {
     configurePID();
     home = pivotMotor.getSelectedSensorPosition();
-
-    tab.addDouble(
-        "Arm Encoder",
-        () -> {
-          return pivotMotor.getSelectedSensorPosition();
-        });
   }
 
   private int loop = 0;
@@ -64,14 +58,6 @@ public class ArmSubsystem extends SubsystemBase {
               "setpoint: %f, current point: %f",
               home + setpoint, pivotMotor.getSelectedSensorPosition(0)));
     }
-  }
-
-  @Override
-  public void simulationPeriodic() {}
-
-  @Override
-  public String getName() {
-    return name;
   }
 
   /**

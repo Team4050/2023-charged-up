@@ -16,26 +16,25 @@ import io.github.oblarg.oblog.annotations.Log;
 public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   /* Motor Controllers */
-  private final WPI_TalonFX FL = new WPI_TalonFX(Constants.Drive.FrontLeft);
-  private final WPI_TalonFX RL = new WPI_TalonFX(Constants.Drive.RearLeft);
-  private final WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
-  private final WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
+  private WPI_TalonFX FL = new WPI_TalonFX(Constants.Drive.FrontLeft);
+  private WPI_TalonFX RL = new WPI_TalonFX(Constants.Drive.RearLeft);
+  private WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
+  private WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
 
   @Log(name = "Drivetrain")
-  private final MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
+  private MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
   private boolean autocorrection = false;
 
   /* Misc */
-  public final Orchestra orchestra = new Orchestra();
-  private final InformationSubsystem info;
-  private final PIDController spinController = new PIDController(0.125, 0.1, 0);
+  public Orchestra orchestra = new Orchestra();
+  private InformationSubsystem info;
+  private PIDController spinController = new PIDController(0.125, 0.1, 0);
 
   public DriveSubsystem(InformationSubsystem info) {
     this.info = info;
 
     // Set up drive motors
-    // This might be what is preventing the orchestra from playing
     FR.setInverted(true);
     RR.setInverted(true);
 
@@ -45,9 +44,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     orchestra.addInstrument(FR);
     orchestra.addInstrument(RR);
   }
-
-  @Override
-  public void periodic() {}
 
   /**
    * Directly sets the drivetrain motor's speeds.
