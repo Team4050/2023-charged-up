@@ -91,16 +91,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private InformationSubsystem info =
-      new InformationSubsystem(
-          dashboardTab,
-          imu,
-          null,
-          null,
-          null,
-          null,
-          null,
-          camera,
-          new Pose2d(0, 0, new Rotation2d()));
+      new InformationSubsystem(dashboardTab, imu, camera, new Pose2d(0, 0, new Rotation2d()));
   private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
   private ClawSubsystem claw =
       new ClawSubsystem(
@@ -235,10 +226,16 @@ public class RobotContainer {
     return state;
   }
 
+  private int loop = 0;
   /** Called every 20ms(?) */
   public void periodic(double dT) {
     info.updatePoseEstimate(dT, drivetrain.getWheelPositions());
     SmartDashboard.putData(pdp);
     SmartDashboard.putData(imu);
+
+    if (++loop > 10) {
+      System.out.println(info.getPoseEstimate());
+      loop = 0;
+    }
   }
 }

@@ -11,7 +11,6 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -29,7 +28,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class InformationSubsystem extends SubsystemBase {
   /* Sensors */
   private ADIS16470_IMU imu;
-  private Encoder[] encoders;
   private PhotonCamera camera;
   private Timer timer;
 
@@ -41,20 +39,11 @@ public class InformationSubsystem extends SubsystemBase {
   private Field2d dashboardField;
 
   public InformationSubsystem(
-      ShuffleboardTab tab,
-      ADIS16470_IMU imu,
-      Encoder FL,
-      Encoder FR,
-      Encoder RL,
-      Encoder RR,
-      Encoder Arm,
-      PhotonCamera camera,
-      Pose2d startingPose) {
+      ShuffleboardTab tab, ADIS16470_IMU imu, PhotonCamera camera, Pose2d startingPose) {
     this.imu = imu;
     tab.add("ADIS IMU", imu);
     this.camera = camera;
     tab.add("Limelight", camera);
-    encoders = new Encoder[] {FL, FR, RL, RR, Arm};
     this.camera = new PhotonCamera("photonvision");
     camera = this.camera;
     AprilTagFieldLayout layout = null;
@@ -150,6 +139,8 @@ public class InformationSubsystem extends SubsystemBase {
      * difference between photonvision positions measured and compared with integrated accel (velocity) data,
      * Kalman filter with vision & accelerometer?
      * xyz pos, xyz vel, avg distance to tags
+     *
+     * Drivetrain pose estimator implements these
      */
   }
 
@@ -200,31 +191,6 @@ public class InformationSubsystem extends SubsystemBase {
       r[i] = getData(a[i]);
     }
     return r;
-  }
-
-  public enum motor {
-    FL(0),
-    FR(1),
-    RL(2),
-    RR(3),
-    ArmPivot(4);
-
-    private int value;
-
-    private motor(int v) {
-      this.value = v;
-    }
-  }
-
-  /**
-   * Gets readngs from the motor encoders. Since the encoders still aren't on the robot, their
-   * accuracy is unknown.
-   *
-   * @param motor
-   * @return
-   */
-  public int getReading(motor motor) {
-    return encoders[motor.value].get();
   }
 
   /**
