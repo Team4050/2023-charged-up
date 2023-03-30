@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public final class Constants {
 
-  public static final class Operator {
+  public static class Operator {
     public static final int XboxPrimary = 0;
     public static final int XboxSecondary = 1;
     public static final float DeadzoneMin = 0.05f;
@@ -30,32 +30,33 @@ public final class Constants {
     public static final int ArmEncoderLimitHigh = 5379;
   }
 
-  public static final class Geometry {
-    public static final Transform3d RobotToCamera =
-        new Transform3d(new Pose3d(), new Pose3d(1f, 0, 0.2f, new Rotation3d()));
-  }
-
-  public static final class Drive {
+  public static class Drive {
     public static final int FrontLeft = 2;
     public static final int FrontRight = 3;
     public static final int RearLeft = 4;
     public static final int RearRight = 5;
   }
 
-  public static final class Actuators {
+  public static class Actuators {
     public static final int Arm = 6;
     public static final int ArmLimitA = 0;
     public static final int ArmLimitB = 0;
     public static final int Wrist = 7;
   }
 
-  public static final class Sensors {
+  public static class Sensors {
     public static final int ClawLimitL = 0;
     public static final int CLawLimitR = 1;
     public static final int ArmLimit = 2;
   }
 
-  public static final class Pneumatics {
+  public static class Vision {
+    public static final String CameraName = "photonvision";
+    public static final Transform3d RobotToCamera =
+        new Transform3d(new Pose3d(), new Pose3d(1f, 0, 0.2f, new Rotation3d()));
+  }
+
+  public static class Pneumatics {
     public static final int PCM = 1;
     public static final PneumaticsModuleType Module = PneumaticsModuleType.CTREPCM;
     public static final int ClawFwdChannel = 0;

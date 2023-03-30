@@ -1,54 +1,41 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Geometry;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import frc.robot.hazard.HazardVision;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
+import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
 
-public class InformationSubsystem extends SubsystemBase {
-  /* Sensors */
-  private ADIS16470_IMU imu;
-  private PhotonCamera camera;
+public class InformationSubsystem extends SubsystemBase implements Loggable {
+
   private Timer timer;
+  private HazardVision camera = new HazardVision();
 
-  /* Filters & Estinators */
-  private PhotonPoseEstimator poseEstimator;
-  private Pose2d estimatedPose;
+  @Log(name = "IMU")
+  private ADIS16470_IMU imu;
 
-  public InformationSubsystem(
-      ShuffleboardTab tab, ADIS16470_IMU imu, PhotonCamera camera, Pose2d startingPose) {
+  @Log(name = "Robot Position")
+  private Field2d field = new Field2d();
+
+  public InformationSubsystem(ADIS16470_IMU imu) {
     this.imu = imu;
-    tab.add("ADIS IMU", imu);
-    // this.camera = camera;
-    // tab.add("Limelight", camera);
-    AprilTagFieldLayout layout = null;
-
-    // Setup field layout from resource file
-    try {
-      layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    /*
-     * Setup pose estimator to average from low ambiguity targets, aka measure from the targets that are the most descernable
-     *
-     * Tends to give semi-acurrate data but with very fast fluxuation.
-     * Control loops using this should rely more on their I component.
-     */
-    poseEstimator =
-        new PhotonPoseEstimator(
-            layout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, Geometry.RobotToCamera);
 
     timer = new Timer();
     timer.start();
+  }
+
+  @Override
+  public void periodic() {
+    Optional<EstimatedRobotPose> estimatedPose = camera.getEstimatedGlobalPose(null);
+
+    if (estimatedPose.isPresent()) {
+      field.setRobotPose(estimatedPose.get().estimatedPose.toPose2d());
+    }
   }
 
   public enum axis {
