@@ -83,19 +83,6 @@ public class InformationSubsystem extends SubsystemBase implements Loggable {
     return r;
   }
 
-  public enum motor {
-    FL(0),
-    FR(1),
-    RL(2),
-    RR(3);
-
-    private int value;
-
-    private motor(int v) {
-      this.value = v;
-    }
-  }
-
   /**
    * For autonomous: drives in the supplied direction for the supplied amount of time
    *
