@@ -43,8 +43,8 @@ public class ClawSubsystem extends SubsystemBase implements Loggable {
     piston.set(target);
   }
 
-  public void setWrist(int speed) {
-    wristMotor.set(ControlMode.PercentOutput, speed * wristLimit);
+  public void setWrist(double speed) {
+    wristMotor.set(ControlMode.PercentOutput, speed * 0.75); // wristLimit
   }
 
   @Config(name = "Wrist Max Output", defaultValueNumeric = 75)

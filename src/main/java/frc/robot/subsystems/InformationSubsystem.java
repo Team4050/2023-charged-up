@@ -31,7 +31,7 @@ public class InformationSubsystem extends SubsystemBase implements Loggable {
 
   @Override
   public void periodic() {
-    Optional<EstimatedRobotPose> estimatedPose = camera.getEstimatedGlobalPose(null);
+    Optional<EstimatedRobotPose> estimatedPose = camera.getEstimatedGlobalPose(new Pose2d());
 
     if (estimatedPose.isPresent()) {
       field.setRobotPose(estimatedPose.get().estimatedPose.toPose2d());

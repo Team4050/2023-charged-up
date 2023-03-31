@@ -38,11 +38,11 @@ public class RobotContainer {
   private Trigger clawClosedTrigger = secondaryControl.rightTrigger();
   // Claw alingment piston
   // TODO: currently set to the controller dpad, discuss with drive team
-  private Trigger clawUpTrigger = secondaryControl.povUp();
-  private Trigger clawDownTrigger = secondaryControl.povDown();
+  private Trigger clawUpTrigger = secondaryControl.leftBumper();
+  private Trigger clawDownTrigger = secondaryControl.rightBumper();
   // Claw rotation motor
-  private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
-  private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
+  // private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
+  // private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
   // Arm setpoint buttons
   private Trigger armPosGrabTrigger = secondaryControl.a();
   private Trigger armPosScore1Trigger = secondaryControl.x();
@@ -86,13 +86,7 @@ public class RobotContainer {
    **************************************************************************************************
    */
   private ClawToggleCmd clawCmd =
-      new ClawToggleCmd(
-          clawOpenTrigger,
-          clawClosedTrigger,
-          clawWristLeftTrigger,
-          clawWristRightTrigger,
-          secondaryControl,
-          claw);
+      new ClawToggleCmd(clawOpenTrigger, clawClosedTrigger, secondaryControl, claw);
   private ArmCommand armCmd =
       new ArmCommand(
           arm,

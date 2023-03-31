@@ -14,8 +14,6 @@ public class ClawToggleCmd extends CommandBase {
   private HazardXbox controller;
   private Trigger clawOnTrigger;
   private Trigger clawOffTrigger;
-  private Trigger clawWristLeftTrigger;
-  private Trigger clawWristRightTrigger;
   public boolean toggle = false;
   private ClawSubsystem claw;
   private Set<Subsystem> requirements;
@@ -28,16 +26,9 @@ public class ClawToggleCmd extends CommandBase {
    * @param claw The claw subsystem to use.
    */
   public ClawToggleCmd(
-      Trigger clawOnTrigger,
-      Trigger clawOffTrigger,
-      Trigger clawWristLeftTrigger,
-      Trigger clawWristRightTrigger,
-      HazardXbox controller,
-      ClawSubsystem claw) {
+      Trigger clawOnTrigger, Trigger clawOffTrigger, HazardXbox controller, ClawSubsystem claw) {
     this.clawOnTrigger = clawOnTrigger;
     this.clawOffTrigger = clawOffTrigger;
-    this.clawWristLeftTrigger = clawWristLeftTrigger;
-    this.clawWristRightTrigger = clawWristRightTrigger;
     this.controller = controller;
     this.claw = claw;
     requirements = new HashSet<Subsystem>();
@@ -62,23 +53,11 @@ public class ClawToggleCmd extends CommandBase {
             () -> {
               toggle = false;
             }));
-
-    clawWristLeftTrigger.onTrue(
-        new InstantCommand(
-            () -> {
-              claw.setWrist(1);
-            }));
-
-    clawWristRightTrigger.onTrue(
-        new InstantCommand(
-            () -> {
-              claw.setWrist(-1);
-            }));
   }
 
   @Override
   public void execute() {
-    claw.setWrist(Math.round((float) controller.getLeftX()));
+    claw.setWrist(controller.getLeftX());
 
     if (toggle) {
       claw.setTargetState(Value.kForward);

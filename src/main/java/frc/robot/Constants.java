@@ -20,9 +20,9 @@ public final class Constants {
     // TODO: Values to be determined
     // TODO: arm encoder resolution is 4096 per quarter rotation. Calculate and test values for
     // button setpoints.
-    public static final int ArmGrabPosition = 5000;
-    public static final int ArmLevelOnePosition = 3250;
-    public static final int ArmLevelTwoPosition = 2000;
+    public static final int ArmGrabPosition = 5150; // 5000
+    public static final int ArmLevelOnePosition = 4100;
+    public static final int ArmLevelTwoPosition = 3000;
     public static final int ArmRestPosition = 0;
 
     // Arm soft limits. 0 is at rest, so we don't want to go further back.
@@ -31,7 +31,7 @@ public final class Constants {
 
     // Controls the speed at which the manual position control changes
     // TODO: tune
-    public static final float ArmJoystickCoefficient = 1;
+    public static final float ArmJoystickCoefficient = 30;
   }
 
   public static class Drive {

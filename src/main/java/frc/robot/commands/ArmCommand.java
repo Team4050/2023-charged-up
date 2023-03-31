@@ -86,7 +86,6 @@ public class ArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    // TODO: test
     arm.setpointAdditive(controller.getRightY() * Constants.Operator.ArmJoystickCoefficient);
   }
 

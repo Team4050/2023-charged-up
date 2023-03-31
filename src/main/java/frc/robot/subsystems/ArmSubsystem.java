@@ -89,7 +89,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
    */
   public void setpointAdditive(double add) {
     setpoint += add;
-    softLimit(setpoint);
+    limit(setpoint);
     pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
   }
 
@@ -123,6 +123,12 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
     }
   }
 
+  public double limit(double v) {
+    if (v < Constants.Operator.ArmEncoderLimitLow) v = Constants.Operator.ArmEncoderLimitLow;
+    if (v > Constants.Operator.ArmEncoderLimitHigh) v = Constants.Operator.ArmEncoderLimitHigh;
+    return v;
+  }
+
   public void configurePID() {
     pivotMotor.configFactoryDefault();
 
@@ -132,13 +138,13 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
 
     pivotMotor.setInverted(
         InvertType.None); // TODO: decide if inverting the arm control makes more sense
-    pivotMotor.setSensorPhase(true); // TODO: see if this fixes the reversing issue
+    pivotMotor.setSensorPhase(true);
 
     pivotMotor.setSelectedSensorPosition(0, 0, 10);
     // pivotMotor.setSelectedSensorPosition(0, 1, 10);
 
     pivotMotor.configClosedloopRamp(0.5);
-    pivotMotor.config_kP(0, 0.8);
+    pivotMotor.config_kP(0, 0.65);
     pivotMotor.config_kI(0, 0.1);
     pivotMotor.configMaxIntegralAccumulator(0, 1);
     pivotMotor.config_kD(0, 0.1);
