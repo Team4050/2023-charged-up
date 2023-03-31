@@ -2,51 +2,41 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Geometry;
 import frc.robot.control.FilteredDrivetrainControl;
+import frc.robot.hazard.HazardVision;
 import java.util.Optional;
-import org.ejml.simple.SimpleMatrix;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class InformationSubsystem extends SubsystemBase {
   /* Sensors */
   private ADIS16470_IMU imu;
-  private PhotonCamera camera;
+
   private Timer timer;
+  private HazardVision camera = new HazardVision();
 
   /* Filters & Estimators */
-  private PhotonPoseEstimator poseEstimator;
   private MecanumDrivePoseEstimator drivetrainPoseEstimator;
-  private Matrix<N3, N1> estimatedPose;
+  private Pose3d estimatedPose;
   private FilteredDrivetrainControl filter;
   private Field2d dashboardField;
+  private AprilTagFieldLayout layout;
 
-  public InformationSubsystem(
-      ShuffleboardTab tab, ADIS16470_IMU imu, PhotonCamera camera, Pose2d startingPose) {
+  public InformationSubsystem(ADIS16470_IMU imu, Pose2d startingPose) {
     this.imu = imu;
-    tab.add("ADIS IMU", imu);
-    this.camera = camera;
-    tab.add("Limelight", camera);
-    this.camera = new PhotonCamera("photonvision");
-    camera = this.camera;
-    AprilTagFieldLayout layout = null;
+    // tab.add("ADIS IMU", imu);
+    this.camera = new HazardVision();
+    // tab.add("Limelight", camera);
+    layout = null;
 
     // Setup field layout from resource file
     try {
@@ -61,32 +51,15 @@ public class InformationSubsystem extends SubsystemBase {
      * Tends to give semi-acurrate data but with very fast fluxuation.
      * Control loops using this should rely more on their I component.
      */
-    poseEstimator =
-        new PhotonPoseEstimator(
-            layout, PoseStrategy.LOWEST_AMBIGUITY, this.camera, Geometry.RobotToCamera);
 
     filter = new FilteredDrivetrainControl();
     filter.initialize();
 
-    estimatedPose =
-        new Matrix<N3, N1>(
-            new SimpleMatrix(
-                new double[][] {
-                  {startingPose.getX()},
-                  {startingPose.getY()},
-                  {startingPose.getRotation().getDegrees()}
-                }));
+    estimatedPose = new Pose3d(startingPose);
 
-    Optional<EstimatedRobotPose> p = poseEstimator.update();
+    Optional<EstimatedRobotPose> p = camera.getEstimatedGlobalPose(startingPose);
     if (p.isPresent()) {
-      estimatedPose =
-          new Matrix<N3, N1>(
-              new SimpleMatrix(
-                  new double[][] {
-                    {p.get().estimatedPose.getX()},
-                    {p.get().estimatedPose.getY()},
-                    {p.get().estimatedPose.getRotation().getZ()}
-                  }));
+      estimatedPose = p.get().estimatedPose;
     }
 
     timer.reset();
@@ -100,33 +73,21 @@ public class InformationSubsystem extends SubsystemBase {
     double[][] columnVec = {{imu.getAccelX() + 0.4}, {imu.getAccelY() + 0.49}, {imu.getRate()}};
     filter.execute(dT, columnVec);
 
-    estimatedPose.set(0, 0, estimatedPose.get(0, 0) + (filter.getStateEstimate().get(0, 0) * dT));
-
-    estimatedPose.set(1, 0, estimatedPose.get(1, 0) + (filter.getStateEstimate().get(1, 0) * dT));
-
-    estimatedPose.set(2, 0, estimatedPose.get(2, 0) + (filter.getStateEstimate().get(2, 0) * dT));
-
     Pose3d newPose = new Pose3d();
-    Optional<EstimatedRobotPose> p = poseEstimator.update();
+    Optional<EstimatedRobotPose> p = camera.getEstimatedGlobalPose();
+
     /* TODO: pose estimator does not take imu angle into account.
      * Possibly write custom estimator to take imu data?
      * Removes ambiguity problem
      */
+
     if (p.isPresent()) {
-      try {
-        newPose = poseEstimator.update().get().estimatedPose;
-      } catch (Exception e) {
-        e.printStackTrace();
-        newPose = new Pose3d();
-      }
       dashboardField.setRobotPose(newPose.getX(), newPose.getY(), new Rotation2d());
-      estimatedPose =
-          new Matrix<N3, N1>(
-              new SimpleMatrix(
-                  new double[][] {{newPose.getX()}, {newPose.getY()}, {imu.getAngle()}}));
+      // estimatedPose = newPose;
       SmartDashboard.putData("Field", dashboardField);
 
-      drivetrainPoseEstimator.addVisionMeasurement(newPose.toPose2d(), dT);
+      if (camera.isTrustworthy())
+        drivetrainPoseEstimator.addVisionMeasurement(newPose.toPose2d(), dT);
     }
 
     drivetrainPoseEstimator.update(
@@ -144,8 +105,17 @@ public class InformationSubsystem extends SubsystemBase {
      */
   }
 
-  public Matrix<N3, N1> getPoseEstimate() {
+  public Pose3d getPoseEstimate() {
     return estimatedPose;
+  }
+
+  @Override
+  public void periodic() {
+    Optional<EstimatedRobotPose> estimatedPose = camera.getEstimatedGlobalPose(new Pose2d());
+
+    if (estimatedPose.isPresent()) {
+      dashboardField.setRobotPose(estimatedPose.get().estimatedPose.toPose2d());
+    }
   }
 
   public enum axis {

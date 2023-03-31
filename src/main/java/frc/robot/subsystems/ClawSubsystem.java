@@ -1,17 +1,32 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class ClawSubsystem extends SubsystemBase {
+public class ClawSubsystem extends SubsystemBase implements Loggable {
+  @Log(name = "Claw Piston")
   private DoubleSolenoid piston;
-  private Value target;
 
-  public ClawSubsystem(
-      int module, PneumaticsModuleType moduleType, int fwdChannel, int revChannel) {
-    piston = new DoubleSolenoid(module, moduleType, fwdChannel, revChannel);
+  @Log(name = "Wrist Motor")
+  private WPI_TalonSRX wristMotor = new WPI_TalonSRX(Constants.Actuators.Wrist);
+
+  private Value target;
+  private double wristLimit = 0.75;
+
+  public ClawSubsystem() {
+    piston =
+        new DoubleSolenoid(
+            Constants.Pneumatics.PCM,
+            Constants.Pneumatics.Module,
+            Constants.Pneumatics.ClawFwdChannel,
+            Constants.Pneumatics.ClawRevChannel);
   }
 
   /**
@@ -26,5 +41,14 @@ public class ClawSubsystem extends SubsystemBase {
   /** Powers the piston, moving it to the target state */
   public void activate() {
     piston.set(target);
+  }
+
+  public void setWrist(double speed) {
+    wristMotor.set(ControlMode.PercentOutput, speed * 0.75); // wristLimit
+  }
+
+  @Config(name = "Wrist Max Output", defaultValueNumeric = 75)
+  public void setWristLimit(int limit) {
+    wristLimit = limit / 100;
   }
 }

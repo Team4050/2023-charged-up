@@ -4,7 +4,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.hazard.HazardXbox;
@@ -47,14 +46,10 @@ public class HoldPosition extends CommandBase {
   public void execute() {
     double[] array =
         new double[] {
-          X.calculate(info.getPoseEstimate().get(0, 0), targetPose.get(0, 0)),
-          Y.calculate(info.getPoseEstimate().get(1, 0), targetPose.get(1, 0)),
-          Z.calculate(info.getPoseEstimate().get(2, 0), targetPose.get(2, 0))
+          X.calculate(info.getPoseEstimate().getX(), targetPose.get(0, 0)),
+          Y.calculate(info.getPoseEstimate().getY(), targetPose.get(1, 0)),
+          Z.calculate(info.getPoseEstimate().getRotation().getZ(), targetPose.get(2, 0))
         };
-
-    SmartDashboard.putNumber("PID X", array[0]);
-    SmartDashboard.putNumber("PID Y", array[1]);
-    SmartDashboard.putNumber("Z", info.getPoseEstimate().get(2, 0));
 
     drive.driveSmart(
         primaryControl.getLeftY(), -primaryControl.getLeftX(), -primaryControl.getRightX());

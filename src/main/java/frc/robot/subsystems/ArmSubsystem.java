@@ -1,54 +1,62 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class ArmSubsystem extends SubsystemBase {
+public class ArmSubsystem extends SubsystemBase implements Loggable {
   /* Pistons & Motors */
-  private final DoubleSolenoid clawAlignmentPiston =
+  @Log(name = "Wrist Piston")
+  private DoubleSolenoid clawAlignmentPiston =
       new DoubleSolenoid(
           Constants.Pneumatics.PCM,
           Constants.Pneumatics.Module,
           Constants.Pneumatics.ArmFwdChannel,
           Constants.Pneumatics.ArmRevChannel);
 
-  private final TalonSRX pivotMotor = new TalonSRX(Constants.Actuators.Arm);
+  @Log(name = "Arm Position")
+  private WPI_TalonSRX pivotMotor = new WPI_TalonSRX(Constants.Actuators.Arm);
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 
   /* Sensors */
-  private final Encoder pivotGearboxEncoder = new Encoder(0, 0);
-  private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
+  // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
-  // Profiled PID controller. Uses a simple trapezoid contraint as per Dan's request.
-  private Constraints constraints = new Constraints(0, 0);
-  private ProfiledPIDController PID = new ProfiledPIDController(0.1, 0, 0, constraints);
+  private double home = 0;
   private double setpoint = 0;
 
-  /* Misc */
-  private final String name = "Arm";
-
   public ArmSubsystem() {
-    // TODO: figure out resolution of integrated gearbox encoder and adjust this value accordingly
-    pivotGearboxEncoder.setDistancePerPulse(1.0);
+    configurePID();
+    setpoint = 0;
+    pivotMotor.set(ControlMode.Position, 0);
+    // home = pivotMotor.getSelectedSensorPosition();
   }
 
-  @Override
-  public void periodic() {}
+  private int loop = 0;
 
   @Override
-  public void simulationPeriodic() {}
+  public void periodic() {
+    // pivotMotor.set(TalonSRXControlMode.Position, setpoint + 100);
+    softLimit(pivotMotor.getSelectedSensorPosition(0));
 
-  @Override
-  public String getName() {
-    return name;
+    // TODO: become confident enough to remove logging
+    loop++;
+    if (loop > 10) {
+      loop = 0;
+      System.out.println(
+          String.format(
+              "setpoint: %f, current point: %f",
+              home + setpoint, pivotMotor.getSelectedSensorPosition(0)));
+    }
   }
 
   /**
@@ -56,14 +64,13 @@ public class ArmSubsystem extends SubsystemBase {
    *
    * @param speed The motor speed.
    */
+  @Deprecated
   public void set(double speed) {
-    pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
-  }
+    setpoint = speed;
+    pivotMotor.set(TalonSRXControlMode.PercentOutput, home + setpoint);
+    // pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
 
-  /** Calculates pid output based on the gearbox encoder. */
-  public void calculatePID() {
-    pivotMotor.set(
-        TalonSRXControlMode.Velocity, PID.calculate(pivotGearboxEncoder.get(), setpoint));
+    // System.out.println(pivotMotor.getSelectedSensorPosition());
   }
 
   /**
@@ -74,5 +81,81 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
+    softLimit(setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+  }
+
+  /**
+   * Sets the PID loop setpoint
+   *
+   * @param add The amount to add to the current setpoint
+   */
+  public void setpointAdditive(double add) {
+    setpoint += add;
+    setpoint = limit(setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+  }
+
+  /** Resets the arm encoder. Currently disabled. */
+  public void resetEncoder() {
+    // pivotMotor.setSelectedSensorPosition(0);
+    // home = pivotMotor.getSelectedSensorPosition();
+  }
+
+  /**
+   * Sets the PID loop setpoint to the current position of the arm. No guarantee it'll stop
+   * immediately though.
+   */
+  public void PIDhaltArm() {
+    pivotMotor.set(TalonSRXControlMode.Position, pivotMotor.getSelectedSensorPosition());
+  }
+
+  public void setClawAlignment(boolean up) {
+    if (up) {
+      clawAlignmentPiston.set(Value.kForward);
+      return;
+    }
+    clawAlignmentPiston.set(Value.kReverse);
+  }
+
+  public void softLimit(double v) {
+    if (v < Constants.Operator.ArmEncoderLimitLow || v > Constants.Operator.ArmEncoderLimitHigh) {
+      pivotMotor.set(TalonSRXControlMode.PercentOutput, 0);
+      pivotMotor.setNeutralMode(NeutralMode.Brake);
+      pivotMotor.disable();
+    }
+  }
+
+  public double limit(double v) {
+    if (v < Constants.Operator.ArmEncoderLimitLow) v = Constants.Operator.ArmEncoderLimitLow;
+    if (v > Constants.Operator.ArmEncoderLimitHigh) v = Constants.Operator.ArmEncoderLimitHigh;
+    return v;
+  }
+
+  public void configurePID() {
+    pivotMotor.configFactoryDefault();
+
+    // Sensor must be PulseWidthEncodedPosition
+    pivotMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 0, 10);
+    pivotMotor.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition, 1, 10);
+
+    pivotMotor.setInverted(
+        InvertType.None); // TODO: decide if inverting the arm control makes more sense
+    pivotMotor.setSensorPhase(true);
+
+    pivotMotor.setSelectedSensorPosition(0, 0, 10);
+    // pivotMotor.setSelectedSensorPosition(0, 1, 10);
+
+    pivotMotor.configClosedloopRamp(0.5);
+    pivotMotor.config_kP(0, 0.65);
+    pivotMotor.config_kI(0, 0.1);
+    pivotMotor.configMaxIntegralAccumulator(0, 1);
+    pivotMotor.config_kD(0, 0.1);
+    // configure feedforward each time a new setpoint is called for
+    pivotMotor.configAllowableClosedloopError(0, 24);
+    pivotMotor.configClosedLoopPeriod(0, 4);
+    pivotMotor.configClosedLoopPeakOutput(0, 1);
+
+    pivotMotor.setNeutralMode(NeutralMode.Coast);
   }
 }

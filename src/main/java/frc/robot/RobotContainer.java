@@ -6,24 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Pneumatics;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
@@ -34,8 +27,8 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
+import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
-import java.time.LocalDateTime;
 import org.ejml.simple.SimpleMatrix;
 import org.photonvision.PhotonCamera;
 
@@ -50,21 +43,32 @@ public class RobotContainer {
   private HazardXbox secondaryControl =
       new HazardXbox(Constants.Operator.XboxSecondary, Constants.Operator.DeadzoneMin);
 
-  private Trigger clawTrigger = secondaryControl.b();
+  // Claw grabbing control
+  private Trigger clawOpenTrigger = secondaryControl.leftTrigger();
+  private Trigger clawClosedTrigger = secondaryControl.rightTrigger();
+  // Claw alingment piston
+  // TODO: currently set to the controller dpad, discuss with drive team
+  private Trigger clawUpTrigger = secondaryControl.leftBumper();
+  private Trigger clawDownTrigger = secondaryControl.rightBumper();
+  // Claw rotation motor
+  // private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
+  // private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
+  // Arm setpoint buttons
+  private Trigger armPosGrabTrigger = secondaryControl.a();
+  private Trigger armPosScore1Trigger = secondaryControl.x();
+  private Trigger armPosScore2Trigger = secondaryControl.y();
+  private Trigger armPosRestTrigger = secondaryControl.b();
+  // Resets the arm encoder
+  private Trigger armResetTrigger = secondaryControl.back();
+  // :(
   private Trigger danceTrigger = primaryControl.start();
+
+  // TODO: figure out controller rumble?
 
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
   private final String noCmd = "no";
   private final String simpleCmd = "simple";
   private final String danceCmd = "crab";
-
-  /*
-   **************************************************************************************************
-   * Logging
-   **************************************************************************************************
-   */
-  private DataLog logFile = new DataLog("", LocalDateTime.now().toString() + " log");
-  private ShuffleboardTab dashboardTab = Shuffleboard.getTab("Custom");
 
   /*
    **************************************************************************************************
@@ -83,22 +87,17 @@ public class RobotContainer {
   private double[] previousState = {0, 0, 0, 0, 0, 0};
   private int N = 0;
 
-  @Log.PowerDistribution() private PowerDistribution pdp = new PowerDistribution();
+  @Log(name = "PowerDistribution")
+  private PowerDistribution pdp = new PowerDistribution();
 
   /*
    **************************************************************************************************
    * Subsystems
    **************************************************************************************************
    */
-  private InformationSubsystem info =
-      new InformationSubsystem(dashboardTab, imu, camera, new Pose2d(0, 0, new Rotation2d()));
-  private DriveSubsystem drivetrain = new DriveSubsystem(info, logFile, dashboardTab);
-  private ClawSubsystem claw =
-      new ClawSubsystem(
-          Pneumatics.PCM,
-          PneumaticsModuleType.CTREPCM,
-          Pneumatics.ClawFwdChannel,
-          Pneumatics.ClawRevChannel);
+  private InformationSubsystem info = new InformationSubsystem(imu, new Pose2d());
+  private DriveSubsystem drivetrain = new DriveSubsystem(info);
+  private ClawSubsystem claw = new ClawSubsystem();
   private ArmSubsystem arm = new ArmSubsystem();
 
   /*
@@ -106,8 +105,19 @@ public class RobotContainer {
    * Commands
    **************************************************************************************************
    */
-  private ClawToggleCmd clawCmd = new ClawToggleCmd(clawTrigger, claw);
-  private ArmCommand armCmd = new ArmCommand(arm, secondaryControl);
+  private ClawToggleCmd clawCmd =
+      new ClawToggleCmd(clawOpenTrigger, clawClosedTrigger, secondaryControl, claw);
+  private ArmCommand armCmd =
+      new ArmCommand(
+          arm,
+          secondaryControl,
+          clawUpTrigger,
+          clawDownTrigger,
+          armPosRestTrigger,
+          armPosScore1Trigger,
+          armPosScore2Trigger,
+          armPosGrabTrigger,
+          armResetTrigger);
   private DanceCommand dance = new DanceCommand(drivetrain);
 
   /*
@@ -116,6 +126,8 @@ public class RobotContainer {
    **************************************************************************************************
    */
   public RobotContainer() {
+    Logger.configureLoggingAndConfig(this, false);
+
     autonomousSwitch.setDefaultOption("No auto", noCmd);
     autonomousSwitch.addOption("Exit community", simpleCmd);
     autonomousSwitch.addOption("Dance", danceCmd);
@@ -230,12 +242,12 @@ public class RobotContainer {
   /** Called every 20ms(?) */
   public void periodic(double dT) {
     info.updatePoseEstimate(dT, drivetrain.getWheelPositions());
-    SmartDashboard.putData(pdp);
-    SmartDashboard.putData(imu);
 
     if (++loop > 10) {
       System.out.println(info.getPoseEstimate());
       loop = 0;
     }
+
+    Logger.updateEntries();
   }
 }
