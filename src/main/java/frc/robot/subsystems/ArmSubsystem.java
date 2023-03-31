@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -30,12 +31,14 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
-  private double home = pivotMotor.getSelectedSensorPosition();
+  private double home = 0;
   private double setpoint = 0;
 
   public ArmSubsystem() {
     configurePID();
-    home = pivotMotor.getSelectedSensorPosition();
+    setpoint = 0;
+    pivotMotor.set(ControlMode.Position, 0);
+    // home = pivotMotor.getSelectedSensorPosition();
   }
 
   private int loop = 0;
@@ -89,7 +92,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
    */
   public void setpointAdditive(double add) {
     setpoint += add;
-    limit(setpoint);
+    setpoint = limit(setpoint);
     pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
   }
 
