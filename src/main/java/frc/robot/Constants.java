@@ -17,9 +17,6 @@ public final class Constants {
     public static final float DeadzoneMin = 0.05f;
     public static final float RotationDamping = 0.5f;
 
-    // TODO: Values to be determined
-    // TODO: arm encoder resolution is 4096 per quarter rotation. Calculate and test values for
-    // button setpoints.
     public static final int ArmGrabPosition = 5150; // 5000
     public static final int ArmLevelOnePosition = 4100;
     public static final int ArmLevelTwoPosition = 3000;
@@ -39,6 +36,8 @@ public final class Constants {
     public static final int FrontRight = 3;
     public static final int RearLeft = 4;
     public static final int RearRight = 5;
+    // TODO: tune
+    public static final double encoderTicksToMeters = 1;
   }
 
   public static class Actuators {
