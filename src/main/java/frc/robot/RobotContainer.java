@@ -4,10 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -22,7 +19,6 @@ import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.commands.DriveToPosition;
-import frc.robot.commands.HoldPosition;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
@@ -31,7 +27,6 @@ import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 import java.util.ArrayList;
-import org.ejml.simple.SimpleMatrix;
 import org.photonvision.PhotonCamera;
 
 public class RobotContainer {
@@ -146,13 +141,6 @@ public class RobotContainer {
                     -primaryControl.getLeftX(),
                     -primaryControl.getRightX()),
             drivetrain));
-
-    drivetrain.setDefaultCommand(
-        new HoldPosition(
-            drivetrain,
-            info,
-            new Matrix<N3, N1>(new SimpleMatrix(new double[][] {{12}, {4}, {0}})),
-            primaryControl));
 
     arm.setDefaultCommand(armCmd);
     claw.setDefaultCommand(clawCmd);

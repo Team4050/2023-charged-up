@@ -76,12 +76,11 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   /**
    * Sets the PID loop setpoint.
    *
-   * @param encodedSetpoint The setpoint which the PID loop will try and reach. As of yet there are
-   *     no safety limits!
+   * @param encodedSetpoint The setpoint which the PID loop will try and reach.
    */
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
-    softLimit(setpoint);
+    setpoint = limit(setpoint);
     pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
   }
 
