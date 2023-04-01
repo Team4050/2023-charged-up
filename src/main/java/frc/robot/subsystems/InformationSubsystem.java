@@ -48,13 +48,6 @@ public class InformationSubsystem extends SubsystemBase {
       e.printStackTrace();
     }
 
-    /*
-     * Setup pose estimator to average from low ambiguity targets, aka measure from the targets that are the most descernable
-     *
-     * Tends to give semi-acurrate data but with very fast fluxuation.
-     * Control loops using this should rely more on their I component.
-     */
-
     filter = new FilteredDrivetrainControl();
     filter.initialize();
 
@@ -94,11 +87,6 @@ public class InformationSubsystem extends SubsystemBase {
     Pose3d newPose = new Pose3d();
     Optional<EstimatedRobotPose> p = camera.getEstimatedGlobalPose();
 
-    /* TODO: pose estimator does not take imu angle into account.
-     * Possibly write custom estimator to take imu data?
-     * Removes ambiguity problem
-     */
-
     if (p.isPresent()) {
       dashboardField.setRobotPose(newPose.getX(), newPose.getY(), new Rotation2d());
       // estimatedPose = newPose;
@@ -115,15 +103,6 @@ public class InformationSubsystem extends SubsystemBase {
             encoderPositions[1] * Drive.encoderTicksToMeters,
             encoderPositions[2] * Drive.encoderTicksToMeters,
             encoderPositions[3] * Drive.encoderTicksToMeters));
-
-    /*
-     * Way to compare photonvision poses with imu data?
-     * difference between photonvision positions measured and compared with integrated accel (velocity) data,
-     * Kalman filter with vision & accelerometer?
-     * xyz pos, xyz vel, avg distance to tags
-     *
-     * Drivetrain pose estimator implements these
-     */
   }
 
   public Pose3d getPoseEstimate() {
