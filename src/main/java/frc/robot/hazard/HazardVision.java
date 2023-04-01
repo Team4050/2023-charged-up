@@ -81,7 +81,7 @@ public class HazardVision {
   }
 
   public boolean isTrustworthy() {
-    for (PhotonTrackedTarget t : photon.getLatestResult().targets) {
+    for (PhotonTrackedTarget t : chassis.getLatestResult().targets) {
       if (t.getPoseAmbiguity() < 0.25) return true;
     }
     return false;
