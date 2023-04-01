@@ -1,7 +1,18 @@
 {
+  "Clients": {
+    "open": true
+  },
+  "Connections": {
+    "open": true
+  },
   "NetworkTables Settings": {
+    "clientName": "csmbp",
+    "dsClient": false,
     "mode": "Client (NT4)",
-    "serverTeam": "4050"
+    "serverTeam": "10.40.50.2"
+  },
+  "Server": {
+    "open": true
   },
   "transitory": {
     "FMSInfo": {
@@ -24,6 +35,12 @@
     },
     "SmartDashboard": {
       "PowerDistribution[0]": {
+        "open": true
+      },
+      "open": true
+    },
+    "photonvision": {
+      "Chassis Cam": {
         "open": true
       },
       "open": true

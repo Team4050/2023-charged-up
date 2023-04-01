@@ -37,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   public ArmSubsystem() {
     configurePID();
     setpoint = 0;
-    pivotMotor.set(ControlMode.Position, 0);
+    pivotMotor.set(ControlMode.Position, pivotMotor.getSelectedSensorPosition());
     // home = pivotMotor.getSelectedSensorPosition();
   }
 
@@ -97,8 +97,8 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
 
   /** Resets the arm encoder. Currently disabled. */
   public void resetEncoder() {
-    // pivotMotor.setSelectedSensorPosition(0);
-    // home = pivotMotor.getSelectedSensorPosition();
+    pivotMotor.setSelectedSensorPosition(0);
+    home = pivotMotor.getSelectedSensorPosition();
   }
 
   /**
@@ -150,7 +150,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
         InvertType.None); // TODO: decide if inverting the arm control makes more sense
     pivotMotor.setSensorPhase(true);
 
-    pivotMotor.setSelectedSensorPosition(0, 0, 10);
+    // pivotMotor.setSelectedSensorPosition(0, 0, 10);
     // pivotMotor.setSelectedSensorPosition(0, 1, 10);
 
     pivotMotor.configClosedloopRamp(0.5);
