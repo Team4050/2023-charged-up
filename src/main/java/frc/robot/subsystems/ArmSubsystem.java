@@ -37,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   public ArmSubsystem() {
     configurePID();
     setpoint = 0;
-    pivotMotor.set(ControlMode.Position, 0);
+    pivotMotor.set(ControlMode.Position, pivotMotor.getSelectedSensorPosition());
     // home = pivotMotor.getSelectedSensorPosition();
   }
 
