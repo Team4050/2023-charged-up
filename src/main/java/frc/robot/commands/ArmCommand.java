@@ -87,6 +87,9 @@ public class ArmCommand extends CommandBase {
   @Override
   public void execute() {
     arm.setpointAdditive(controller.getRightY() * Constants.Operator.ArmJoystickCoefficient);
+    if (arm.getArmMotorVelocity() < 48 && arm.getArmError() > 128) {
+      controller.rumble(0.4f);
+    }
   }
 
   @Override
