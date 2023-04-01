@@ -97,8 +97,8 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
 
   /** Resets the arm encoder. Currently disabled. */
   public void resetEncoder() {
-    // pivotMotor.setSelectedSensorPosition(0);
-    // home = pivotMotor.getSelectedSensorPosition();
+    pivotMotor.setSelectedSensorPosition(0);
+    home = pivotMotor.getSelectedSensorPosition();
   }
 
   /**
