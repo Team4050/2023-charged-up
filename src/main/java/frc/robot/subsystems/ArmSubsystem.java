@@ -27,13 +27,12 @@ public class ArmSubsystem extends SubsystemBase {
   // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
-  private double home = 0;
   private double setpoint = 0;
 
   public ArmSubsystem() {
     configurePID();
     setpoint = 0;
-    pivotMotor.set(ControlMode.Position, pivotMotor.getSelectedSensorPosition());
+    pivotMotor.set(ControlMode.PercentOutput, 0);
     // home = pivotMotor.getSelectedSensorPosition();
   }
 
@@ -51,7 +50,7 @@ public class ArmSubsystem extends SubsystemBase {
       System.out.println(
           String.format(
               "setpoint: %f, current point: %f",
-              home + setpoint, pivotMotor.getSelectedSensorPosition(0)));
+              setpoint, pivotMotor.getSelectedSensorPosition(0)));
     }
   }
 
@@ -63,7 +62,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Deprecated
   public void set(double speed) {
     setpoint = speed;
-    pivotMotor.set(TalonSRXControlMode.PercentOutput, home + setpoint);
+    pivotMotor.set(TalonSRXControlMode.PercentOutput, setpoint);
     // pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
 
     // System.out.println(pivotMotor.getSelectedSensorPosition());
@@ -77,7 +76,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
     setpoint = limit(setpoint);
-    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, setpoint);
   }
 
   /**
@@ -88,13 +87,16 @@ public class ArmSubsystem extends SubsystemBase {
   public void setpointAdditive(double add) {
     setpoint += add;
     setpoint = limit(setpoint);
-    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, setpoint);
+  }
+
+  public double getEncoderValue() {
+    return pivotMotor.getSelectedSensorPosition();
   }
 
   /** Resets the arm encoder. Currently disabled. */
   public void resetEncoder() {
     pivotMotor.setSelectedSensorPosition(0);
-    home = pivotMotor.getSelectedSensorPosition();
   }
 
   /**
@@ -122,7 +124,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void softLimit(double v) {
-    if (v < Constants.Operator.ArmEncoderLimitLow || v > Constants.Operator.ArmEncoderLimitHigh) {
+    if (v < Constants.Operator.ArmEncoderBreakLow || v > Constants.Operator.ArmEncoderBreakHigh) {
       pivotMotor.set(TalonSRXControlMode.PercentOutput, 0);
       pivotMotor.setNeutralMode(NeutralMode.Brake);
       pivotMotor.disable();

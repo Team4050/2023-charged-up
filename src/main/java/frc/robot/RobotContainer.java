@@ -121,6 +121,7 @@ public class RobotContainer {
 
     arm.setDefaultCommand(armCmd);
     arm.resetEncoder();
+    System.out.println(arm.getEncoderValue());
     claw.setDefaultCommand(clawCmd);
   }
 
