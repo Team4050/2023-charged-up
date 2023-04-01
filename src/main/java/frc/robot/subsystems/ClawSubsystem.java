@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import io.github.oblarg.oblog.annotations.Config;
 
 public class ClawSubsystem extends SubsystemBase {
   private DoubleSolenoid piston;
@@ -42,7 +41,6 @@ public class ClawSubsystem extends SubsystemBase {
     wristMotor.set(ControlMode.PercentOutput, speed * 0.75); // wristLimit
   }
 
-  @Config(name = "Wrist Max Output", defaultValueNumeric = 75)
   public void setWristLimit(int limit) {
     wristLimit = limit / 100;
   }
