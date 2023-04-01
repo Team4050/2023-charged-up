@@ -10,12 +10,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Log;
 
-public class ArmSubsystem extends SubsystemBase implements Loggable {
+public class ArmSubsystem extends SubsystemBase {
   /* Pistons & Motors */
-  @Log(name = "Wrist Piston")
   private DoubleSolenoid clawAlignmentPiston =
       new DoubleSolenoid(
           Constants.Pneumatics.PCM,
@@ -23,7 +20,6 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
           Constants.Pneumatics.ArmFwdChannel,
           Constants.Pneumatics.ArmRevChannel);
 
-  @Log(name = "Arm Position")
   private WPI_TalonSRX pivotMotor = new WPI_TalonSRX(Constants.Actuators.Arm);
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 

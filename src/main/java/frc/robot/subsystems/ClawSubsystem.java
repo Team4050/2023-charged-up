@@ -6,15 +6,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
 
-public class ClawSubsystem extends SubsystemBase implements Loggable {
-  @Log(name = "Claw Piston")
+public class ClawSubsystem extends SubsystemBase {
   private DoubleSolenoid piston;
-
-  @Log(name = "Wrist Motor")
   private WPI_TalonSRX wristMotor = new WPI_TalonSRX(Constants.Actuators.Wrist);
 
   private Value target;
