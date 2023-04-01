@@ -21,6 +21,7 @@ import frc.robot.commands.ArmCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
+import frc.robot.commands.DriveToPosition;
 import frc.robot.commands.HoldPosition;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ArmSubsystem;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
+import java.util.ArrayList;
 import org.ejml.simple.SimpleMatrix;
 import org.photonvision.PhotonCamera;
 
@@ -69,6 +71,7 @@ public class RobotContainer {
   private final String noCmd = "no";
   private final String simpleCmd = "simple";
   private final String danceCmd = "crab";
+  private final String trajectory = "traj";
 
   /*
    **************************************************************************************************
@@ -173,6 +176,15 @@ public class RobotContainer {
         return new AutonomousCommand(drivetrain, arm, claw, info);
       case danceCmd:
         return new DanceCommand(drivetrain);
+      case trajectory:
+        ArrayList<Pose2d> list = new ArrayList<Pose2d>();
+        list.add(info.getPoseEstimate().toPose2d());
+        list.add(
+            new Pose2d(
+                info.getPoseEstimate().toPose2d().getX() + 1,
+                info.getPoseEstimate().toPose2d().getY() + 1,
+                info.getPoseEstimate().toPose2d().getRotation()));
+        return new DriveToPosition(drivetrain, info, list);
       default:
         return null;
     }
