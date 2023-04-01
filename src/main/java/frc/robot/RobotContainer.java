@@ -125,6 +125,7 @@ public class RobotContainer {
             drivetrain));
 
     arm.setDefaultCommand(armCmd);
+    arm.resetEncoder();
     claw.setDefaultCommand(clawCmd);
   }
 
