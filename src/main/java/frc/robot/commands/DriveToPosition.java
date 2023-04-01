@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -48,6 +49,8 @@ public class DriveToPosition extends CommandBase {
     Y = new PIDController(0.3, 0.1, 0.2);
     Rotation = new ProfiledPIDController(0.3, 0.1, 0.2, new Constraints(1, 1));
     controller = new HolonomicDriveController(X, Y, Rotation);
+    // Tolerance of +-5cm & +-5 degrees
+    controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 72)));
     timer = new Timer();
     timer.start();
   }

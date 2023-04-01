@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -42,6 +43,8 @@ public class HoldPosition extends CommandBase {
     Y = new PIDController(0.2, 0.2, 0);
     Z = new ProfiledPIDController(0.2, 0.2, 0, new Constraints(1, 1));
     this.controller = new HolonomicDriveController(X, Y, Z);
+    // Tolerance of +-5cm & +-5 degrees
+    this.controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 72)));
   }
 
   public void execute() {
