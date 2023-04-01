@@ -150,7 +150,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
         InvertType.None); // TODO: decide if inverting the arm control makes more sense
     pivotMotor.setSensorPhase(true);
 
-    pivotMotor.setSelectedSensorPosition(0, 0, 10);
+    // pivotMotor.setSelectedSensorPosition(0, 0, 10);
     // pivotMotor.setSelectedSensorPosition(0, 1, 10);
 
     pivotMotor.configClosedloopRamp(0.5);
