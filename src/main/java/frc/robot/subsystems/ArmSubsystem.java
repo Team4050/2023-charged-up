@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class ArmSubsystem extends SubsystemBase implements Loggable {
@@ -37,7 +38,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   public ArmSubsystem() {
     configurePID();
     setpoint = 0;
-    pivotMotor.set(ControlMode.Position, pivotMotor.getSelectedSensorPosition());
+    pivotMotor.set(ControlMode.Disabled, pivotMotor.getSelectedSensorPosition());
     // home = pivotMotor.getSelectedSensorPosition();
   }
 
@@ -96,6 +97,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   }
 
   /** Resets the arm encoder. Currently disabled. */
+  @Config.ToggleButton(name = "Reset arm encoder")
   public void resetEncoder() {
     pivotMotor.setSelectedSensorPosition(0);
     home = pivotMotor.getSelectedSensorPosition();
