@@ -37,11 +37,13 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class HazardVision {
-  public PhotonCamera photon;
+  public PhotonCamera chassis;
+  public PhotonCamera claw;
   private PhotonPoseEstimator poseEstimator;
 
   public HazardVision() {
-    photon = new PhotonCamera(Constants.Vision.CameraName);
+    chassis = new PhotonCamera(Constants.Vision.ChassisCamName);
+    claw = new PhotonCamera(Constants.Vision.ClawCamName);
 
     try {
       AprilTagFieldLayout fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
@@ -49,7 +51,7 @@ public class HazardVision {
           new PhotonPoseEstimator(
               fieldLayout,
               PoseStrategy.AVERAGE_BEST_TARGETS,
-              photon,
+              chassis,
               Constants.Vision.RobotToCamera);
     } catch (IOException e) {
       DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());

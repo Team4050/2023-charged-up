@@ -55,7 +55,8 @@ public final class Constants {
   }
 
   public static class Vision {
-    public static final String CameraName = "photonvision";
+    public static final String ChassisCamName = "Chassis";
+    public static final String ClawCamName = "Claw";
     public static final Transform3d RobotToCamera =
         new Transform3d(new Pose3d(), new Pose3d(1f, 0, 0.2f, new Rotation3d()));
   }

@@ -25,6 +25,8 @@ public class InformationSubsystem extends SubsystemBase implements Loggable {
   public InformationSubsystem(ADIS16470_IMU imu) {
     this.imu = imu;
 
+    camera.claw.setDriverMode(true);
+
     timer = new Timer();
     timer.start();
   }
