@@ -11,7 +11,6 @@ import frc.robot.Constants.Operator;
 import frc.robot.subsystems.InformationSubsystem.axis;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase implements Loggable {
 
@@ -21,7 +20,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
   private WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
 
-  @Log(name = "Drivetrain")
   private MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
   private boolean autocorrection = false;

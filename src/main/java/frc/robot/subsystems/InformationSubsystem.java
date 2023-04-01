@@ -6,20 +6,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hazard.HazardVision;
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Log;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 
-public class InformationSubsystem extends SubsystemBase implements Loggable {
+public class InformationSubsystem extends SubsystemBase {
 
   private Timer timer;
   private HazardVision camera = new HazardVision();
-
-  @Log(name = "IMU")
   private ADIS16470_IMU imu;
-
-  @Log(name = "Robot Position")
   private Field2d field = new Field2d();
 
   public InformationSubsystem(ADIS16470_IMU imu) {
