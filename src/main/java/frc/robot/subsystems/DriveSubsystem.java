@@ -9,10 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.InformationSubsystem.axis;
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Config;
 
-public class DriveSubsystem extends SubsystemBase implements Loggable {
+public class DriveSubsystem extends SubsystemBase {
 
   /* Motor Controllers */
   private WPI_TalonFX FL = new WPI_TalonFX(Constants.Drive.FrontLeft);
@@ -110,7 +108,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    *
    * @param maxOutput Maximum output value (0-1)
    */
-  @Config(name = "Max Output", defaultValueNumeric = 100)
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput / 100);
   }
@@ -136,7 +133,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     }
   }
 
-  @Config(name = "Autocorrection", defaultValueBoolean = false)
   public void setAutocorrection(boolean enabled) {
     autocorrection = enabled;
   }
