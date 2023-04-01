@@ -65,6 +65,8 @@ public class InformationSubsystem extends SubsystemBase {
       estimatedPose = p.get().estimatedPose;
     }
 
+    camera.claw.setDriverMode(true);
+
     timer.reset();
     timer.start();
 
