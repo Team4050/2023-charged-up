@@ -71,8 +71,8 @@ public class DriveSubsystem extends SubsystemBase {
    * Drives in robot-relative coordinates with rotation damping (if damping is enabled on the
    * dashboard.)
    *
-   * @param xSpeed X velocity in field coordinates
-   * @param ySpeed Y velocity in field coordinates
+   * @param xSpeed X velocity
+   * @param ySpeed Y velocity
    * @param rotation Rotational velocity
    */
   public void driveSmart(double xSpeed, double ySpeed, double rotation) {
