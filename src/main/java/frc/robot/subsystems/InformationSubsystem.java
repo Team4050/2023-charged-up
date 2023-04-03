@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Drive;
 import frc.robot.control.FilteredDrivetrainControl;
@@ -60,6 +59,7 @@ public class InformationSubsystem extends SubsystemBase {
 
     camera.claw.setDriverMode(true);
 
+    timer = new Timer();
     timer.reset();
     timer.start();
 
@@ -94,7 +94,7 @@ public class InformationSubsystem extends SubsystemBase {
     if (p.isPresent()) {
       dashboardField.setRobotPose(newPose.getX(), newPose.getY(), new Rotation2d());
       // estimatedPose = newPose;
-      SmartDashboard.putData("Field", dashboardField);
+      // SmartDashboard.putData("Field", dashboardField);
 
       if (camera.isTrustworthy())
         drivetrainPoseEstimator.addVisionMeasurement(newPose.toPose2d(), dT);

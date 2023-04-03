@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmCommand;
-import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
 import frc.robot.commands.DriveToPosition;
@@ -24,9 +23,7 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations.Log;
 import java.util.ArrayList;
-import org.photonvision.PhotonCamera;
 
 public class RobotContainer {
   /*
@@ -72,9 +69,7 @@ public class RobotContainer {
    * Camera & Sensors
    **************************************************************************************************
    */
-  @Log.CameraStream() private PhotonCamera camera = new PhotonCamera("photonvision");
-
-  @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
+  // @Log.ThreeAxisAccelerometer(name = "ADIS16470 IMU")
   public ADIS16470_IMU imu = new ADIS16470_IMU(IMUAxis.kZ, Port.kOnboardCS0, CalibrationTime._4s);
 
   private double[] stdDev = {0, 0, 0, 0, 0, 0};
@@ -157,7 +152,17 @@ public class RobotContainer {
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
-    switch (autonomousSwitch.getSelected()) {
+    ArrayList<Pose2d> list = new ArrayList<Pose2d>();
+    list.add(info.getPoseEstimate().toPose2d());
+    list.add(
+        new Pose2d(
+            info.getPoseEstimate().toPose2d().getX() + 1,
+            info.getPoseEstimate().toPose2d().getY() + 1,
+            info.getPoseEstimate().toPose2d().getRotation()));
+    DriveToPosition command = new DriveToPosition(drivetrain, info, list);
+    return command;
+
+    /*switch (autonomousSwitch.getSelected()) {
       case noCmd:
         return null;
       case simpleCmd:
@@ -165,7 +170,7 @@ public class RobotContainer {
       case danceCmd:
         return new DanceCommand(drivetrain);
       case trajectory:
-        ArrayList<Pose2d> list = new ArrayList<Pose2d>();
+        ArrayList<Pose2d> list2 = new ArrayList<Pose2d>();
         list.add(info.getPoseEstimate().toPose2d());
         list.add(
             new Pose2d(
@@ -175,7 +180,7 @@ public class RobotContainer {
         return new DriveToPosition(drivetrain, info, list);
       default:
         return null;
-    }
+    }*/
   }
 
   public void manualLogging() {

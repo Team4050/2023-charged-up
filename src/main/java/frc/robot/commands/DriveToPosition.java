@@ -24,7 +24,7 @@ public class DriveToPosition extends CommandBase {
   private PIDController Y;
   private ProfiledPIDController Rotation;
   private HolonomicDriveController controller;
-  private Timer timer;
+  private Timer timer = new Timer();
 
   public DriveToPosition(DriveSubsystem drive, InformationSubsystem info, ArrayList<Pose2d> curve) {
     this.drive = drive;
