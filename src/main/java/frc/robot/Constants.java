@@ -37,7 +37,10 @@ public final class Constants {
     public static final int RearLeft = 4;
     public static final int RearRight = 5;
     // TODO: tune
-    public static final double encoderTicksToMeters = 1;
+    public static final double encoderTicksToMeters =
+        (16 * Math.PI * 0.0254) / 2048; // 6.2340979219672459575743079636953e-4
+
+    public static final double halfSquareWheelbaseLengthMeters = (23 / 2) * 0.0254; // 0.2921
   }
 
   public static class Actuators {
@@ -57,7 +60,7 @@ public final class Constants {
     public static final String ChassisCamName = "Chassis";
     public static final String ClawCamName = "Claw";
     public static final Transform3d RobotToCamera =
-        new Transform3d(new Pose3d(), new Pose3d(1f, 0, 0.2f, new Rotation3d()));
+        new Transform3d(new Pose3d(), new Pose3d(1f, 0, 0.2f, new Rotation3d(0, 10, 0)));
   }
 
   public static class Pneumatics {

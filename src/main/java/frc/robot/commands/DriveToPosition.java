@@ -45,9 +45,9 @@ public class DriveToPosition extends CommandBase {
 
   @Override
   public void initialize() {
-    X = new PIDController(0.3, 0.1, 0.2);
-    Y = new PIDController(0.3, 0.1, 0.2);
-    Rotation = new ProfiledPIDController(0.3, 0.1, 0.2, new Constraints(1, 1));
+    X = new PIDController(0.5, 0.1, 0.2);
+    Y = new PIDController(0.5, 0.1, 0.2);
+    Rotation = new ProfiledPIDController(0.5, 0.1, 0.2, new Constraints(1, 1));
     controller = new HolonomicDriveController(X, Y, Rotation);
     // Tolerance of +-5cm & +-5 degrees
     controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 72)));
@@ -57,6 +57,6 @@ public class DriveToPosition extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return timer.get() > trajectory.getTotalTimeSeconds() + 0.1;
+    return timer.get() > (trajectory.getTotalTimeSeconds() + 0.1);
   }
 }

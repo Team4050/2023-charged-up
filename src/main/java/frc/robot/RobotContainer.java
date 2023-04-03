@@ -129,6 +129,7 @@ public class RobotContainer {
     autonomousSwitch.setDefaultOption("No auto", noCmd);
     autonomousSwitch.addOption("Exit community", simpleCmd);
     autonomousSwitch.addOption("Dance", danceCmd);
+    autonomousSwitch.addOption("Trajectory Test", trajectory);
 
     configureBindings();
 

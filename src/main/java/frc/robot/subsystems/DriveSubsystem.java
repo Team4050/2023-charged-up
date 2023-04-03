@@ -38,6 +38,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     FR.setInverted(true);
     RR.setInverted(true);
 
+    FL.setSelectedSensorPosition(0);
+    FR.setSelectedSensorPosition(0);
+    RL.setSelectedSensorPosition(0);
+    RR.setSelectedSensorPosition(0);
+
     // Set up orchestra
     orchestra.addInstrument(FL);
     orchestra.addInstrument(RL);

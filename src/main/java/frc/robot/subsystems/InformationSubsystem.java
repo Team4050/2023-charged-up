@@ -68,10 +68,14 @@ public class InformationSubsystem extends SubsystemBase {
 
     MecanumDriveKinematics kinematics =
         new MecanumDriveKinematics(
-            new Translation2d(1, 1),
-            new Translation2d(-1, 1),
-            new Translation2d(1, -1),
-            new Translation2d(-1, -1));
+            new Translation2d(
+                Drive.halfSquareWheelbaseLengthMeters, Drive.halfSquareWheelbaseLengthMeters),
+            new Translation2d(
+                -Drive.halfSquareWheelbaseLengthMeters, Drive.halfSquareWheelbaseLengthMeters),
+            new Translation2d(
+                Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters),
+            new Translation2d(
+                -Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters));
     drivetrainPoseEstimator =
         new MecanumDrivePoseEstimator(
             kinematics,
