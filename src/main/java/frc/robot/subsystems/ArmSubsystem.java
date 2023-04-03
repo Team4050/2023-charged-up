@@ -10,13 +10,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
 
-public class ArmSubsystem extends SubsystemBase implements Loggable {
+public class ArmSubsystem extends SubsystemBase {
   /* Pistons & Motors */
-  @Log(name = "Wrist Piston")
   private DoubleSolenoid clawAlignmentPiston =
       new DoubleSolenoid(
           Constants.Pneumatics.PCM,
@@ -24,7 +21,6 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
           Constants.Pneumatics.ArmFwdChannel,
           Constants.Pneumatics.ArmRevChannel);
 
-  @Log(name = "Arm Position")
   private WPI_TalonSRX pivotMotor = new WPI_TalonSRX(Constants.Actuators.Arm);
   // The motor encoder that's supposedly built into the gearbox. Uses MXP port channels.
 
@@ -32,13 +28,12 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   // private final DigitalInput ls1 = new DigitalInput(Constants.Sensors.ArmLimit);
 
   /* Control */
-  private double home = 0;
   private double setpoint = 0;
 
   public ArmSubsystem() {
     configurePID();
     setpoint = 0;
-    pivotMotor.set(ControlMode.Disabled, pivotMotor.getSelectedSensorPosition());
+    pivotMotor.set(ControlMode.PercentOutput, 0);
     // home = pivotMotor.getSelectedSensorPosition();
   }
 
@@ -56,7 +51,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
       System.out.println(
           String.format(
               "setpoint: %f, current point: %f",
-              home + setpoint, pivotMotor.getSelectedSensorPosition(0)));
+              setpoint, pivotMotor.getSelectedSensorPosition(0)));
     }
   }
 
@@ -68,7 +63,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   @Deprecated
   public void set(double speed) {
     setpoint = speed;
-    pivotMotor.set(TalonSRXControlMode.PercentOutput, home + setpoint);
+    pivotMotor.set(TalonSRXControlMode.PercentOutput, setpoint);
     // pivotMotor.set(TalonSRXControlMode.PercentOutput, speed);
 
     // System.out.println(pivotMotor.getSelectedSensorPosition());
@@ -82,7 +77,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   public void setpoint(double encodedSetpoint) {
     setpoint = encodedSetpoint;
     setpoint = limit(setpoint);
-    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, setpoint);
   }
 
   /**
@@ -93,14 +88,17 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   public void setpointAdditive(double add) {
     setpoint += add;
     setpoint = limit(setpoint);
-    pivotMotor.set(TalonSRXControlMode.Position, home + setpoint);
+    pivotMotor.set(TalonSRXControlMode.Position, setpoint);
+  }
+
+  public double getEncoderValue() {
+    return pivotMotor.getSelectedSensorPosition();
   }
 
   /** Resets the arm encoder. Currently disabled. */
   @Config.ToggleButton(name = "Reset arm encoder")
   public void resetEncoder() {
     pivotMotor.setSelectedSensorPosition(0);
-    home = pivotMotor.getSelectedSensorPosition();
   }
 
   /**
@@ -128,7 +126,7 @@ public class ArmSubsystem extends SubsystemBase implements Loggable {
   }
 
   public void softLimit(double v) {
-    if (v < Constants.Operator.ArmEncoderLimitLow || v > Constants.Operator.ArmEncoderLimitHigh) {
+    if (v < Constants.Operator.ArmEncoderBreakLow || v > Constants.Operator.ArmEncoderBreakHigh) {
       pivotMotor.set(TalonSRXControlMode.PercentOutput, 0);
       pivotMotor.setNeutralMode(NeutralMode.Brake);
       pivotMotor.disable();

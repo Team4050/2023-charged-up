@@ -9,11 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.InformationSubsystem.axis;
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
 
-public class DriveSubsystem extends SubsystemBase implements Loggable {
+public class DriveSubsystem extends SubsystemBase {
 
   /* Motor Controllers */
   private WPI_TalonFX FL = new WPI_TalonFX(Constants.Drive.FrontLeft);
@@ -21,7 +18,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private WPI_TalonFX FR = new WPI_TalonFX(Constants.Drive.FrontRight);
   private WPI_TalonFX RR = new WPI_TalonFX(Constants.Drive.RearRight);
 
-  @Log(name = "Drivetrain")
   private MecanumDrive drive = new MecanumDrive(FL, RL, FR, RR);
 
   private boolean autocorrection = false;
@@ -80,8 +76,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * Drives in robot-relative coordinates with rotation damping (if damping is enabled on the
    * dashboard.)
    *
-   * @param xSpeed X velocity in field coordinates
-   * @param ySpeed Y velocity in field coordinates
+   * @param xSpeed X velocity
+   * @param ySpeed Y velocity
    * @param rotation Rotational velocity
    */
   public void driveSmart(double xSpeed, double ySpeed, double rotation) {
@@ -117,7 +113,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    *
    * @param maxOutput Maximum output value (0-1)
    */
-  @Config(name = "Max Output", defaultValueNumeric = 100)
   public void setMaxOutput(double maxOutput) {
     drive.setMaxOutput(maxOutput / 100);
   }
@@ -152,7 +147,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     }
   }
 
-  @Config(name = "Autocorrection", defaultValueBoolean = false)
   public void setAutocorrection(boolean enabled) {
     autocorrection = enabled;
   }

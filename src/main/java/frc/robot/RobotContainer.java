@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -85,9 +84,6 @@ public class RobotContainer {
   private double[] previousState = {0, 0, 0, 0, 0, 0};
   private int N = 0;
 
-  @Log(name = "PowerDistribution")
-  private PowerDistribution pdp = new PowerDistribution();
-
   /*
    **************************************************************************************************
    * Subsystems
@@ -145,6 +141,8 @@ public class RobotContainer {
 
     arm.resetEncoder();
     arm.setDefaultCommand(armCmd);
+    arm.resetEncoder();
+    System.out.println(arm.getEncoderValue());
     claw.setDefaultCommand(clawCmd);
   }
 

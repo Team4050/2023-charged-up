@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
@@ -20,17 +21,20 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
-    System.out.println(
+    DriverStation.reportWarning(
         String.join(
+            "",
             "",
             "______ _       _                            _     ___ _____ _____  _____\n",
             "| ___ (_)     | |                          | |   /   |  _  |  ___||  _  |\n",
             "| |_/ /_  ___ | |__   __ _ ______ _ _ __ __| |  / /| | |/' |___ \\ | |/' |\n",
             "| ___ \\ |/ _ \\| '_ \\ / _` |_  / _` | '__/ _` | / /_| |  /| |   \\ \\|  /| |\n",
             "| |_/ / | (_) | | | | (_| |/ / (_| | | | (_| | \\___  \\ |_/ /\\__/ /\\ |_/ /\n",
-            "\\____/|_|\\___/|_| |_|\\__,_/___\\__,_|_|  \\__,_|     |_/\\___/\\____/  \\___/\n"));
-    System.out.println(
+            "\\____/|_|\\___/|_| |_|\\__,_/___\\__,_|_|  \\__,_|     |_/\\___/\\____/  \\___/\n"),
+        false);
+    DriverStation.reportWarning(
         String.join(
+            "",
             "",
             "              ____   ____  _\n",
             "             |_  _| |_  _|(_)\n ",
@@ -38,7 +42,8 @@ public class Robot extends TimedRobot {
             "                \\ \\ / /  [  |[ '/'`\\ \\/ /__\\\\[ `/'`\\]\n",
             "                  \\ ' /    | | | \\__/ || \\__., | |\n",
             "                   \\_/    [___]| ;.__/  '.__.'[___]\n",
-            "                               [__|\n"));
+            "                               [__|\n"),
+        false);
   }
 
   @Override
