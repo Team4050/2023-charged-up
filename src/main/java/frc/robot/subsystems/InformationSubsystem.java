@@ -99,12 +99,14 @@ public class InformationSubsystem extends SubsystemBase {
     }
 
     drivetrainPoseEstimator.update(
-        new Rotation2d(imu.getAngle()),
+        Rotation2d.fromDegrees(imu.getAngle()),
         new MecanumDriveWheelPositions(
             encoderPositions[0] * Drive.encoderTicksToMeters,
             encoderPositions[1] * Drive.encoderTicksToMeters,
             encoderPositions[2] * Drive.encoderTicksToMeters,
             encoderPositions[3] * Drive.encoderTicksToMeters));
+
+    estimatedPose = new Pose3d(drivetrainPoseEstimator.getEstimatedPosition());
 
     dashboardField.setRobotPose(getPoseEstimate().toPose2d());
   }

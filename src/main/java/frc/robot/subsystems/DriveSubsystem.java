@@ -118,12 +118,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double[] getWheelPositions() {
-    return new double[] {
-      FL.getSelectedSensorPosition(),
-      FR.getSelectedSensorPosition(),
-      RL.getSelectedSensorPosition(),
-      RR.getSelectedSensorPosition()
-    };
+    double[] array =
+        new double[] {
+          FL.getSelectedSensorPosition(),
+          FR.getSelectedSensorPosition(),
+          RL.getSelectedSensorPosition(),
+          RR.getSelectedSensorPosition()
+        };
+    // System.out.println(String.format("%f, %f, %f, %f", array[0], array[1], array[2], array[3]));
+    return array;
   }
 
   /**
