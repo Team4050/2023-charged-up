@@ -42,7 +42,7 @@ public class HazardVision {
   public PhotonCamera claw;
   private PhotonPoseEstimator poseEstimator;
 
-  public HazardVision() {
+  public HazardVision(Pose2d previousPose) {
     chassis = new PhotonCamera(Constants.Vision.ChassisCamName);
     claw = new PhotonCamera(Constants.Vision.ClawCamName);
 
@@ -54,6 +54,7 @@ public class HazardVision {
               PoseStrategy.AVERAGE_BEST_TARGETS,
               chassis,
               Constants.Vision.RobotToCamera);
+      poseEstimator.setLastPose(previousPose);
     } catch (IOException e) {
       DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
       poseEstimator = null;

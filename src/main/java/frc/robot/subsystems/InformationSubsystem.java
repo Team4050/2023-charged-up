@@ -24,7 +24,7 @@ public class InformationSubsystem extends SubsystemBase {
   private ADIS16470_IMU imu;
 
   private Timer timer;
-  private HazardVision camera = new HazardVision();
+  private HazardVision camera;
 
   /* Filters & Estimators */
   private MecanumDrivePoseEstimator drivetrainPoseEstimator;
@@ -36,7 +36,7 @@ public class InformationSubsystem extends SubsystemBase {
   public InformationSubsystem(ADIS16470_IMU imu, Pose2d startingPose) {
     this.imu = imu;
     // tab.add("ADIS IMU", imu);
-    this.camera = new HazardVision();
+    this.camera = new HazardVision(startingPose);
     // tab.add("Limelight", camera);
     layout = null;
 
