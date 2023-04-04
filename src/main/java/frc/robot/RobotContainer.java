@@ -156,8 +156,8 @@ public class RobotContainer {
     list.add(info.getPoseEstimate().toPose2d());
     list.add(
         new Pose2d(
-            info.getPoseEstimate().toPose2d().getX() + 1,
-            info.getPoseEstimate().toPose2d().getY() + 1,
+            info.getPoseEstimate().toPose2d().getX() - 0.5,
+            info.getPoseEstimate().toPose2d().getY() - 0.5,
             info.getPoseEstimate().toPose2d().getRotation()));
     DriveToPosition command = new DriveToPosition(drivetrain, info, list);
     return command;
@@ -227,7 +227,6 @@ public class RobotContainer {
   private double[] getImuDataArray() {
     double[] r = {
       imu.getAccelX(),
-      // java.util.random.RandomGenerator.getDefault().nextDouble(),
       imu.getAccelY(),
       imu.getAccelZ(),
       imu.getAngle(),

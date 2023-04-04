@@ -92,8 +92,6 @@ public class InformationSubsystem extends SubsystemBase {
     Optional<EstimatedRobotPose> p = camera.getEstimatedGlobalPose();
 
     if (p.isPresent()) {
-      dashboardField.setRobotPose(newPose.getX(), newPose.getY(), new Rotation2d());
-      // estimatedPose = newPose;
       // SmartDashboard.putData("Field", dashboardField);
 
       if (camera.isTrustworthy())
@@ -107,6 +105,8 @@ public class InformationSubsystem extends SubsystemBase {
             encoderPositions[1] * Drive.encoderTicksToMeters,
             encoderPositions[2] * Drive.encoderTicksToMeters,
             encoderPositions[3] * Drive.encoderTicksToMeters));
+
+    dashboardField.setRobotPose(getPoseEstimate().toPose2d());
   }
 
   public Pose3d getPoseEstimate() {
