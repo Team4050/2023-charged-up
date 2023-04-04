@@ -174,12 +174,15 @@ public class InformationSubsystem extends SubsystemBase {
    *
    * @param drive The drivetrain subsystem to use.
    * @param direction The direction to drive in.
-   * @param timeout If the command takes longer than the supplied value, the command stops.
+   * @param timeout The amount of time to drive
    */
   public void driveUntil(DriveSubsystem drive, Pose2d direction, int timeout) {
     double since = timer.get();
     while (timer.get() < since + timeout) {
-      drive.driveSmart(direction.getX(), direction.getY(), 0);
+      drive.drive(
+          direction.getX(),
+          direction.getY(),
+          0.2); // (direction.getRotation().getRadians() / Math.PI) % 1
     }
   }
 }

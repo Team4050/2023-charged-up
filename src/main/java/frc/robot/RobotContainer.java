@@ -152,12 +152,14 @@ public class RobotContainer {
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
+    // return new AutonomousCommand(drivetrain, arm, claw, info);
+
     ArrayList<Pose2d> list = new ArrayList<Pose2d>();
     list.add(info.getPoseEstimate().toPose2d());
     list.add(
         new Pose2d(
-            info.getPoseEstimate().toPose2d().getX() - 0.5,
-            info.getPoseEstimate().toPose2d().getY() - 0.5,
+            info.getPoseEstimate().toPose2d().getX() - 40,
+            info.getPoseEstimate().toPose2d().getY() - 40,
             info.getPoseEstimate().toPose2d().getRotation()));
     DriveToPosition command = new DriveToPosition(drivetrain, info, list);
     return command;
@@ -248,7 +250,12 @@ public class RobotContainer {
     info.updatePoseEstimate(dT, drivetrain.getWheelPositions());
 
     if (++loop > 10) {
-      System.out.println(info.getPoseEstimate());
+      System.out.println(
+          String.format(
+              "%f, %f, %f",
+              info.getPoseEstimate().getX(),
+              info.getPoseEstimate().getY(),
+              info.getPoseEstimate().getRotation().getAngle()));
       loop = 0;
     }
 

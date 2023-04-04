@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.math.controller.PIDController;
@@ -106,6 +107,13 @@ public class DriveSubsystem extends SubsystemBase {
         ySpeed,
         rotation * Operator.RotationDamping,
         Rotation2d.fromDegrees(info.getData(axis.ZRot)));
+  }
+
+  public void driveManual(double fl, double fr, double rl, double rr) {
+    FL.set(ControlMode.PercentOutput, fl);
+    FR.set(ControlMode.PercentOutput, fr);
+    RL.set(ControlMode.PercentOutput, rl);
+    RL.set(ControlMode.PercentOutput, rr);
   }
 
   /**

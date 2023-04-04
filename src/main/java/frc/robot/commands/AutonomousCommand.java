@@ -28,6 +28,9 @@ public class AutonomousCommand extends CommandBase {
 
   @Override
   public void execute() {
-    info.driveUntil(drivetrain, new Pose2d(new Translation2d(-0.2, 0), new Rotation2d()), 3);
+    info.driveUntil(drivetrain, new Pose2d(new Translation2d(0, 0), new Rotation2d()), 1);
+    // info.driveUntil(drivetrain, new Pose2d(new Translation2d(0, -0.2), new Rotation2d()), 1);
+    // info.driveUntil(drivetrain, new Pose2d(new Translation2d(0.2, 0), new Rotation2d()), 1);
+    // info.driveUntil(drivetrain, new Pose2d(new Translation2d(0, 0.2), new Rotation2d()), 1);
   }
 }

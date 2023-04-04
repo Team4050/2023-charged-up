@@ -45,7 +45,7 @@ public class ArmSubsystem extends SubsystemBase {
     softLimit(pivotMotor.getSelectedSensorPosition(0));
 
     // TODO: become confident enough to remove logging
-    loop++;
+    // loop++;
     if (loop > 10) {
       loop = 0;
       System.out.println(
