@@ -95,7 +95,7 @@ public class ArmSubsystem extends SubsystemBase {
     return pivotMotor.getSelectedSensorPosition();
   }
 
-  /** Resets the arm encoder. Currently disabled. */
+  /** Resets the arm encoder. */
   @Config.ToggleButton(name = "Reset arm encoder")
   public void resetEncoder() {
     pivotMotor.setSelectedSensorPosition(0);
@@ -115,6 +115,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getArmError() {
     return pivotMotor.getClosedLoopError(0);
+  }
+
+  public boolean atReference() {
+    return pivotMotor.getClosedLoopError(0) <= Constants.Actuators.ArmPIDTolerance;
   }
 
   public void setClawAlignment(boolean up) {
@@ -159,7 +163,7 @@ public class ArmSubsystem extends SubsystemBase {
     pivotMotor.configMaxIntegralAccumulator(0, 1);
     pivotMotor.config_kD(0, 0.1);
     // configure feedforward each time a new setpoint is called for
-    pivotMotor.configAllowableClosedloopError(0, 24);
+    pivotMotor.configAllowableClosedloopError(0, Constants.Actuators.ArmPIDTolerance);
     pivotMotor.configClosedLoopPeriod(0, 4);
     pivotMotor.configClosedLoopPeakOutput(0, 1);
 

@@ -17,15 +17,12 @@ public final class Constants {
     public static final float DeadzoneMin = 0.05f;
     public static final float RotationDamping = 0.5f;
 
-    // TODO: Values to be determined
-    // TODO: arm encoder resolution is 4096 per quarter rotation. Calculate and test values for
-    // button setpoints.
-    public static final int ArmGrabPosition = 5250; // 5000
+    public static final int ArmGrabPosition = 5250;
     public static final int ArmLevelOnePosition = 4300;
     public static final int ArmLevelTwoPosition = 3000;
     public static final int ArmRestPosition = 0;
 
-    // Arm soft limits. 0 is at rest, so we don't want to go further back.
+    // Arm soft limits. 0 is at rest, so we don't want to go too farther back.
     public static final int ArmEncoderLimitLow = -10;
     public static final int ArmEncoderLimitHigh = 5379;
 
@@ -33,7 +30,6 @@ public final class Constants {
     public static final int ArmEncoderBreakHigh = 5800;
 
     // Controls the speed at which the manual position control changes
-    // TODO: tune
     public static final float ArmJoystickCoefficient = 45;
   }
 
@@ -42,7 +38,7 @@ public final class Constants {
     public static final int FrontRight = 3;
     public static final int RearLeft = 4;
     public static final int RearRight = 5;
-    // TODO: tune
+
     public static final double encoderTicksToMeters =
         (16 * Math.PI * 0.0254) / 2048; // 6.2340979219672459575743079636953e-4
 
@@ -53,6 +49,8 @@ public final class Constants {
     public static final int Arm = 6;
     public static final int ArmLimitA = 0;
     public static final int ArmLimitB = 0;
+    // encoder units
+    public static final int ArmPIDTolerance = 24;
     public static final int Wrist = 7;
   }
 
