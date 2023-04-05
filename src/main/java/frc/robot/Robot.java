@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -60,12 +60,12 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {}
 
-  private Command autoCmd;
+  private SequentialCommandGroup autoCmds;
 
   @Override
   public void autonomousInit() {
-    autoCmd = robotContainer.getAutonomousCommand();
-    CommandScheduler.getInstance().schedule(autoCmd);
+    autoCmds = robotContainer.getAutonomousCommand();
+    CommandScheduler.getInstance().schedule(autoCmds);
   }
 
   @Override

@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ClawToggleCmd;
@@ -23,7 +23,6 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.InformationSubsystem;
 import io.github.oblarg.oblog.Logger;
-import java.util.ArrayList;
 
 public class RobotContainer {
   /*
@@ -151,18 +150,36 @@ public class RobotContainer {
    *
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
-  public Command getAutonomousCommand() {
+  public SequentialCommandGroup getAutonomousCommand() {
     // return new AutonomousCommand(drivetrain, arm, claw, info);
+    DriveToPosition command1 =
+        new DriveToPosition(
+            drivetrain,
+            info,
+            new Pose2d(
+                info.getPoseEstimate().toPose2d().getX() - 40,
+                info.getPoseEstimate().toPose2d().getY() - 40,
+                info.getPoseEstimate().toPose2d().getRotation()));
+    DriveToPosition command2 =
+        new DriveToPosition(
+            drivetrain,
+            info,
+            new Pose2d(
+                info.getPoseEstimate().toPose2d().getX(),
+                info.getPoseEstimate().toPose2d().getY(),
+                info.getPoseEstimate().toPose2d().getRotation()));
+    DriveToPosition command3 =
+        new DriveToPosition(
+            drivetrain,
+            info,
+            new Pose2d(
+                info.getPoseEstimate().toPose2d().getX() + 40,
+                info.getPoseEstimate().toPose2d().getY() + 40,
+                info.getPoseEstimate().toPose2d().getRotation()));
+    // I hope this is how you use this
+    SequentialCommandGroup cmdGroup = new SequentialCommandGroup(command1, command2, command3);
 
-    ArrayList<Pose2d> list = new ArrayList<Pose2d>();
-    list.add(info.getPoseEstimate().toPose2d());
-    list.add(
-        new Pose2d(
-            info.getPoseEstimate().toPose2d().getX() - 40,
-            info.getPoseEstimate().toPose2d().getY() - 40,
-            info.getPoseEstimate().toPose2d().getRotation()));
-    DriveToPosition command = new DriveToPosition(drivetrain, info, list);
-    return command;
+    return cmdGroup;
 
     /*switch (autonomousSwitch.getSelected()) {
       case noCmd:
