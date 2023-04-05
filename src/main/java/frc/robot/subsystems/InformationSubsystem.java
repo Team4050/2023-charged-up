@@ -20,6 +20,7 @@ public class InformationSubsystem extends SubsystemBase {
     this.imu = imu;
 
     camera.claw.setDriverMode(true);
+    camera.chassis.setDriverMode(true);
 
     timer = new Timer();
     timer.start();
