@@ -177,12 +177,13 @@ public class InformationSubsystem extends SubsystemBase {
    * @param timeout The amount of time to drive
    */
   public void driveUntil(DriveSubsystem drive, Pose2d direction, int timeout) {
+    // 18 degrees / second
     double since = timer.get();
     while (timer.get() < since + timeout) {
       drive.drive(
           direction.getX(),
           direction.getY(),
-          0.2); // (direction.getRotation().getRadians() / Math.PI) % 1
+          0); // (direction.getRotation().getRadians() / Math.PI) % 1
     }
   }
 }

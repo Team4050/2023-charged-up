@@ -62,12 +62,12 @@ public class DriveToPosition extends CommandBase {
 
   @Override
   public void initialize() {
-    X = new PIDController(0.5, 0, 0.1);
-    Y = new PIDController(0.5, 0, 0.1);
-    Rotation = new ProfiledPIDController(0.2, 0.05, 0.1, new Constraints(1, 0.5));
+    X = new PIDController(0.5, 0.05, 0.1);
+    Y = new PIDController(0.5, 0.05, 0.1);
+    Rotation = new ProfiledPIDController(0.5, 0.1, 0.1, new Constraints(1, 0.5));
     controller = new HolonomicDriveController(X, Y, Rotation);
     // Tolerance of +-5cm & +-5 degrees
-    controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 144)));
+    controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 288)));
     timer = new Timer();
     timer.start();
     // drive.setMaxOutput(0.2);
