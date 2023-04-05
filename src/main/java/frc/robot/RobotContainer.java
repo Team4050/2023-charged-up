@@ -177,6 +177,8 @@ public class RobotContainer {
                 info.getPoseEstimate().toPose2d().getX() + 40,
                 info.getPoseEstimate().toPose2d().getY() + 40,
                 info.getPoseEstimate().toPose2d().getRotation())); */
+
+    // TODO: code a real autonomous mode based on field measurements
     AutonomousStep step0 =
         new AutonomousStep(
             arm,
@@ -205,8 +207,8 @@ public class RobotContainer {
             500,
             true,
             false,
-            0,
-            10);
+            7,
+            15);
     AutonomousStep step2 =
         new AutonomousStep(
             arm,
@@ -222,7 +224,7 @@ public class RobotContainer {
             false,
             0,
             10);
-    // I hope this is how you use this
+    // I hope this is how you use command groups
     SequentialCommandGroup cmdGroup = new SequentialCommandGroup(step0, step1, step2);
 
     return cmdGroup;
@@ -269,7 +271,6 @@ public class RobotContainer {
             Math.sqrt(stateDev[3]),
             Math.sqrt(stateDev[4]),
             Math.sqrt(stateDev[5])));
-    // cov(v + w) = (cov(v) + cov(w)) / 2?
   }
 
   public void updateAvg(double dT) {

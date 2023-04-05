@@ -43,6 +43,8 @@ public final class Constants {
         (16 * Math.PI * 0.0254) / 2048; // 6.2340979219672459575743079636953e-4
 
     public static final double halfSquareWheelbaseLengthMeters = (23 / 2) * 0.0254; // 0.2921
+
+    public static final double autonomousDrivetrainCoeff = 1 / 15;
   }
 
   public static class Actuators {

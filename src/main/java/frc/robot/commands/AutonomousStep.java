@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -20,22 +21,31 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AutonomousStep extends CommandBase {
+  /* Drive subsystem & information stuff */
   private DriveSubsystem drive;
   private InformationSubsystem info;
   private Pose2d dest;
+
+  /* PID control */
   private PIDController X;
   private PIDController Y;
   private ProfiledPIDController Rotation;
   private HolonomicDriveController controller;
+
+  /* Arm subsystem */
+  private ArmSubsystem arm;
+  private double armTarget;
+  private boolean pistonState;
+
+  /* Claw subsystem */
+  private ClawSubsystem claw;
+  private boolean grabState;
+  private Set<Subsystem> reqs;
+
+  /* Timer stuff */
   private Timer timer = new Timer();
   private double timeout;
   private double minTime;
-  private Set<Subsystem> reqs;
-  private ArmSubsystem arm;
-  private ClawSubsystem claw;
-  private double armTarget;
-  private boolean pistonState;
-  private boolean grabState;
 
   public AutonomousStep(
       ArmSubsystem arm,
@@ -60,25 +70,34 @@ public class AutonomousStep extends CommandBase {
     grabState = clawGrabState;
     HashSet<Subsystem> set = new HashSet<Subsystem>();
     set.add(drive);
+    set.add(arm);
+    set.add(claw);
     reqs = set;
   }
 
+  private int loop = 0;
+
+  /** This method should include update calls for all subsystems used in the autonomous program */
   @Override
   public void execute() {
     ChassisSpeeds speeds =
         controller.calculate(
             info.getPoseEstimate().toPose2d(), new State(1, 0, 0, dest, 0), dest.getRotation());
     // System.out.println(trajectory.sample(timer.get()).poseMeters);
-    System.out.println(
-        String.format(
-            "%f, %f, %f",
-            controller.getXController().getPositionError(),
-            controller.getYController().getPositionError(),
-            controller.getThetaController().getPositionError()));
+
+    if (++loop > 10) {
+      System.out.println(
+          String.format(
+              "%f, %f, %f",
+              controller.getXController().getPositionError(),
+              controller.getYController().getPositionError(),
+              controller.getThetaController().getPositionError()));
+    }
+
     drive.driveFieldRelative(
-        speeds.vxMetersPerSecond / 15,
-        -speeds.vyMetersPerSecond / 15,
-        -speeds.omegaRadiansPerSecond / 15);
+        speeds.vxMetersPerSecond * Constants.Drive.autonomousDrivetrainCoeff,
+        -speeds.vyMetersPerSecond * Constants.Drive.autonomousDrivetrainCoeff,
+        -speeds.omegaRadiansPerSecond * Constants.Drive.autonomousDrivetrainCoeff);
 
     arm.setpoint(armTarget);
     arm.setClawAlignment(pistonState);
@@ -88,6 +107,7 @@ public class AutonomousStep extends CommandBase {
     } else {
       claw.setTargetState(Value.kReverse);
     }
+    claw.activate();
   }
 
   @Override
@@ -96,9 +116,10 @@ public class AutonomousStep extends CommandBase {
     Y = new PIDController(0.5, 0.08, 0.1);
     Rotation = new ProfiledPIDController(0.5, 0.1, 0.1, new Constraints(1, 0.5));
     controller = new HolonomicDriveController(X, Y, Rotation);
-    // Tolerance of +-5cm & +-5 degrees
-    controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 288)));
+    // Tolerance of +-5cm & +-1 degrees
+    controller.setTolerance(new Pose2d(0.05, 0.05, new Rotation2d(Math.PI / 180)));
     timer = new Timer();
+    timer.reset();
     timer.start();
   }
 
@@ -107,6 +128,10 @@ public class AutonomousStep extends CommandBase {
     return reqs;
   }
 
+  /**
+   * The logic for this should be if all PID loops are at their setpoints, and the minimum time has
+   * elapsed, or the time is beyond the timeout, end the step.
+   */
   @Override
   public boolean isFinished() {
     return (controller.atReference() && arm.atReference() && timer.get() > minTime)
