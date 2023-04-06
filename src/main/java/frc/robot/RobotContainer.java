@@ -109,7 +109,7 @@ public class RobotContainer {
     autonomousSwitch.addOption("Exit community 2 seconds", simpleShort);
     autonomousSwitch.addOption("Exit community 2.7 seconds", simpleCmd);
     autonomousSwitch.addOption("Exit community 3 seconds", simpleLong);
-    Shuffleboard.getTab("Auto").add(autonomousSwitch);
+    Shuffleboard.getTab("Autonomous").add(autonomousSwitch);
 
     configureBindings();
 
