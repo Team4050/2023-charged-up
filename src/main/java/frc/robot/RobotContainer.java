@@ -178,6 +178,13 @@ public class RobotContainer {
                 info.getPoseEstimate().toPose2d().getY() + 40,
                 info.getPoseEstimate().toPose2d().getRotation())); */
 
+    /* New autonomous is based on steps.
+     * Steps' min time should not be greater than the timeout.
+     * Timeout should not be greater than 15 seconds.
+     * Arm state should be within the soft limits for the arm.
+     *
+     */
+
     // TODO: code a real autonomous mode based on field measurements
     Pose2d relativeStart = info.getPoseEstimate().toPose2d();
     AutonomousStep step0 =
@@ -187,9 +194,9 @@ public class RobotContainer {
             drivetrain,
             info,
             new Pose2d(
-                relativeStart.getX() - 40, relativeStart.getY() - 40, relativeStart.getRotation()),
+                relativeStart.getX() + 20, relativeStart.getY(), relativeStart.getRotation()),
             0,
-            false,
+            true,
             false,
             0,
             10);
@@ -199,11 +206,12 @@ public class RobotContainer {
             claw,
             drivetrain,
             info,
-            new Pose2d(relativeStart.getX(), relativeStart.getY(), relativeStart.getRotation()),
-            500,
+            new Pose2d(
+                relativeStart.getX() + 20, relativeStart.getY(), relativeStart.getRotation()),
+            Constants.Operator.ArmLevelTwoPosition,
             true,
             false,
-            7,
+            0,
             15);
     AutonomousStep step2 =
         new AutonomousStep(
@@ -212,7 +220,20 @@ public class RobotContainer {
             drivetrain,
             info,
             new Pose2d(
-                relativeStart.getX() + 40, relativeStart.getY() + 40, relativeStart.getRotation()),
+                relativeStart.getX() + 20, relativeStart.getY(), relativeStart.getRotation()),
+            Constants.Operator.ArmLevelTwoPosition,
+            false,
+            false,
+            1,
+            15);
+    AutonomousStep step3 =
+        new AutonomousStep(
+            arm,
+            claw,
+            drivetrain,
+            info,
+            new Pose2d(
+                relativeStart.getX() - 60, relativeStart.getY(), relativeStart.getRotation()),
             0,
             false,
             false,
@@ -220,7 +241,7 @@ public class RobotContainer {
             10);
 
     // I hope this is how you use command groups
-    SequentialCommandGroup cmdGroup = new SequentialCommandGroup(step0, step1, step2);
+    SequentialCommandGroup cmdGroup = new SequentialCommandGroup(step0, step1, step2, step3);
 
     return cmdGroup;
   }

@@ -43,6 +43,7 @@ public class AutonomousStep extends CommandBase {
   private Set<Subsystem> reqs;
 
   /* Timer stuff */
+  // Timer runs relative time from the start of the command
   private Timer timer = new Timer();
   private double timeout;
   private double minTime;
@@ -80,9 +81,11 @@ public class AutonomousStep extends CommandBase {
   /** This method should include update calls for all subsystems used in the autonomous program */
   @Override
   public void execute() {
+    // According to the source code, timeSeconds, accelerationMetersPerSecond, and
+    // curvatureRadPerMeter are ignored, so we can just set those to 0.
     ChassisSpeeds speeds =
         controller.calculate(
-            info.getPoseEstimate().toPose2d(), new State(1, 0, 0, dest, 0), dest.getRotation());
+            info.getPoseEstimate().toPose2d(), new State(0, 0, 0, dest, 0), dest.getRotation());
     // System.out.println(trajectory.sample(timer.get()).poseMeters);
 
     if (++loop > 10) {

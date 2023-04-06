@@ -66,7 +66,9 @@ public final class Constants {
     public static final String ChassisCamName = "Chassis";
     public static final String ClawCamName = "Claw";
     public static final Transform3d RobotToCamera =
-        new Transform3d(new Pose3d(), new Pose3d(1f, 0, 0.2f, new Rotation3d(0, 10, 0)));
+        // 0.3937m = 15 1/2 in, 0.0889m = 3 1/2 in.
+        new Transform3d(
+            new Pose3d(), new Pose3d(15.5 * 0.0254, 0, 3.5 * 0.0254, new Rotation3d(0, 10, 0)));
   }
 
   public static class Pneumatics {
