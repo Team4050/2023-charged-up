@@ -14,9 +14,14 @@ public class AutonomousCommand extends CommandBase {
   private ArmSubsystem arm;
   private ClawSubsystem claw;
   private InformationSubsystem info;
+  private double time;
 
   public AutonomousCommand(
-      DriveSubsystem drive, ArmSubsystem arm, ClawSubsystem claw, InformationSubsystem info) {
+      DriveSubsystem drive,
+      ArmSubsystem arm,
+      ClawSubsystem claw,
+      InformationSubsystem info,
+      double time) {
     this.drivetrain = drive;
     this.arm = arm;
     this.claw = claw;
@@ -28,6 +33,6 @@ public class AutonomousCommand extends CommandBase {
 
   @Override
   public void execute() {
-    info.driveUntil(drivetrain, new Pose2d(new Translation2d(-0.2, 0), new Rotation2d()), 3);
+    info.driveUntil(drivetrain, new Pose2d(new Translation2d(0.3, 0), new Rotation2d()), time);
   }
 }

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -55,8 +56,9 @@ public class RobotContainer {
 
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
   private final String noCmd = "no";
+  private final String simpleShort = "short";
   private final String simpleCmd = "simple";
-  private final String danceCmd = "crab";
+  private final String simpleLong = "long";
 
   /*
    **************************************************************************************************
@@ -104,8 +106,10 @@ public class RobotContainer {
     Logger.configureLoggingAndConfig(this, false);
 
     autonomousSwitch.setDefaultOption("No auto", noCmd);
-    autonomousSwitch.addOption("Exit community", simpleCmd);
-    autonomousSwitch.addOption("Dance", danceCmd);
+    autonomousSwitch.addOption("Exit community 2 seconds", simpleShort);
+    autonomousSwitch.addOption("Exit community 2.7 seconds", simpleCmd);
+    autonomousSwitch.addOption("Exit community 3 seconds", simpleLong);
+    Shuffleboard.getTab("Auto").add(autonomousSwitch);
 
     configureBindings();
 
@@ -137,13 +141,15 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     switch (autonomousSwitch.getSelected()) {
       case noCmd:
-        return null;
+        return new AutonomousCommand(drivetrain, arm, claw, info, 0);
+      case simpleShort:
+        return new AutonomousCommand(drivetrain, arm, claw, info, 2);
       case simpleCmd:
-        return new AutonomousCommand(drivetrain, arm, claw, info);
-      case danceCmd:
-        return new DanceCommand(drivetrain);
+        return new AutonomousCommand(drivetrain, arm, claw, info, 2.7);
+      case simpleLong:
+        return new AutonomousCommand(drivetrain, arm, claw, info, 3);
       default:
-        return null;
+        return new AutonomousCommand(drivetrain, arm, claw, info, 2.7);
     }
   }
 

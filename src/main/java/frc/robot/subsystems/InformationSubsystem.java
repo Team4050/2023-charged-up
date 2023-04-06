@@ -87,7 +87,7 @@ public class InformationSubsystem extends SubsystemBase {
    * @param direction The direction to drive in.
    * @param timeout If the command takes longer than the supplied value, the command stops.
    */
-  public void driveUntil(DriveSubsystem drive, Pose2d direction, int timeout) {
+  public void driveUntil(DriveSubsystem drive, Pose2d direction, double timeout) {
     double since = timer.get();
     while (timer.get() < since + timeout) {
       drive.driveSmart(direction.getX(), direction.getY(), 0);
