@@ -100,8 +100,8 @@ public class AutonomousStep extends CommandBase {
     // TODO: with the new kinematics, test if normal control works
     drive.driveFieldRelative(
         speeds.vxMetersPerSecond * Constants.Drive.autonomousDrivetrainCoeff,
-        -speeds.vyMetersPerSecond * Constants.Drive.autonomousDrivetrainCoeff,
-        -speeds.omegaRadiansPerSecond * Constants.Drive.autonomousDrivetrainCoeff);
+        speeds.vyMetersPerSecond * Constants.Drive.autonomousDrivetrainCoeff,
+        speeds.omegaRadiansPerSecond * Constants.Drive.autonomousDrivetrainCoeff);
 
     arm.setpoint(armTarget);
     arm.setClawAlignment(pistonState);
