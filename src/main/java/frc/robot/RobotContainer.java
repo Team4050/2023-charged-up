@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.AutonomousCommand;
@@ -139,9 +142,30 @@ public class RobotContainer {
    * @return A command which controls various robot subsystems and accomplishes autonomous tasks.
    */
   public Command getAutonomousCommand() {
-    switch (autonomousSwitch.getSelected()) {
+    return new SequentialCommandGroup(
+        new AutonomousCommand(
+            drivetrain,
+            arm,
+            claw,
+            info,
+            new Pose2d(0, 0, new Rotation2d()),
+            2,
+            true,
+            Constants.Operator.ArmLevelTwoPosition),
+        new AutonomousCommand(
+            drivetrain,
+            arm,
+            claw,
+            info,
+            new Pose2d(0, 0, new Rotation2d()),
+            2,
+            false,
+            Constants.Operator.ArmLevelTwoPosition),
+        new AutonomousCommand(
+            drivetrain, arm, claw, info, new Pose2d(0.3, 0, new Rotation2d()), 2.7, false, 0));
+    /*switch (autonomousSwitch.getSelected()) {
       case noCmd:
-        return new AutonomousCommand(drivetrain, arm, claw, info, 0);
+        return new AutonomousCommand(drivetrain, arm, claw, info, 2);
       case simpleShort:
         return new AutonomousCommand(drivetrain, arm, claw, info, 2);
       case simpleCmd:
@@ -150,7 +174,7 @@ public class RobotContainer {
         return new AutonomousCommand(drivetrain, arm, claw, info, 3);
       default:
         return new AutonomousCommand(drivetrain, arm, claw, info, 2.7);
-    }
+    }*/
   }
 
   public void periodic() {
