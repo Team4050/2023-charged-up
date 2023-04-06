@@ -179,6 +179,7 @@ public class RobotContainer {
                 info.getPoseEstimate().toPose2d().getRotation())); */
 
     // TODO: code a real autonomous mode based on field measurements
+    Pose2d relativeStart = info.getPoseEstimate().toPose2d();
     AutonomousStep step0 =
         new AutonomousStep(
             arm,
@@ -186,9 +187,7 @@ public class RobotContainer {
             drivetrain,
             info,
             new Pose2d(
-                info.getPoseEstimate().toPose2d().getX() - 40,
-                info.getPoseEstimate().toPose2d().getY() - 40,
-                info.getPoseEstimate().toPose2d().getRotation()),
+                relativeStart.getX() - 40, relativeStart.getY() - 40, relativeStart.getRotation()),
             0,
             false,
             false,
@@ -200,10 +199,7 @@ public class RobotContainer {
             claw,
             drivetrain,
             info,
-            new Pose2d(
-                info.getPoseEstimate().toPose2d().getX(),
-                info.getPoseEstimate().toPose2d().getY(),
-                info.getPoseEstimate().toPose2d().getRotation()),
+            new Pose2d(relativeStart.getX(), relativeStart.getY(), relativeStart.getRotation()),
             500,
             true,
             false,
@@ -216,38 +212,17 @@ public class RobotContainer {
             drivetrain,
             info,
             new Pose2d(
-                info.getPoseEstimate().toPose2d().getX() + 40,
-                info.getPoseEstimate().toPose2d().getY() + 40,
-                info.getPoseEstimate().toPose2d().getRotation()),
+                relativeStart.getX() + 40, relativeStart.getY() + 40, relativeStart.getRotation()),
             0,
             false,
             false,
             0,
             10);
+
     // I hope this is how you use command groups
     SequentialCommandGroup cmdGroup = new SequentialCommandGroup(step0, step1, step2);
 
     return cmdGroup;
-
-    /*switch (autonomousSwitch.getSelected()) {
-      case noCmd:
-        return null;
-      case simpleCmd:
-        return new AutonomousCommand(drivetrain, arm, claw, info);
-      case danceCmd:
-        return new DanceCommand(drivetrain);
-      case trajectory:
-        ArrayList<Pose2d> list2 = new ArrayList<Pose2d>();
-        list.add(info.getPoseEstimate().toPose2d());
-        list.add(
-            new Pose2d(
-                info.getPoseEstimate().toPose2d().getX() + 1,
-                info.getPoseEstimate().toPose2d().getY() + 1,
-                info.getPoseEstimate().toPose2d().getRotation()));
-        return new DriveToPosition(drivetrain, info, list);
-      default:
-        return null;
-    }*/
   }
 
   public void manualLogging() {
