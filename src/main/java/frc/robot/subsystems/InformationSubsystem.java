@@ -67,7 +67,8 @@ public class InformationSubsystem extends SubsystemBase {
     dashboardField = new Field2d();
     dashboardField.setRobotPose(startingPose);
 
-    // TODO: okay so this is rotated and reversed, causing AutonomousStep to apply motor power to
+    // TODO: okay so this is rotated and reversed, causing AutonomousStep to apply motor power in
+    // reverse for strafe & turn
     MecanumDriveKinematics kinematics =
         new MecanumDriveKinematics(
             new Translation2d(
@@ -89,6 +90,7 @@ public class InformationSubsystem extends SubsystemBase {
                 -Drive.halfSquareWheelbaseLengthMeters, Drive.halfSquareWheelbaseLengthMeters),
             new Translation2d(
                 -Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters));
+
     drivetrainPoseEstimator =
         new MecanumDrivePoseEstimator(
             kinematicsNew,
