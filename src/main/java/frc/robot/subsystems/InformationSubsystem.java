@@ -85,18 +85,19 @@ public class InformationSubsystem extends SubsystemBase {
   }
 
   public void updatePoseEstimate(double dT, double[] encoderPositions) {
-    double[][] columnVec = {{imu.getAccelX() + 0.4}, {imu.getAccelY() + 0.49}, {imu.getRate()}};
-    filter.execute(dT, columnVec);
+    // double[][] columnVec = {{imu.getAccelX() + 0.4}, {imu.getAccelY() + 0.49}, {imu.getRate()}};
+    // filter.execute(dT, columnVec);
 
-    Pose3d newPose = new Pose3d();
     Optional<EstimatedRobotPose> p = camera.getEstimatedGlobalPose();
 
     if (p.isPresent()) {
       // SmartDashboard.putData("Field", dashboardField);
 
       if (camera.isTrustworthy())
-        drivetrainPoseEstimator.addVisionMeasurement(newPose.toPose2d(), dT);
+        drivetrainPoseEstimator.addVisionMeasurement(p.get().estimatedPose.toPose2d(), dT);
     }
+
+    // TODO: try updateWithTime using the Timer class
 
     drivetrainPoseEstimator.update(
         Rotation2d.fromDegrees(imu.getAngle()),
