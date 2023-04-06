@@ -21,6 +21,7 @@ import org.photonvision.EstimatedRobotPose;
 
 public class InformationSubsystem extends SubsystemBase {
   /* Sensors */
+  // ADIS winds CCW
   private ADIS16470_IMU imu;
 
   private Timer timer;
@@ -66,6 +67,7 @@ public class InformationSubsystem extends SubsystemBase {
     dashboardField = new Field2d();
     dashboardField.setRobotPose(startingPose);
 
+    // TODO: okay so this is rotated and reversed, causing AutonomousStep to apply motor power to
     MecanumDriveKinematics kinematics =
         new MecanumDriveKinematics(
             new Translation2d(
@@ -76,9 +78,20 @@ public class InformationSubsystem extends SubsystemBase {
                 Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters),
             new Translation2d(
                 -Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters));
+
+    MecanumDriveKinematics kinematicsNew =
+        new MecanumDriveKinematics(
+            new Translation2d(
+                Drive.halfSquareWheelbaseLengthMeters, Drive.halfSquareWheelbaseLengthMeters),
+            new Translation2d(
+                Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters),
+            new Translation2d(
+                -Drive.halfSquareWheelbaseLengthMeters, Drive.halfSquareWheelbaseLengthMeters),
+            new Translation2d(
+                -Drive.halfSquareWheelbaseLengthMeters, -Drive.halfSquareWheelbaseLengthMeters));
     drivetrainPoseEstimator =
         new MecanumDrivePoseEstimator(
-            kinematics,
+            kinematicsNew,
             new Rotation2d(imu.getAngle()),
             new MecanumDriveWheelPositions(0, 0, 0, 0),
             startingPose);

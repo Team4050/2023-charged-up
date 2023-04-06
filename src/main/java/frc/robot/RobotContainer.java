@@ -193,9 +193,8 @@ public class RobotContainer {
             claw,
             drivetrain,
             info,
-            new Pose2d(
-                relativeStart.getX() + 20, relativeStart.getY(), relativeStart.getRotation()),
-            0,
+            new Pose2d(relativeStart.getX(), relativeStart.getY(), relativeStart.getRotation()),
+            Constants.Operator.ArmLevelTwoPosition,
             true,
             false,
             0,
@@ -206,12 +205,11 @@ public class RobotContainer {
             claw,
             drivetrain,
             info,
-            new Pose2d(
-                relativeStart.getX() + 20, relativeStart.getY(), relativeStart.getRotation()),
+            new Pose2d(relativeStart.getX(), relativeStart.getY(), relativeStart.getRotation()),
             Constants.Operator.ArmLevelTwoPosition,
-            true,
             false,
-            0,
+            false,
+            1.5,
             15);
     AutonomousStep step2 =
         new AutonomousStep(
@@ -220,28 +218,28 @@ public class RobotContainer {
             drivetrain,
             info,
             new Pose2d(
-                relativeStart.getX() + 20, relativeStart.getY(), relativeStart.getRotation()),
-            Constants.Operator.ArmLevelTwoPosition,
+                relativeStart.getX() - 80, relativeStart.getY(), relativeStart.getRotation()),
+            0,
             false,
             false,
-            1,
+            0,
             15);
-    AutonomousStep step3 =
-        new AutonomousStep(
-            arm,
-            claw,
-            drivetrain,
-            info,
-            new Pose2d(
-                relativeStart.getX() - 60, relativeStart.getY(), relativeStart.getRotation()),
-            0,
-            false,
-            false,
-            0,
-            10);
+    /*AutonomousStep step3 =
+    new AutonomousStep(
+        arm,
+        claw,
+        drivetrain,
+        info,
+        new Pose2d(
+            relativeStart.getX() - 60, relativeStart.getY(), relativeStart.getRotation()),
+        0,
+        false,
+        false,
+        0,
+        10);*/
 
     // I hope this is how you use command groups
-    SequentialCommandGroup cmdGroup = new SequentialCommandGroup(step0, step1, step2, step3);
+    SequentialCommandGroup cmdGroup = new SequentialCommandGroup(step0, step1, step2);
 
     return cmdGroup;
   }
