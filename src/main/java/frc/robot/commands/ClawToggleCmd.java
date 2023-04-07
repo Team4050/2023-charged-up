@@ -45,13 +45,15 @@ public class ClawToggleCmd extends CommandBase {
     clawOnTrigger.onTrue(
         new InstantCommand(
             () -> {
-              toggle = true;
+              claw.setTargetState(Value.kForward);
+              claw.activate();
             }));
 
     clawOffTrigger.onTrue(
         new InstantCommand(
             () -> {
-              toggle = false;
+              claw.setTargetState(Value.kReverse);
+              claw.activate();
             }));
   }
 
@@ -59,12 +61,12 @@ public class ClawToggleCmd extends CommandBase {
   public void execute() {
     claw.setWrist(controller.getLeftX());
 
-    if (toggle) {
+    /*if (toggle) {
       claw.setTargetState(Value.kForward);
       claw.activate();
       return;
     }
     claw.setTargetState(Value.kReverse);
-    claw.activate();
+    claw.activate();*/
   }
 }

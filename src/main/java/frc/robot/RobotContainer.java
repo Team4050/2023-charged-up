@@ -17,6 +17,7 @@ import frc.robot.commands.ArmCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClawToggleCmd;
 import frc.robot.commands.DanceCommand;
+import frc.robot.commands.TOSSME;
 import frc.robot.hazard.HazardXbox;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
@@ -42,6 +43,7 @@ public class RobotContainer {
   // TODO: currently set to the controller dpad, discuss with drive team
   private Trigger clawUpTrigger = secondaryControl.leftBumper();
   private Trigger clawDownTrigger = secondaryControl.rightBumper();
+  private Trigger tossTrigger = secondaryControl.povUp();
   // Claw rotation motor
   // private Trigger clawWristLeftTrigger = secondaryControl.leftBumper();
   // private Trigger clawWristRightTrigger = secondaryControl.rightBumper();
@@ -134,6 +136,7 @@ public class RobotContainer {
   /** Maps commands to their respective triggers. */
   private void configureBindings() {
     danceTrigger.toggleOnTrue(dance);
+    tossTrigger.onTrue(new TOSSME(arm, claw));
   }
 
   /**
@@ -162,7 +165,7 @@ public class RobotContainer {
             false,
             Constants.Operator.ArmLevelTwoPosition),
         new AutonomousCommand(
-            drivetrain, arm, claw, info, new Pose2d(0.3, 0, new Rotation2d()), 2.7, false, 0));
+            drivetrain, arm, claw, info, new Pose2d(0.3, 0, new Rotation2d()), 3.2, false, 0));
     /*switch (autonomousSwitch.getSelected()) {
       case noCmd:
         return new AutonomousCommand(drivetrain, arm, claw, info, 2);
