@@ -57,8 +57,6 @@ public class RobotContainer {
   // :(
   private Trigger danceTrigger = primaryControl.start();
 
-  // TODO: figure out controller rumble?
-
   private SendableChooser<String> autonomousSwitch = new SendableChooser<>();
   private final String noCmd = "no";
   private final String simpleShort = "short";
