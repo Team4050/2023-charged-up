@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TOSSME extends CommandBase {
-  private final double grabTiming = 0.07; // 50ms after wrist flick
+  private final double grabTiming = 0.09; // 90ms after wrist flick
   private final double end = 0.2; // 200ms timeout
   private Timer timer;
   private ClawSubsystem claw;
